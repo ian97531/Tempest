@@ -1,0 +1,450 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		EB5221F115377A3A00785F97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F015377A3A00785F97 /* UIKit.framework */; };
+		EB5221F315377A3A00785F97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F215377A3A00785F97 /* Foundation.framework */; };
+		EB5221F515377A3A00785F97 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F415377A3A00785F97 /* CoreGraphics.framework */; };
+		EB5221F715377A3A00785F97 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F615377A3A00785F97 /* CoreData.framework */; };
+		EB5221FD15377A3A00785F97 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EB5221FB15377A3A00785F97 /* InfoPlist.strings */; };
+		EB5221FF15377A3A00785F97 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EB5221FE15377A3A00785F97 /* main.m */; };
+		EB52220315377A3A00785F97 /* EMTLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EB52220215377A3A00785F97 /* EMTLAppDelegate.m */; };
+		EB52220615377A3A00785F97 /* Flickrgram.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EB52220415377A3A00785F97 /* Flickrgram.xcdatamodeld */; };
+		EB52220E15377A3A00785F97 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB52220D15377A3A00785F97 /* SenTestingKit.framework */; };
+		EB52220F15377A3A00785F97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F015377A3A00785F97 /* UIKit.framework */; };
+		EB52221015377A3A00785F97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F215377A3A00785F97 /* Foundation.framework */; };
+		EB52221115377A3A00785F97 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F615377A3A00785F97 /* CoreData.framework */; };
+		EB52221915377A3A00785F97 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EB52221715377A3A00785F97 /* InfoPlist.strings */; };
+		EB52221C15377A3A00785F97 /* FlickrgramTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EB52221B15377A3A00785F97 /* FlickrgramTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EB52221215377A3A00785F97 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EB5221E315377A3A00785F97 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EB5221EB15377A3A00785F97;
+			remoteInfo = Flickrgram;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		EB5221EC15377A3A00785F97 /* Flickrgram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Flickrgram.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB5221F015377A3A00785F97 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		EB5221F215377A3A00785F97 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		EB5221F415377A3A00785F97 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		EB5221F615377A3A00785F97 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		EB5221FA15377A3A00785F97 /* Flickrgram-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Flickrgram-Info.plist"; sourceTree = "<group>"; };
+		EB5221FC15377A3A00785F97 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		EB5221FE15377A3A00785F97 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		EB52220015377A3A00785F97 /* Flickrgram-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Flickrgram-Prefix.pch"; sourceTree = "<group>"; };
+		EB52220115377A3A00785F97 /* EMTLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMTLAppDelegate.h; sourceTree = "<group>"; };
+		EB52220215377A3A00785F97 /* EMTLAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMTLAppDelegate.m; sourceTree = "<group>"; };
+		EB52220515377A3A00785F97 /* Flickrgram.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flickrgram.xcdatamodel; sourceTree = "<group>"; };
+		EB52220C15377A3A00785F97 /* FlickrgramTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlickrgramTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EB52220D15377A3A00785F97 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		EB52221615377A3A00785F97 /* FlickrgramTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FlickrgramTests-Info.plist"; sourceTree = "<group>"; };
+		EB52221815377A3A00785F97 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		EB52221A15377A3A00785F97 /* FlickrgramTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlickrgramTests.h; sourceTree = "<group>"; };
+		EB52221B15377A3A00785F97 /* FlickrgramTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FlickrgramTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EB5221E915377A3A00785F97 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB5221F115377A3A00785F97 /* UIKit.framework in Frameworks */,
+				EB5221F315377A3A00785F97 /* Foundation.framework in Frameworks */,
+				EB5221F515377A3A00785F97 /* CoreGraphics.framework in Frameworks */,
+				EB5221F715377A3A00785F97 /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EB52220815377A3A00785F97 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB52220E15377A3A00785F97 /* SenTestingKit.framework in Frameworks */,
+				EB52220F15377A3A00785F97 /* UIKit.framework in Frameworks */,
+				EB52221015377A3A00785F97 /* Foundation.framework in Frameworks */,
+				EB52221115377A3A00785F97 /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EB5221E115377A3A00785F97 = {
+			isa = PBXGroup;
+			children = (
+				EB5221F815377A3A00785F97 /* Flickrgram */,
+				EB52221415377A3A00785F97 /* FlickrgramTests */,
+				EB5221EF15377A3A00785F97 /* Frameworks */,
+				EB5221ED15377A3A00785F97 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EB5221ED15377A3A00785F97 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EB5221EC15377A3A00785F97 /* Flickrgram.app */,
+				EB52220C15377A3A00785F97 /* FlickrgramTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EB5221EF15377A3A00785F97 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				EB5221F015377A3A00785F97 /* UIKit.framework */,
+				EB5221F215377A3A00785F97 /* Foundation.framework */,
+				EB5221F415377A3A00785F97 /* CoreGraphics.framework */,
+				EB5221F615377A3A00785F97 /* CoreData.framework */,
+				EB52220D15377A3A00785F97 /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EB5221F815377A3A00785F97 /* Flickrgram */ = {
+			isa = PBXGroup;
+			children = (
+				EB52220115377A3A00785F97 /* EMTLAppDelegate.h */,
+				EB52220215377A3A00785F97 /* EMTLAppDelegate.m */,
+				EB52220415377A3A00785F97 /* Flickrgram.xcdatamodeld */,
+				EB5221F915377A3A00785F97 /* Supporting Files */,
+			);
+			path = Flickrgram;
+			sourceTree = "<group>";
+		};
+		EB5221F915377A3A00785F97 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				EB5221FA15377A3A00785F97 /* Flickrgram-Info.plist */,
+				EB5221FB15377A3A00785F97 /* InfoPlist.strings */,
+				EB5221FE15377A3A00785F97 /* main.m */,
+				EB52220015377A3A00785F97 /* Flickrgram-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		EB52221415377A3A00785F97 /* FlickrgramTests */ = {
+			isa = PBXGroup;
+			children = (
+				EB52221A15377A3A00785F97 /* FlickrgramTests.h */,
+				EB52221B15377A3A00785F97 /* FlickrgramTests.m */,
+				EB52221515377A3A00785F97 /* Supporting Files */,
+			);
+			path = FlickrgramTests;
+			sourceTree = "<group>";
+		};
+		EB52221515377A3A00785F97 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				EB52221615377A3A00785F97 /* FlickrgramTests-Info.plist */,
+				EB52221715377A3A00785F97 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		EB5221EB15377A3A00785F97 /* Flickrgram */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EB52221F15377A3A00785F97 /* Build configuration list for PBXNativeTarget "Flickrgram" */;
+			buildPhases = (
+				EB5221E815377A3A00785F97 /* Sources */,
+				EB5221E915377A3A00785F97 /* Frameworks */,
+				EB5221EA15377A3A00785F97 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Flickrgram;
+			productName = Flickrgram;
+			productReference = EB5221EC15377A3A00785F97 /* Flickrgram.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EB52220B15377A3A00785F97 /* FlickrgramTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EB52222215377A3A00785F97 /* Build configuration list for PBXNativeTarget "FlickrgramTests" */;
+			buildPhases = (
+				EB52220715377A3A00785F97 /* Sources */,
+				EB52220815377A3A00785F97 /* Frameworks */,
+				EB52220915377A3A00785F97 /* Resources */,
+				EB52220A15377A3A00785F97 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EB52221315377A3A00785F97 /* PBXTargetDependency */,
+			);
+			name = FlickrgramTests;
+			productName = FlickrgramTests;
+			productReference = EB52220C15377A3A00785F97 /* FlickrgramTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EB5221E315377A3A00785F97 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = EMTL;
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = EB5221E615377A3A00785F97 /* Build configuration list for PBXProject "Flickrgram" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = EB5221E115377A3A00785F97;
+			productRefGroup = EB5221ED15377A3A00785F97 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EB5221EB15377A3A00785F97 /* Flickrgram */,
+				EB52220B15377A3A00785F97 /* FlickrgramTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EB5221EA15377A3A00785F97 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB5221FD15377A3A00785F97 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EB52220915377A3A00785F97 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB52221915377A3A00785F97 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		EB52220A15377A3A00785F97 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EB5221E815377A3A00785F97 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB5221FF15377A3A00785F97 /* main.m in Sources */,
+				EB52220315377A3A00785F97 /* EMTLAppDelegate.m in Sources */,
+				EB52220615377A3A00785F97 /* Flickrgram.xcdatamodeld in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EB52220715377A3A00785F97 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EB52221C15377A3A00785F97 /* FlickrgramTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EB52221315377A3A00785F97 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EB5221EB15377A3A00785F97 /* Flickrgram */;
+			targetProxy = EB52221215377A3A00785F97 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		EB5221FB15377A3A00785F97 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EB5221FC15377A3A00785F97 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		EB52221715377A3A00785F97 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				EB52221815377A3A00785F97 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		EB52221D15377A3A00785F97 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		EB52221E15377A3A00785F97 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		EB52222015377A3A00785F97 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Flickrgram/Flickrgram-Prefix.pch";
+				INFOPLIST_FILE = "Flickrgram/Flickrgram-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		EB52222115377A3A00785F97 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Flickrgram/Flickrgram-Prefix.pch";
+				INFOPLIST_FILE = "Flickrgram/Flickrgram-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		EB52222315377A3A00785F97 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Flickrgram.app/Flickrgram";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Flickrgram/Flickrgram-Prefix.pch";
+				INFOPLIST_FILE = "FlickrgramTests/FlickrgramTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		EB52222415377A3A00785F97 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Flickrgram.app/Flickrgram";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Flickrgram/Flickrgram-Prefix.pch";
+				INFOPLIST_FILE = "FlickrgramTests/FlickrgramTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EB5221E615377A3A00785F97 /* Build configuration list for PBXProject "Flickrgram" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB52221D15377A3A00785F97 /* Debug */,
+				EB52221E15377A3A00785F97 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EB52221F15377A3A00785F97 /* Build configuration list for PBXNativeTarget "Flickrgram" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB52222015377A3A00785F97 /* Debug */,
+				EB52222115377A3A00785F97 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		EB52222215377A3A00785F97 /* Build configuration list for PBXNativeTarget "FlickrgramTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB52222315377A3A00785F97 /* Debug */,
+				EB52222415377A3A00785F97 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		EB52220415377A3A00785F97 /* Flickrgram.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				EB52220515377A3A00785F97 /* Flickrgram.xcdatamodel */,
+			);
+			currentVersion = EB52220515377A3A00785F97 /* Flickrgram.xcdatamodel */;
+			path = Flickrgram.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
+	};
+	rootObject = EB5221E315377A3A00785F97 /* Project object */;
+}
