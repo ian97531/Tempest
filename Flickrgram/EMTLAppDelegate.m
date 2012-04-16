@@ -7,6 +7,7 @@
 //
 
 #import "EMTLAppDelegate.h"
+#import "EMTLPhotoListViewController.h"
 
 @implementation EMTLAppDelegate
 
@@ -20,6 +21,13 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
+    
+    EMTLPhotoListViewController *photoList = [[EMTLPhotoListViewController alloc] init];
+    
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:photoList];
+    
+    self.window.rootViewController = navController;
+    
     [self.window makeKeyAndVisible];
     return YES;
 }
