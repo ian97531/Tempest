@@ -23,13 +23,11 @@
 		EB52221C15377A3A00785F97 /* FlickrgramTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EB52221B15377A3A00785F97 /* FlickrgramTests.m */; };
 		EB69B1F6153CD26D003D8422 /* EMTLPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F1153CD26D003D8422 /* EMTLPhotoCell.m */; };
 		EB69B1F7153CD26D003D8422 /* EMTLPhotoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */; };
-		EB69B1F8153CD26D003D8422 /* EMTLPhotoSource.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F5153CD26D003D8422 /* EMTLPhotoSource.m */; };
 		EB69B1FA153CD42A003D8422 /* EMTLPhotoCell.h in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F0153CD26D003D8422 /* EMTLPhotoCell.h */; };
 		EB69B1FB153CD42A003D8422 /* EMTLPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F1153CD26D003D8422 /* EMTLPhotoCell.m */; };
 		EB69B1FC153CD42A003D8422 /* EMTLPhotoListViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F2153CD26D003D8422 /* EMTLPhotoListViewController.h */; };
 		EB69B1FD153CD42A003D8422 /* EMTLPhotoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */; };
 		EB69B1FE153CD42A003D8422 /* EMTLPhotoSource.h in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F4153CD26D003D8422 /* EMTLPhotoSource.h */; };
-		EB69B1FF153CD42A003D8422 /* EMTLPhotoSource.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F5153CD26D003D8422 /* EMTLPhotoSource.m */; };
 		EB69B241153CD46B003D8422 /* NSMutableURLRequest+Parameters.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B204153CD46B003D8422 /* NSMutableURLRequest+Parameters.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		EB69B242153CD46B003D8422 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B206153CD46B003D8422 /* NSString+URLEncoding.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		EB69B243153CD46B003D8422 /* NSURL+Base.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B208153CD46B003D8422 /* NSURL+Base.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -70,6 +68,17 @@
 		EB69B266153CD46B003D8422 /* 7.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EB69B23E153CD46B003D8422 /* 7.jpg */; };
 		EB69B267153CD46B003D8422 /* 8.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EB69B23F153CD46B003D8422 /* 8.jpg */; };
 		EB69B268153CD46B003D8422 /* 9.jpg in Resources */ = {isa = PBXBuildFile; fileRef = EB69B240153CD46B003D8422 /* 9.jpg */; };
+		EB69B27F153CDBB6003D8422 /* LFHTTPRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B273153CDBB6003D8422 /* LFHTTPRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		EB69B280153CDBB6003D8422 /* LFSiteReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B275153CDBB6003D8422 /* LFSiteReachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		EB69B281153CDBB6003D8422 /* NSData+LFHTTPFormExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B278153CDBB6003D8422 /* NSData+LFHTTPFormExtensions.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		EB69B282153CDBB6003D8422 /* ObjectiveFlickr.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B27A153CDBB6003D8422 /* ObjectiveFlickr.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		EB69B283153CDBB6003D8422 /* OFUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B27C153CDBB6003D8422 /* OFUtilities.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		EB69B284153CDBB6003D8422 /* OFXMLMapper.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B27E153CDBB6003D8422 /* OFXMLMapper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		EB69B286153CDE2E003D8422 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B285153CDE2E003D8422 /* Security.framework */; };
+		EB69B288153CDE3A003D8422 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B287153CDE3A003D8422 /* CFNetwork.framework */; };
+		EB69B28A153CDE40003D8422 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B289153CDE40003D8422 /* libxml2.dylib */; };
+		EB69B28C153CDE59003D8422 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */; };
+		EB850DAC153DF3D30073BBAE /* EMTLFlickr.m in Sources */ = {isa = PBXBuildFile; fileRef = EB850DAB153DF3D30073BBAE /* EMTLFlickr.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,7 +115,6 @@
 		EB69B1F2153CD26D003D8422 /* EMTLPhotoListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoListViewController.h; sourceTree = "<group>"; };
 		EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoListViewController.m; sourceTree = "<group>"; };
 		EB69B1F4153CD26D003D8422 /* EMTLPhotoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoSource.h; sourceTree = "<group>"; };
-		EB69B1F5153CD26D003D8422 /* EMTLPhotoSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoSource.m; sourceTree = "<group>"; };
 		EB69B203153CD46B003D8422 /* NSMutableURLRequest+Parameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableURLRequest+Parameters.h"; sourceTree = "<group>"; };
 		EB69B204153CD46B003D8422 /* NSMutableURLRequest+Parameters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableURLRequest+Parameters.m"; sourceTree = "<group>"; };
 		EB69B205153CD46B003D8422 /* NSString+URLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncoding.h"; sourceTree = "<group>"; };
@@ -167,6 +175,26 @@
 		EB69B23E153CD46B003D8422 /* 7.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 7.jpg; sourceTree = "<group>"; };
 		EB69B23F153CD46B003D8422 /* 8.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 8.jpg; sourceTree = "<group>"; };
 		EB69B240153CD46B003D8422 /* 9.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = 9.jpg; sourceTree = "<group>"; };
+		EB69B272153CDBB6003D8422 /* LFHTTPRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFHTTPRequest.h; sourceTree = "<group>"; };
+		EB69B273153CDBB6003D8422 /* LFHTTPRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFHTTPRequest.m; sourceTree = "<group>"; };
+		EB69B274153CDBB6003D8422 /* LFSiteReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFSiteReachability.h; sourceTree = "<group>"; };
+		EB69B275153CDBB6003D8422 /* LFSiteReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LFSiteReachability.m; sourceTree = "<group>"; };
+		EB69B276153CDBB6003D8422 /* LFWebAPIKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFWebAPIKit.h; sourceTree = "<group>"; };
+		EB69B277153CDBB6003D8422 /* NSData+LFHTTPFormExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+LFHTTPFormExtensions.h"; sourceTree = "<group>"; };
+		EB69B278153CDBB6003D8422 /* NSData+LFHTTPFormExtensions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+LFHTTPFormExtensions.m"; sourceTree = "<group>"; };
+		EB69B279153CDBB6003D8422 /* ObjectiveFlickr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectiveFlickr.h; sourceTree = "<group>"; };
+		EB69B27A153CDBB6003D8422 /* ObjectiveFlickr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectiveFlickr.m; sourceTree = "<group>"; };
+		EB69B27B153CDBB6003D8422 /* OFUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OFUtilities.h; sourceTree = "<group>"; };
+		EB69B27C153CDBB6003D8422 /* OFUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OFUtilities.m; sourceTree = "<group>"; };
+		EB69B27D153CDBB6003D8422 /* OFXMLMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OFXMLMapper.h; sourceTree = "<group>"; };
+		EB69B27E153CDBB6003D8422 /* OFXMLMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OFXMLMapper.m; sourceTree = "<group>"; };
+		EB69B285153CDE2E003D8422 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		EB69B287153CDE3A003D8422 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		EB69B289153CDE40003D8422 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
+		EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		EB850DAA153DF3D30073BBAE /* EMTLFlickr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFlickr.h; sourceTree = "<group>"; };
+		EB850DAB153DF3D30073BBAE /* EMTLFlickr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickr.m; sourceTree = "<group>"; };
+		EB850DAE153E0A710073BBAE /* APISecrets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APISecrets.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +202,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB69B28C153CDE59003D8422 /* SystemConfiguration.framework in Frameworks */,
+				EB69B28A153CDE40003D8422 /* libxml2.dylib in Frameworks */,
+				EB69B288153CDE3A003D8422 /* CFNetwork.framework in Frameworks */,
+				EB69B286153CDE2E003D8422 /* Security.framework in Frameworks */,
 				EB5221F115377A3A00785F97 /* UIKit.framework in Frameworks */,
 				EB5221F315377A3A00785F97 /* Foundation.framework in Frameworks */,
 				EB5221F515377A3A00785F97 /* CoreGraphics.framework in Frameworks */,
@@ -198,6 +230,10 @@
 		EB5221E115377A3A00785F97 = {
 			isa = PBXGroup;
 			children = (
+				EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */,
+				EB69B289153CDE40003D8422 /* libxml2.dylib */,
+				EB69B287153CDE3A003D8422 /* CFNetwork.framework */,
+				EB69B285153CDE2E003D8422 /* Security.framework */,
 				EB5221F815377A3A00785F97 /* Flickrgram */,
 				EB52221415377A3A00785F97 /* FlickrgramTests */,
 				EB5221EF15377A3A00785F97 /* Frameworks */,
@@ -236,8 +272,11 @@
 				EB69B1F2153CD26D003D8422 /* EMTLPhotoListViewController.h */,
 				EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */,
 				EB69B1F4153CD26D003D8422 /* EMTLPhotoSource.h */,
-				EB69B1F5153CD26D003D8422 /* EMTLPhotoSource.m */,
+				EB850DAA153DF3D30073BBAE /* EMTLFlickr.h */,
+				EB850DAB153DF3D30073BBAE /* EMTLFlickr.m */,
+				EB850DAE153E0A710073BBAE /* APISecrets.h */,
 				EB52220415377A3A00785F97 /* Flickrgram.xcdatamodeld */,
+				EB69B271153CDBB6003D8422 /* objectiveflickr */,
 				EB69B201153CD46B003D8422 /* OAuthConsumer */,
 				EB69B200153CD46B003D8422 /* Assets */,
 				EB69B22C153CD46B003D8422 /* Sample Images */,
@@ -373,6 +412,26 @@
 			path = "Sample Images";
 			sourceTree = "<group>";
 		};
+		EB69B271153CDBB6003D8422 /* objectiveflickr */ = {
+			isa = PBXGroup;
+			children = (
+				EB69B272153CDBB6003D8422 /* LFHTTPRequest.h */,
+				EB69B273153CDBB6003D8422 /* LFHTTPRequest.m */,
+				EB69B274153CDBB6003D8422 /* LFSiteReachability.h */,
+				EB69B275153CDBB6003D8422 /* LFSiteReachability.m */,
+				EB69B276153CDBB6003D8422 /* LFWebAPIKit.h */,
+				EB69B277153CDBB6003D8422 /* NSData+LFHTTPFormExtensions.h */,
+				EB69B278153CDBB6003D8422 /* NSData+LFHTTPFormExtensions.m */,
+				EB69B279153CDBB6003D8422 /* ObjectiveFlickr.h */,
+				EB69B27A153CDBB6003D8422 /* ObjectiveFlickr.m */,
+				EB69B27B153CDBB6003D8422 /* OFUtilities.h */,
+				EB69B27C153CDBB6003D8422 /* OFUtilities.m */,
+				EB69B27D153CDBB6003D8422 /* OFXMLMapper.h */,
+				EB69B27E153CDBB6003D8422 /* OFXMLMapper.m */,
+			);
+			path = objectiveflickr;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -506,7 +565,6 @@
 				EB69B1FC153CD42A003D8422 /* EMTLPhotoListViewController.h in Sources */,
 				EB69B1FD153CD42A003D8422 /* EMTLPhotoListViewController.m in Sources */,
 				EB69B1FE153CD42A003D8422 /* EMTLPhotoSource.h in Sources */,
-				EB69B1FF153CD42A003D8422 /* EMTLPhotoSource.m in Sources */,
 				EB5221FF15377A3A00785F97 /* main.m in Sources */,
 				EB52220315377A3A00785F97 /* EMTLAppDelegate.m in Sources */,
 				EB52220615377A3A00785F97 /* Flickrgram.xcdatamodeld in Sources */,
@@ -528,6 +586,13 @@
 				EB69B250153CD46B003D8422 /* OAServiceTicket.m in Sources */,
 				EB69B252153CD46B003D8422 /* OAToken.m in Sources */,
 				EB69B253153CD46B003D8422 /* OATokenManager.m in Sources */,
+				EB69B27F153CDBB6003D8422 /* LFHTTPRequest.m in Sources */,
+				EB69B280153CDBB6003D8422 /* LFSiteReachability.m in Sources */,
+				EB69B281153CDBB6003D8422 /* NSData+LFHTTPFormExtensions.m in Sources */,
+				EB69B282153CDBB6003D8422 /* ObjectiveFlickr.m in Sources */,
+				EB69B283153CDBB6003D8422 /* OFUtilities.m in Sources */,
+				EB69B284153CDBB6003D8422 /* OFXMLMapper.m in Sources */,
+				EB850DAC153DF3D30073BBAE /* EMTLFlickr.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -538,7 +603,6 @@
 				EB52221C15377A3A00785F97 /* FlickrgramTests.m in Sources */,
 				EB69B1F6153CD26D003D8422 /* EMTLPhotoCell.m in Sources */,
 				EB69B1F7153CD26D003D8422 /* EMTLPhotoListViewController.m in Sources */,
-				EB69B1F8153CD26D003D8422 /* EMTLPhotoSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

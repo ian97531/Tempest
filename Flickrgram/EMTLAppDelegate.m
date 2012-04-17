@@ -8,8 +8,17 @@
 
 #import "EMTLAppDelegate.h"
 #import "EMTLPhotoListViewController.h"
+#import "EMTLFlickr.h"
 
 @implementation EMTLAppDelegate
+
+@synthesize navController;
+@synthesize feed;
+
+@synthesize photoSources;
+@synthesize authorizedSources;
+@synthesize authorizationQueue;
+@synthesize disabledSources;
 
 @synthesize window = _window;
 @synthesize managedObjectContext = __managedObjectContext;
@@ -18,18 +27,101 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     
-    EMTLPhotoListViewController *photoList = [[EMTLPhotoListViewController alloc] init];
-    
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:photoList];
-    
-    self.window.rootViewController = navController;
-    
+    feed = [[EMTLPhotoListViewController alloc] init];
+    navController = [[UINavigationController alloc] initWithRootViewController:feed];
+    self.window.rootViewController = navController;    
     [self.window makeKeyAndVisible];
+    
+    authorizationWebViewOpened = NO;
+    
+    self.photoSources = [[NSMutableDictionary alloc] initWithCapacity:4];
+    self.authorizationQueue = [[NSMutableArray alloc] initWithCapacity:4];
+    self.authorizedSources = [[NSMutableArray alloc] initWithCapacity:4];
+    self.disabledSources = [[NSMutableArray alloc] initWithCapacity:1];
+    
+    [self initializePhotoSources];
+    
     return YES;
+}
+
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    NSLog(@"the app caught the URL");
+    
+	if ([[url scheme] isEqualToString:@"flickrgram"]) {
+        NSLog(@"we got the callback");
+        if ([[url path] isEqualToString:@"/verify-auth"]) {
+            NSLog(@"It's a verify auth URL");
+            
+            NSDictionary *queryParts = [self convertQueryToDict:[url query]];
+            id <PhotoSource> source = [self.photoSources objectForKey:[url host]];
+            
+            [source authorizedWithVerifier:[queryParts objectForKey:@"oauth_verifier"]];
+            
+        }
+        
+        
+        
+        
+		//in here you do whatever you need the app to do
+		// e.g decode JSON string from base64 to plain text & parse JSON string
+	}
+    return YES; //if everything went well
+}
+
+- (NSDictionary *)convertQueryToDict:(NSString *)query {
+    
+    NSArray *parts = [query componentsSeparatedByString:@"&"];
+    NSMutableDictionary *returnValue = [[NSMutableDictionary alloc] initWithCapacity:parts.count];
+    
+    for (NSString *part in parts) {
+        NSArray *keyValue = [part componentsSeparatedByString:@"="];
+        [returnValue setObject:[keyValue lastObject] forKey:[keyValue objectAtIndex:0]];
+    }
+    
+    return [NSDictionary dictionaryWithDictionary:returnValue];
+}
+
+- (void)initializePhotoSources
+{
+    
+    // Grab the enabled sources from defaults, and ask each to authorize.
+    
+    EMTLFlickr *flickr = [[EMTLFlickr alloc] init];
+    [self.photoSources setObject:flickr forKey:[flickr key]];
+    
+    flickr.delegate = self;
+    [flickr authorize];
+    
+}
+
+- (void)photoSource:(id <PhotoSource>)photoSource authorizationError:(NSError *)error
+{
+    NSLog(@"authorization error for %@", photoSource.key);
+}
+
+- (void)photoSource:(id <PhotoSource>)photoSource requiresAuthorizationAtURL:(NSURL *)url
+{
+    NSLog(@"authorization requred for %@", photoSource.key);
+    
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    UIWebView *authorizationPanel = [[UIWebView alloc] init];
+    [authorizationPanel loadRequest:request];
+    
+    UIViewController *webController = [[UIViewController alloc] init];
+    webController.view = authorizationPanel;
+    
+    [navController presentModalViewController:webController animated:YES];
+}
+
+- (void)authorizationCompleteForSource:(id <PhotoSource>)photoSource
+{
+    NSLog(@"authorization complete for %@", photoSource.key);
+    [feed addSource:photoSource];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

@@ -7,13 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@class EMTLPhotoSource;
+#import "EMTLPhotoSource.h"
 
 @interface EMTLPhotoListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, strong) EMTLPhotoSource *photoSource;
+{
+     NSArray *sources;
+}
+
 @property (nonatomic, strong) NSMutableArray *photos;
+
+- (void)addSource:(id <PhotoSource>)source;
 
 // UITableViewDelegate methods
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -21,5 +25,8 @@
 // UITableViewDataSource methods
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
+
+
+
 
 @end

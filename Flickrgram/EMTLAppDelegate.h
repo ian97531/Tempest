@@ -7,8 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "EMTLPhotoSource.h"
 
-@interface EMTLAppDelegate : UIResponder <UIApplicationDelegate>
+@class EMTLPhotoListViewController;
+
+@interface EMTLAppDelegate : UIResponder <UIApplicationDelegate, Authorizable>
+
+{
+    BOOL authorizationWebViewOpened;
+}
 
 @property (strong, nonatomic) UIWindow *window;
 
@@ -16,7 +23,22 @@
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
+@property (nonatomic, strong) NSMutableDictionary *photoSources;
+@property (nonatomic, strong) NSMutableArray *authorizationQueue;
+@property (nonatomic, strong) NSMutableArray *authorizedSources;
+@property (nonatomic, strong) NSMutableArray *disabledSources;
+
+@property (nonatomic, strong) UINavigationController *navController;
+@property (nonatomic, strong) EMTLPhotoListViewController *feed;
+
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
+
+- (void)initializePhotoSources;
+
+// Authorizable Methods
+- (void)photoSource:(id <PhotoSource>)photoSource authorizationError:(NSError *)error;
+- (void)photoSource:(id <PhotoSource>)photoSource requiresAuthorizationAtURL:(NSURL *)url;
+- (void)authorizationCompleteForSource:(id <PhotoSource>)photoSource;
 
 @end

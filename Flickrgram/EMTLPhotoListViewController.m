@@ -7,32 +7,36 @@
 //
 
 #import "EMTLPhotoListViewController.h"
-#import "EMTLPhotoSource.h"
 #import "EMTLPhotoCell.h"
 
 
 @implementation EMTLPhotoListViewController
 
-@synthesize photoSource;
 @synthesize photos;
 
 - (id)init
 {
     self = [super init];
     if (self) {
-        photoSource = [[EMTLPhotoSource alloc] init];
-        photos = [[photoSource getMorePhotos] mutableCopy];
+        sources = [[NSMutableArray alloc] initWithCapacity:4];
+        
     }
     return self;
 }
+
+- (void)addSource:(id <PhotoSource>)source
+{
+    NSLog(@"Adding the source %@ to the photolistview controller", source.key);
+}
+
 
 - (void)loadView
 {
     UITableView *list = [[UITableView alloc] init];
     list.delegate = self;
     list.dataSource = self;
-    
     self.view = list;
+            
 }
 
 - (void)viewDidLoad
@@ -76,5 +80,6 @@
 {
     return photos.count;
 }
+
 
 @end
