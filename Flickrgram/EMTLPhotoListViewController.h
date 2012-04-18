@@ -8,14 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "EMTLPhotoSource.h"
+#import "EMTLPhotoSource.h"
 
-@interface EMTLPhotoListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource>
+@interface EMTLPhotoListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, PhotoConsumer>
 
 {
-     NSArray *sources;
+    NSArray *sources;
 }
 
 @property (nonatomic, strong) NSMutableArray *photos;
+@property (nonatomic, strong) UITableView *table;
 
 - (void)addSource:(id <PhotoSource>)source;
 
@@ -26,7 +28,9 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 
-
+// PhotoConsumer methods
+- (void)photoSource:(id <PhotoSource>)photoSource addedPhotosToArray:(NSArray *)photoArray atIndex:(int)index;
+- (void)photoSource:(id <PhotoSource>)photoSource encounteredAnError:(NSError *)error;
 
 
 @end

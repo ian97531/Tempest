@@ -23,11 +23,24 @@
 
 @end
 
+@protocol PhotoConsumer <NSObject>
+
+- (void)photoSource:(id <PhotoSource>)photoSource addedPhotosToArray:(NSArray *)photoArray atIndex:(int)index;
+- (void)photoSource:(id <PhotoSource>)photoSource encounteredAnError:(NSError *)error;
+
+@end
+
     
 @protocol PhotoSource <NSObject>
 
 @property (nonatomic, assign) id <Authorizable> delegate;
+@property (nonatomic, assign) id <PhotoConsumer> photoDelegate;
 @property (readonly, nonatomic, strong) NSString *key;
+@property (readonly, nonatomic) NSURL *authorizationURL;
+
+@property (readonly, strong) NSString *user_id;
+@property (readonly, strong) NSString *username;
+@property (readonly, strong) NSMutableArray *photos;
 
 - (void)authorize;
 - (void)authorizedWithVerifier:(NSString *)verfier;
@@ -37,8 +50,14 @@
 - (void)accessTokenTicket:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data;
 - (void)accessTokenTicket:(OAServiceTicket *)ticket didFailWithError:(NSError *)error;
 
-- (NSArray *)getMorePhotos;
-- (NSArray *)getMorePhotos:(int)num;
+- (void)callMethod:(NSString *)method didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
+- (void)callMethod:(NSString *)method withArguments:(NSDictionary *)args didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
+- (void)callMethod:(NSString *)method delegate:(id)delegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
+- (void)callMethod:(NSString *)method withArguments:(NSDictionary *)args delegate:(id)delegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
+
+- (void)morePhotos;
+- (void)morePhotos:(int)num;
+
 
 
 @end

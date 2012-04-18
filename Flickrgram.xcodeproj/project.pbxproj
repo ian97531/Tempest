@@ -79,6 +79,7 @@
 		EB69B28A153CDE40003D8422 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B289153CDE40003D8422 /* libxml2.dylib */; };
 		EB69B28C153CDE59003D8422 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */; };
 		EB850DAC153DF3D30073BBAE /* EMTLFlickr.m in Sources */ = {isa = PBXBuildFile; fileRef = EB850DAB153DF3D30073BBAE /* EMTLFlickr.m */; };
+		EB850DB1153E3CD40073BBAE /* EMTLPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = EB850DB0153E3CD40073BBAE /* EMTLPhoto.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -195,6 +196,8 @@
 		EB850DAA153DF3D30073BBAE /* EMTLFlickr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFlickr.h; sourceTree = "<group>"; };
 		EB850DAB153DF3D30073BBAE /* EMTLFlickr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickr.m; sourceTree = "<group>"; };
 		EB850DAE153E0A710073BBAE /* APISecrets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APISecrets.h; sourceTree = "<group>"; };
+		EB850DAF153E3CD30073BBAE /* EMTLPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhoto.h; sourceTree = "<group>"; };
+		EB850DB0153E3CD40073BBAE /* EMTLPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhoto.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -274,6 +277,8 @@
 				EB69B1F4153CD26D003D8422 /* EMTLPhotoSource.h */,
 				EB850DAA153DF3D30073BBAE /* EMTLFlickr.h */,
 				EB850DAB153DF3D30073BBAE /* EMTLFlickr.m */,
+				EB850DAF153E3CD30073BBAE /* EMTLPhoto.h */,
+				EB850DB0153E3CD40073BBAE /* EMTLPhoto.m */,
 				EB850DAE153E0A710073BBAE /* APISecrets.h */,
 				EB52220415377A3A00785F97 /* Flickrgram.xcdatamodeld */,
 				EB69B271153CDBB6003D8422 /* objectiveflickr */,
@@ -593,6 +598,7 @@
 				EB69B283153CDBB6003D8422 /* OFUtilities.m in Sources */,
 				EB69B284153CDBB6003D8422 /* OFXMLMapper.m in Sources */,
 				EB850DAC153DF3D30073BBAE /* EMTLFlickr.m in Sources */,
+				EB850DB1153E3CD40073BBAE /* EMTLPhoto.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

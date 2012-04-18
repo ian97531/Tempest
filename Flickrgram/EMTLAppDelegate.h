@@ -13,9 +13,6 @@
 
 @interface EMTLAppDelegate : UIResponder <UIApplicationDelegate, Authorizable>
 
-{
-    BOOL authorizationWebViewOpened;
-}
 
 @property (strong, nonatomic) UIWindow *window;
 
@@ -24,6 +21,7 @@
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
 @property (nonatomic, strong) NSMutableDictionary *photoSources;
+@property (strong) NSLock *queueLock;
 @property (nonatomic, strong) NSMutableArray *authorizationQueue;
 @property (nonatomic, strong) NSMutableArray *authorizedSources;
 @property (nonatomic, strong) NSMutableArray *disabledSources;

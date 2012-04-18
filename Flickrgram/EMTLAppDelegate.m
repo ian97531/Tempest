@@ -18,6 +18,7 @@
 @synthesize photoSources;
 @synthesize authorizedSources;
 @synthesize authorizationQueue;
+@synthesize queueLock;
 @synthesize disabledSources;
 
 @synthesize window = _window;
@@ -37,10 +38,9 @@
     self.window.rootViewController = navController;    
     [self.window makeKeyAndVisible];
     
-    authorizationWebViewOpened = NO;
-    
     self.photoSources = [[NSMutableDictionary alloc] initWithCapacity:4];
     self.authorizationQueue = [[NSMutableArray alloc] initWithCapacity:4];
+    self.queueLock = [[NSLock alloc] init];
     self.authorizedSources = [[NSMutableArray alloc] initWithCapacity:4];
     self.disabledSources = [[NSMutableArray alloc] initWithCapacity:1];
     
@@ -61,6 +61,16 @@
             id <PhotoSource> source = [self.photoSources objectForKey:[url host]];
             
             [source authorizedWithVerifier:[queryParts objectForKey:@"oauth_verifier"]];
+            
+            [navController dismissModalViewControllerAnimated:YES];
+            
+            if (authorizationQueue.count) {
+                [self showAuthorizationPanelForURL:[authorizationQueue objectAtIndex:0]];
+                [authorizationQueue removeObjectAtIndex:0];
+            }
+            else {
+                [queueLock unlock];
+            }
             
         }
         
@@ -106,8 +116,19 @@
 
 - (void)photoSource:(id <PhotoSource>)photoSource requiresAuthorizationAtURL:(NSURL *)url
 {
-    NSLog(@"authorization requred for %@", photoSource.key);
-    
+    if ([queueLock tryLock]) {
+        NSLog(@"authorization requred for %@", photoSource.key);
+        [self showAuthorizationPanelForURL:url];
+        
+    }
+    else {
+        [authorizationQueue addObject:url];
+    }
+   
+}
+
+- (void)showAuthorizationPanelForURL:(NSURL *)url
+{
     NSURLRequest *request = [NSURLRequest requestWithURL:url];
     UIWebView *authorizationPanel = [[UIWebView alloc] init];
     [authorizationPanel loadRequest:request];
@@ -120,7 +141,7 @@
 
 - (void)authorizationCompleteForSource:(id <PhotoSource>)photoSource
 {
-    NSLog(@"authorization complete for %@", photoSource.key);
+    NSLog(@"authorization complete for %@. user:%@, id: %@", photoSource.key, photoSource.username, photoSource.user_id);
     [feed addSource:photoSource];
 }
 

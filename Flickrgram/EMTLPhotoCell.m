@@ -7,10 +7,13 @@
 //
 
 #import "EMTLPhotoCell.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation EMTLPhotoCell
 
-@synthesize image;
+@synthesize imageView;
+@synthesize owner;
+@synthesize date;
 @synthesize isFavorite;
 @synthesize numFavorites;
 @synthesize numComments;
@@ -20,7 +23,19 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
+        imageView = [[UIImageView alloc] initWithFrame:CGRectMake(5, 20, 310, 310)];
+        imageView.layer.borderColor = [UIColor blackColor].CGColor;
+        imageView.backgroundColor = [UIColor grayColor];
+        imageView.layer.cornerRadius = 4;
+        imageView.layer.masksToBounds = YES;
+        owner = [[UILabel alloc] initWithFrame:CGRectMake(5, 5, 150, 12)];
+        owner.backgroundColor = [UIColor whiteColor];
+        owner.font = [UIFont systemFontOfSize:16];
+        owner.textColor = [UIColor blackColor];
+        self.frame = CGRectMake(0, 0, 310, 335);
+        self.layer.masksToBounds = YES;
+        [self.contentView addSubview:imageView];
+        [self.contentView addSubview:owner];
     }
     return self;
 }
@@ -31,5 +46,6 @@
 
     // Configure the view for the selected state
 }
+
 
 @end

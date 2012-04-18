@@ -132,6 +132,8 @@ signatureProvider:(id<OASignatureProviding>)aProvider
 	[chunks release];
 
     [self setValue:oauthHeader forHTTPHeaderField:@"Authorization"];
+    
+    
 }
 
 - (void)_generateTimestamp {
@@ -216,6 +218,7 @@ NSInteger normalize(id obj1, id obj2, void *context)
     NSArray *sortedPairs = [parameterPairs sortedArrayUsingFunction:normalize context:NULL];
 
     NSString *normalizedRequestParameters = [sortedPairs componentsJoinedByString:@"&"];
+    
     [parameterPairs release];
 	//	NSLog(@"Normalized: %@", normalizedRequestParameters);
     // OAuth Spec, Section 9.1.2 "Concatenate Request Elements"
@@ -223,6 +226,7 @@ NSInteger normalize(id obj1, id obj2, void *context)
             [self HTTPMethod],
             [[[self URL] URLStringWithoutQuery] encodedURLParameterString],
             [normalizedRequestParameters encodedURLString]];
+    
 }
 
 - (void) dealloc
