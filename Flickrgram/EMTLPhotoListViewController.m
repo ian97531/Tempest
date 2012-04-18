@@ -10,6 +10,8 @@
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
 
+#import <QuartzCore/QuartzCore.h>
+
 
 @implementation EMTLPhotoListViewController
 
@@ -31,7 +33,7 @@
 {
     NSLog(@"Adding the source %@ to the photolistview controller", source.key);
     source.photoDelegate = self;
-    [source morePhotos];
+    [source morePhotos:50];
 }
 
 - (void)photoSource:(id <PhotoSource>)photoSource addedPhotosToArray:(NSArray *)photoArray atIndex:(int)index;
@@ -54,11 +56,24 @@
 
 - (void)loadView
 {
-    table = [[UITableView alloc] init];
-    table.separatorColor = [UIColor whiteColor];
+    
+    UIView *parent = [[UIView alloc] init];
+    parent.backgroundColor = [UIColor blackColor];
+    
+    UIImageView *backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"TableBackground.png"]];
+    
+    
+    table = [[UITableView alloc] initWithFrame:CGRectMake(backgroundImage.frame.origin.x, backgroundImage.frame.origin.y + 1, backgroundImage.frame.size.width, backgroundImage.frame.size.height - 2)];
+    table.separatorColor = [UIColor clearColor];
     table.delegate = self;
     table.dataSource = self;
-    self.view = table;
+    table.backgroundColor = [UIColor clearColor];
+    table.layer.masksToBounds = YES;
+    
+    [parent addSubview:backgroundImage];
+    [parent addSubview:table];
+    
+    self.view = parent;
             
 }
 
@@ -82,7 +97,7 @@
 #pragma mark - UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 335;
+    return 380;
 }
 
 #pragma mark - UITableViewDataSource
@@ -96,8 +111,9 @@
     }
     cell.imageView.image = nil;
     EMTLPhoto *photo = [photos objectAtIndex:indexPath.row];
-    [photo loadPhotoIntoImage:cell.imageView];
-    cell.owner.text = photo.username;
+    [photo loadPhotoIntoCell:cell];
+    cell.ownerLabel.text = photo.username;
+    cell.dateLabel.text = [photo datePostedString];
     
     return cell;
 }
@@ -111,6 +127,11 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 1;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    
 }
 
 

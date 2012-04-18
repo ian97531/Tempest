@@ -50,6 +50,12 @@
             else if ([key isEqualToString:@"small_url"]) {
                 smallURL = [dict objectForKey:@"small_url"];
             }
+            else if ([key isEqualToString:@"date_taken"]) {
+                dateTaken = [dict objectForKey:@"date_taken"];
+            }
+            else if ([key isEqualToString:@"date_posted"]) {
+                datePosted = [dict objectForKey:@"date_posted"];
+            }
         }
         
     }
@@ -61,6 +67,7 @@
 - (void)loadImage
 {
     if(!image) {
+        NSLog(@"Loading Image %@", photo_id);
         imageData = [NSMutableData data];
         NSURLRequest *request = [NSURLRequest requestWithURL:smallURL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:30];
         NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:self];
@@ -69,23 +76,24 @@
 }
 
 
-- (void)loadPhotoIntoImage:(UIImageView *)imageView
+- (void)loadPhotoIntoCell:(EMTLPhotoCell *)cell
 {
     
-    container = imageView;
+    container = cell;
     if (!image) { 
         [self loadImage];
     }
     else {
-        container.image = image;
+        [container setImage:image animated:NO];
     }
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)theConnection
 {
+    NSLog(@"Finished loading %@", photo_id);
     image = [UIImage imageWithData:imageData];
     if(container) {
-        container.image = image;
+        [container setImage:image animated:YES];
     }
     
 }
@@ -93,7 +101,62 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
+    NSLog(@"got a chunk of %@", photo_id);
     [imageData appendData:data];
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+    NSLog(@"Failed to download %@", photo_id);
+    //NSLog(error.localizedDescription);
+}
+
+- (NSString *)dateTakenString 
+{
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+    NSDate *now = [NSDate date];
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDateComponents *nowComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:now];
+    NSDateComponents *dateComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:dateTaken];
+    
+    int nowYear = [nowComponents year];
+        
+    int dateYear = [dateComponents year];
+        
+    if (nowYear == dateYear)
+    {
+        [dateFormat setDateFormat:@"MMM. d"];
+    }
+    else {
+        [dateFormat setDateFormat:@"MMM. d, y"];
+    }
+    
+    return [dateFormat stringFromDate:self.dateTaken];
+
+}
+
+- (NSString *)datePostedString 
+{
+    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+    NSDate *now = [NSDate date];
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSDateComponents *nowComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:now];
+    NSDateComponents *dateComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:datePosted];
+    
+    int nowYear = [nowComponents year];
+    
+    int dateYear = [dateComponents year];
+    
+    if (nowYear == dateYear)
+    {
+        [dateFormat setDateFormat:@"MMM d"];
+    }
+    else {
+        [dateFormat setDateFormat:@"MMM d, y"];
+    }
+    
+    return [dateFormat stringFromDate:self.datePosted];
+    
 }
 
 

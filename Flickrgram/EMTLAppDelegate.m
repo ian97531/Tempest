@@ -32,9 +32,11 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque animated:NO];
     
     feed = [[EMTLPhotoListViewController alloc] init];
     navController = [[UINavigationController alloc] initWithRootViewController:feed];
+    navController.navigationBar.hidden = YES;
     self.window.rootViewController = navController;    
     [self.window makeKeyAndVisible];
     

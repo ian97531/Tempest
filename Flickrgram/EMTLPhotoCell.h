@@ -11,11 +11,13 @@
 @interface EMTLPhotoCell : UITableViewCell
 
 @property (nonatomic, strong) UIImageView *imageView;
-@property (nonatomic, strong) UILabel *owner;
-@property (nonatomic, strong) UILabel *date;
+@property (nonatomic, strong) UILabel *ownerLabel;
+@property (nonatomic, strong) UILabel *dateLabel;
 @property (nonatomic) BOOL isFavorite;
 @property (nonatomic) int numFavorites;
 @property (nonatomic) int numComments;
+
+- (void)setImage:(UIImage *)image animated:(BOOL)animated;
 
 
 @end

@@ -52,7 +52,7 @@ NSString *const kFlickrDefaultsPrefix = @"com.Elemental.Flickrgram";
     [args setObject:kFlickrAPIKey forKey:@"api_key"];
     [args setObject:@"1" forKey:@"include_self"];
     [args setObject:[[NSNumber numberWithInt:num] stringValue] forKey:@"count"];
-    [args setObject:@"date_taken,owner_name" forKey:@"extras"];
+    [args setObject:@"date_taken,date_upload,owner_name" forKey:@"extras"];
     
     [self callMethod:@"flickr.photos.getContactsPhotos" 
        withArguments:args 
@@ -75,6 +75,7 @@ NSString *const kFlickrDefaultsPrefix = @"com.Elemental.Flickrgram";
         
         for (NSMutableDictionary *photoDict in [[newPhotos objectForKey:@"photos"] objectForKey:@"photo"]) {
             
+            // Construct the URLs
             NSString *farm = [photoDict objectForKey:@"farm"];
             NSString *server = [photoDict objectForKey:@"server"];
             NSString *secret = [photoDict objectForKey:@"secret"];
@@ -86,7 +87,18 @@ NSString *const kFlickrDefaultsPrefix = @"com.Elemental.Flickrgram";
             [photoDict setObject:URL forKey:@"url"];
             [photoDict setObject:smallURL forKey:@"small_url"];
             
+            // Get the dates
+            
+            NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+            dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+            NSDate* dateTaken = [dateFormatter dateFromString:[photoDict objectForKey:@"datetaken"]];
+            NSDate* datePosted = [NSDate dateWithTimeIntervalSince1970:[[photoDict objectForKey:@"dateupload"] doubleValue]];
+            
+            [photoDict setObject:dateTaken forKey:@"date_taken"];
+            [photoDict setObject:datePosted forKey:@"date_posted"];
+            
             EMTLPhoto *photo = [[EMTLPhoto alloc] initWithDict:photoDict];
+            photo.source = self;
             [photos addObject:photo];
         }
         
