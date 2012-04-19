@@ -33,16 +33,19 @@
 {
     NSLog(@"Adding the source %@ to the photolistview controller", source.key);
     source.photoDelegate = self;
-    [source morePhotos:50];
+    [source morePhotos];
+    [sources addObject:source];
 }
 
 - (void)photoSource:(id <PhotoSource>)photoSource addedPhotosToArray:(NSArray *)photoArray atIndex:(int)index;
 {
     NSLog(@"photos added to array for service %@ at index %i", photoSource.key, index);
-    for (EMTLPhoto *photo in photoArray) {
-        [photos addObject:photo];
-        NSLog(@"%@", photo.URL.absoluteString);
+    
+    for (int i = index; i < photoArray.count; i++) {
+        [photos addObject:[photoArray objectAtIndex:i]];
     }
+         
+    NSLog(@"Got %i (%i - %i) more photos from %@", photoArray.count - index, photoArray.count, index, photoSource.key);
     
     [table reloadData];
 }
@@ -115,8 +118,24 @@
     cell.ownerLabel.text = photo.username;
     cell.dateLabel.text = [photo datePostedString];
     
+    
+    // Preload the next 3 images if they exist.
+    for (int i = 1; i < 3; i++) {
+        if(indexPath.row + i < photos.count) {
+            [[photos objectAtIndex:(indexPath.row + i)] loadImage];
+        }
+        else {
+            break;
+        }
+    }
+    
+    if(indexPath.row > photos.count - 10) {
+        [[sources objectAtIndex:0] morePhotos];
+    }
+    
     return cell;
 }
+
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -131,6 +150,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    EMTLPhoto *photo = [photos objectAtIndex:indexPath.row];
+    NSLog(@"That image is %@", photo.photo_id);
     
 }
 

@@ -16,6 +16,7 @@ NSString *const kFlickrAccessTokenURL = @"http://www.flickr.com/services/oauth/a
 NSString *const kFlickrAPICallURL = @"http://api.flickr.com/services/rest";
 NSString *const kFlickrDefaultsServiceProviderName = @"flickr-access-token";
 NSString *const kFlickrDefaultsPrefix = @"com.Elemental.Flickrgram";
+double const kSecondsInAYear = 7776500;
 
 @implementation EMTLFlickr
 
@@ -27,6 +28,7 @@ NSString *const kFlickrDefaultsPrefix = @"com.Elemental.Flickrgram";
 @synthesize user_id;
 @synthesize username;
 @synthesize photos;
+@synthesize expired;
 
 - (id)init
 {
@@ -34,7 +36,25 @@ NSString *const kFlickrDefaultsPrefix = @"com.Elemental.Flickrgram";
     if (self) {
         key = @"flickr";
         photos = [[NSMutableArray alloc] initWithCapacity:100];
+        
+        totalPages = 1;
+        currentPage = 0;
+                
+        maxYear = 0;
+        maxMonth = 0;
+        maxDay = 0;
+        
+        NSDate *minDate = [NSDate dateWithTimeIntervalSinceNow:-kSecondsInAYear];
+        NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+        NSDateComponents *minComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:minDate];
+        
+        minYear = [minComponents year];
+        minMonth = [minComponents month];
+        minDay = [minComponents day];
+                
         currentPhoto = 0;
+        expired = NO;
+        loading = NO;
     }
     
     return self;
@@ -42,22 +62,49 @@ NSString *const kFlickrDefaultsPrefix = @"com.Elemental.Flickrgram";
 
 - (void)morePhotos
 {
-    [self morePhotos:10];
+    [self morePhotos:100];
 }
 
 
 - (void)morePhotos:(int)num
 {
-    NSMutableDictionary *args = [NSMutableDictionary dictionaryWithCapacity:4];
-    [args setObject:kFlickrAPIKey forKey:@"api_key"];
-    [args setObject:@"1" forKey:@"include_self"];
-    [args setObject:[[NSNumber numberWithInt:num] stringValue] forKey:@"count"];
-    [args setObject:@"date_taken,date_upload,owner_name" forKey:@"extras"];
+    if(!loading) {
+        loading = YES;
+        
+        NSLog(@"Requesting more photos from flickr.");
+
+        
+        NSMutableDictionary *args = [NSMutableDictionary dictionaryWithCapacity:4];
+        [args setObject:kFlickrAPIKey 
+                 forKey:@"api_key"];
+        
+        [args setObject:[[NSNumber numberWithInt:num] stringValue] 
+                 forKey:@"per_page"];
+        
+        [args setObject:@"all" 
+                 forKey:@"contacts"];
+        
+        [args setObject:@"date_taken,date_upload,owner_name,description" 
+                 forKey:@"extras"];
+        
+        [args setObject:[NSString stringWithFormat:@"%04d-%02d-%02d", minYear, minMonth, minDay]
+                 forKey:@"min_upload_date"];
+        
+        if(maxYear && maxMonth && maxDay) {
+            [args setObject:[NSString stringWithFormat:@"%04d-%02d-%02d", maxYear, maxMonth, maxDay] 
+                     forKey:@"max_upload_date"];
+        }
+        
+        if(currentPage) {
+            [args setObject:[[NSNumber numberWithInt:currentPage + 1] stringValue] forKey:@"page"];
+        }
+        
+        [self callMethod:@"flickr.photos.search" 
+           withArguments:args 
+       didFinishSelector:@selector(moarPhotos:didFinishWithData:) 
+         didFailSelector:@selector(moarPhotos:didFailWithError:)];
+    }
     
-    [self callMethod:@"flickr.photos.getContactsPhotos" 
-       withArguments:args 
-   didFinishSelector:@selector(moarPhotos:didFinishWithData:) 
-     didFailSelector:@selector(moarPhotos:didFailWithError:)];
 }
 
 
@@ -68,11 +115,38 @@ NSString *const kFlickrDefaultsPrefix = @"com.Elemental.Flickrgram";
     
     if(error) {
         [photoDelegate photoSource:self encounteredAnError:error];
+        NSLog(@"There was an error interpreting the json from the request for more photos from %@", key);
         return;
     }
-    else if(newPhotos) {
+    
+    if(newPhotos) {
         NSLog(@"%@", [newPhotos description]);
         
+        // Grab the paging information...
+        
+        currentPage = [[[newPhotos objectForKey:@"photos"] objectForKey:@"page"] intValue];
+        totalPages = [[[newPhotos objectForKey:@"photos"] objectForKey:@"pages"] intValue];
+        
+        // If we've run out of pages, we need to set a new date range to search and reset the page numbering.
+        if (currentPage >= totalPages) {
+            NSLog(@"Next search will change the date range.");
+            maxYear = minYear;
+            maxMonth = minMonth;
+            maxDay = minDay;
+            
+            if(minMonth - 3 < 1) {
+                minMonth = 12 + (minMonth - 3);
+                minYear = minYear - 1;
+            }
+            else {
+                minMonth = minMonth - 3;
+            }
+            
+            currentPage = 0;
+            totalPages = 0;
+        }
+        
+        // Clean up the photo information...
         for (NSMutableDictionary *photoDict in [[newPhotos objectForKey:@"photos"] objectForKey:@"photo"]) {
             
             // Construct the URLs
@@ -105,18 +179,24 @@ NSString *const kFlickrDefaultsPrefix = @"com.Elemental.Flickrgram";
         [photoDelegate photoSource:self addedPhotosToArray:photos atIndex:currentPhoto];
         currentPhoto = photos.count - 1;
     }
+    else {
+        expired = YES;
+    }
+    loading = NO;
 
 
 }
 
 - (void)moarPhotos:(OAServiceTicket *)ticket didFailWithError:(NSError *)data
 {
-    
+    NSLog(@"There was an error loading more photos from: %@", key);
+    loading = NO;
 }
     
+
 - (NSDictionary *)extractJSON:(NSData *)data fromTicket:(OAServiceTicket *)ticket withError:(NSError **) error
 {
-    NSLog(@"Got a response for the test login for %@", key);
+    NSLog(@"Extracting JSON response from %@", key);
     
     if (ticket.didSucceed) {
         

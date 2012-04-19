@@ -12,10 +12,23 @@
 @interface EMTLFlickr : NSObject <PhotoSource>
 
 {
+    int currentPage;
+    int totalPages;
+    
+    int maxYear;
+    int maxMonth;
+    int maxDay;
+    
+    int minYear;
+    int minMonth;
+    int minDay;
+    
     int currentPhoto;
     OAConsumer *consumer;
     OAToken *requestToken;
     OAToken *accessToken;
+    
+    BOOL loading;
 }
 
 @property (nonatomic, assign) id <Authorizable> delegate;
@@ -26,6 +39,7 @@
 @property (readonly, strong) NSString *user_id;
 @property (readonly, strong) NSString *username;
 @property (readonly, strong) NSMutableArray *photos;
+@property (readonly) BOOL expired;
 
 - (void)authorize;
 - (void)authorizedWithVerifier:(NSString *)verfier;

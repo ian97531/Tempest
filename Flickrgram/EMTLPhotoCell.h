@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+@class EMTLPhoto;
+
 @interface EMTLPhotoCell : UITableViewCell
 
 @property (nonatomic, strong) UIImageView *imageView;
@@ -16,6 +18,7 @@
 @property (nonatomic) BOOL isFavorite;
 @property (nonatomic) int numFavorites;
 @property (nonatomic) int numComments;
+@property (nonatomic, strong) EMTLPhoto* photo;
 
 - (void)setImage:(UIImage *)image animated:(BOOL)animated;
 

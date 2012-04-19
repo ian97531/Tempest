@@ -8,9 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import "EMTLPhotoSource.h"
-#import "EMTLPhotoCell.h"
+
+@class EMTLPhotoCell;
 
 @interface EMTLPhoto : NSObject <NSURLConnectionDataDelegate>
+
+{
+    BOOL loading;
+}
 
 @property (strong, readonly) NSURL *URL;
 @property (strong, readonly) NSURL *smallURL;
@@ -25,11 +30,15 @@
 @property (nonatomic, strong) EMTLPhotoCell *container;
 @property (nonatomic, strong) id <PhotoSource> source;
 @property (nonatomic, strong) NSMutableData *imageData;
+@property (nonatomic, strong) NSURLConnection *connection;
 
 - (id)initWithDict:(NSDictionary *)dict;
+- (void)loadImage;
 - (void)loadPhotoIntoCell:(EMTLPhotoCell *)cell;
+- (void)removeFromCell:(EMTLPhotoCell *)cell;
 - (NSString *)datePostedString;
 - (NSString *)dateTakenString;
+
 
 // NSURLConnectionDelegate method
 - (void)connectionDidFinishDownloading:(NSURLConnection *)connection destinationURL:(NSURL *)destinationURL;

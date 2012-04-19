@@ -7,6 +7,7 @@
 //
 
 #import "EMTLPhotoCell.h"
+#import "EMTLPhoto.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation EMTLPhotoCell
@@ -17,6 +18,7 @@
 @synthesize isFavorite;
 @synthesize numFavorites;
 @synthesize numComments;
+@synthesize photo;
 
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -83,6 +85,17 @@
     
     
 }
+
+- (void)prepareForReuse
+{
+    if(photo) {
+        [photo removeFromCell:self];
+        photo = nil;
+        imageView.image = nil;
+    }
+}
+
+
 
 
 

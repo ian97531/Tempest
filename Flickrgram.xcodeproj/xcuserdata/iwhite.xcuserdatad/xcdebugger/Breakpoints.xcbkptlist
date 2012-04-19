@@ -8,12 +8,25 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Flickrgram/EMTLPhoto.m"
-         timestampString = "356479080.899888"
+         timestampString = "356504556.672886"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "110"
-         endingLineNumber = "110"
+         startingLineNumber = "132"
+         endingLineNumber = "132"
          landmarkName = "-connection:didFailWithError:"
+         landmarkType = "5">
+      </FileBreakpoint>
+      <FileBreakpoint
+         shouldBeEnabled = "Yes"
+         ignoreCount = "0"
+         continueAfterRunningActions = "No"
+         filePath = "Flickrgram/EMTLFlickr.m"
+         timestampString = "356507593.030138"
+         startingColumnNumber = "9223372036854775807"
+         endingColumnNumber = "9223372036854775807"
+         startingLineNumber = "119"
+         endingLineNumber = "119"
+         landmarkName = "-moarPhotos:didFinishWithData:"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

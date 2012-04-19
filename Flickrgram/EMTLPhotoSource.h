@@ -41,6 +41,7 @@
 @property (readonly, strong) NSString *user_id;
 @property (readonly, strong) NSString *username;
 @property (readonly, strong) NSMutableArray *photos;
+@property (readonly) BOOL expired;
 
 - (void)authorize;
 - (void)authorizedWithVerifier:(NSString *)verfier;

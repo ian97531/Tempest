@@ -7,6 +7,7 @@
 //
 
 #import "EMTLPhoto.h"
+#import "EMTLPhotoCell.h"
 
 @implementation EMTLPhoto
 
@@ -23,11 +24,15 @@
 @synthesize container;
 @synthesize source;
 @synthesize imageData;
+@synthesize connection;
 
 - (id)initWithDict:(NSDictionary *)dict
 {
     self = [super init];
     if(self) {
+        
+        loading = NO;
+        
         for (NSString *key in dict) {
             if ([key isEqualToString:@"owner"]) {
                 user_id = [dict objectForKey:@"owner"];
@@ -66,13 +71,14 @@
 
 - (void)loadImage
 {
-    if(!image) {
-        NSLog(@"Loading Image %@", photo_id);
+    if(!image && !loading) {
+        loading = YES;
         imageData = [NSMutableData data];
         NSURLRequest *request = [NSURLRequest requestWithURL:smallURL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:30];
-        NSURLConnection *connection = [NSURLConnection connectionWithRequest:request delegate:self];
+        connection = [NSURLConnection connectionWithRequest:request delegate:self];
         [connection start];
     }
+
 }
 
 
@@ -80,7 +86,8 @@
 {
     
     container = cell;
-    if (!image) { 
+    cell.photo = self;
+    if (!image && !loading) { 
         [self loadImage];
     }
     else {
@@ -88,10 +95,24 @@
     }
 }
 
+- (void)removeFromCell:(EMTLPhotoCell *)cell 
+{
+    container = nil;
+    if(connection) {
+        [connection cancel];
+        loading = NO;
+        if(!image) {
+            imageData = nil;
+        }
+    }
+}
+
 - (void)connectionDidFinishLoading:(NSURLConnection *)theConnection
 {
-    NSLog(@"Finished loading %@", photo_id);
     image = [UIImage imageWithData:imageData];
+    loading = NO;
+    connection = nil;
+    imageData = nil;
     if(container) {
         [container setImage:image animated:YES];
     }
@@ -99,16 +120,20 @@
 }
 
 
+
+
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-    NSLog(@"got a chunk of %@", photo_id);
     [imageData appendData:data];
 }
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+- (void)connection:(NSURLConnection *)theConnection didFailWithError:(NSError *)error
 {
     NSLog(@"Failed to download %@", photo_id);
     //NSLog(error.localizedDescription);
+    loading = NO;
+    connection = nil;
+    imageData = nil;
 }
 
 - (NSString *)dateTakenString 

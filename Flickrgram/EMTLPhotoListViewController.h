@@ -13,7 +13,7 @@
 @interface EMTLPhotoListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, PhotoConsumer>
 
 {
-    NSArray *sources;
+    NSMutableArray *sources;
 }
 
 @property (nonatomic, strong) NSMutableArray *photos;
