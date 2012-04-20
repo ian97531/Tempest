@@ -8,6 +8,7 @@
 
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
+#import "EMTLProgressIndicatorViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation EMTLPhotoCell
@@ -19,6 +20,7 @@
 @synthesize numFavorites;
 @synthesize numComments;
 @synthesize photo;
+@synthesize indicator;
 
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
@@ -35,27 +37,33 @@
         imageView.layer.masksToBounds = YES;
         imageView.contentMode = UIViewContentModeScaleAspectFill;
         
-        dateLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, 170, 40)];
+        dateLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 18, 170, 40)];
         dateLabel.backgroundColor = [UIColor clearColor];
         dateLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:28];
         dateLabel.textColor = [UIColor colorWithWhite:0.2 alpha:1];
         dateLabel.shadowColor = [UIColor colorWithWhite:1 alpha:0.6];
         dateLabel.shadowOffset = CGSizeMake(0, 1);
         
-        ownerLabel = [[UILabel alloc] initWithFrame:CGRectMake(190, 37, 120, 20)];
+        ownerLabel = [[UILabel alloc] initWithFrame:CGRectMake(190, 35, 120, 20)];
         ownerLabel.backgroundColor = [UIColor clearColor];
         ownerLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:12];
         ownerLabel.textColor = [UIColor colorWithWhite:0.44 alpha:1];
         ownerLabel.textAlignment = UITextAlignmentRight;
         ownerLabel.layer.masksToBounds = YES;
         
+        indicator = [[EMTLProgressIndicatorViewController alloc] initWithSmallSize:YES];
+        indicator.view.center = imageView.center;
+        indicator.view.layer.opacity = 0.2;
+        
         self.backgroundColor = [UIColor clearColor];
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         
         [self.contentView addSubview:backgroundGutter];
+        [self.contentView addSubview:indicator.view];
         [self.contentView addSubview:imageView];
         [self.contentView addSubview:dateLabel];
         [self.contentView addSubview:ownerLabel];
+        
         
     }
     return self;
@@ -80,6 +88,8 @@
         [UIView animateWithDuration:0.4 animations:^(void) {
             imageView.layer.opacity = 1;
             
+        } completion:^(BOOL finished) {
+            indicator.value = 0;
         }];
     }
     
@@ -92,6 +102,7 @@
         [photo removeFromCell:self];
         photo = nil;
         imageView.image = nil;
+        
     }
 }
 

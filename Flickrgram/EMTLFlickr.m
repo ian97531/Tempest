@@ -27,7 +27,6 @@ double const kSecondsInAYear = 7776500;
 
 @synthesize user_id;
 @synthesize username;
-@synthesize photos;
 @synthesize expired;
 
 - (id)init
@@ -35,7 +34,6 @@ double const kSecondsInAYear = 7776500;
     self = [super init];
     if (self) {
         key = @"flickr";
-        photos = [[NSMutableArray alloc] initWithCapacity:100];
         
         totalPages = 1;
         currentPage = 0;
@@ -52,7 +50,6 @@ double const kSecondsInAYear = 7776500;
         minMonth = [minComponents month];
         minDay = [minComponents day];
                 
-        currentPhoto = 0;
         expired = NO;
         loading = NO;
     }
@@ -146,6 +143,8 @@ double const kSecondsInAYear = 7776500;
             totalPages = 0;
         }
         
+        NSMutableArray *photos = [[NSMutableArray alloc] initWithCapacity:[[[newPhotos objectForKey:@"photos"] objectForKey:@"total"] intValue]];
+        
         // Clean up the photo information...
         for (NSMutableDictionary *photoDict in [[newPhotos objectForKey:@"photos"] objectForKey:@"photo"]) {
             
@@ -176,8 +175,7 @@ double const kSecondsInAYear = 7776500;
             [photos addObject:photo];
         }
         
-        [photoDelegate photoSource:self addedPhotosToArray:photos atIndex:currentPhoto];
-        currentPhoto = photos.count - 1;
+        [photoDelegate photoSource:self retreivedMorePhotos:photos];
     }
     else {
         expired = YES;

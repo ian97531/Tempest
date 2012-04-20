@@ -8,6 +8,7 @@
 
 #import "EMTLPhoto.h"
 #import "EMTLPhotoCell.h"
+#import "EMTLProgressIndicatorViewController.h"
 
 @implementation EMTLPhoto
 
@@ -32,6 +33,8 @@
     if(self) {
         
         loading = NO;
+        expectingBytes = 0;
+        currentPercent = 0;
         
         for (NSString *key in dict) {
             if ([key isEqualToString:@"owner"]) {
@@ -87,6 +90,7 @@
     
     container = cell;
     cell.photo = self;
+    cell.indicator.value = currentPercent;
     if (!image && !loading) { 
         [self loadImage];
     }
@@ -114,17 +118,25 @@
     connection = nil;
     imageData = nil;
     if(container) {
+        container.indicator.value = 100;
         [container setImage:image animated:YES];
     }
     
 }
 
-
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    expectingBytes = response.expectedContentLength;
+}
 
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
     [imageData appendData:data];
+    
+    currentPercent = (((float)imageData.length)/(float)expectingBytes) * 100;
+    container.indicator.value = currentPercent;
+    
 }
 
 - (void)connection:(NSURLConnection *)theConnection didFailWithError:(NSError *)error
@@ -169,12 +181,43 @@
     NSDateComponents *dateComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:datePosted];
     
     int nowYear = [nowComponents year];
+    int nowMonth = [nowComponents month];
+    int nowDay = [nowComponents day];
     
     int dateYear = [dateComponents year];
+    int dateMonth = [dateComponents month];
+    int dateDay = [dateComponents day];
+    
+    if(nowYear == dateYear && nowMonth == dateMonth) {
+        
+        
+        
+    }
+    
     
     if (nowYear == dateYear)
     {
-        [dateFormat setDateFormat:@"MMM d"];
+        
+        if (nowMonth == dateMonth) {
+            
+            if (nowDay == dateDay) {
+                return @"Today";
+            }
+            else if (nowDay == dateDay + 1) {
+                return @"Yesterday";
+            }
+            else if (nowDay - dateDay < 6) {
+                [dateFormat setDateFormat:@"EEEE"];
+            }
+            else {
+                [dateFormat setDateFormat:@"MMMM d"];
+            }
+            
+        }
+        else {
+            [dateFormat setDateFormat:@"MMMM d"];
+        }
+        
     }
     else {
         [dateFormat setDateFormat:@"MMM d, y"];

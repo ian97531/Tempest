@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "EMTLPhotoSource.h"
-#import "EMTLPhotoSource.h"
+
+@class EMTLProgressIndicatorViewController;
 
 @interface EMTLPhotoListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, PhotoConsumer>
 
@@ -18,6 +19,7 @@
 
 @property (nonatomic, strong) NSMutableArray *photos;
 @property (nonatomic, strong) UITableView *table;
+@property (nonatomic, strong) EMTLProgressIndicatorViewController *spinner;
 
 - (void)addSource:(id <PhotoSource>)source;
 
@@ -29,7 +31,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 
 // PhotoConsumer methods
-- (void)photoSource:(id <PhotoSource>)photoSource addedPhotosToArray:(NSArray *)photoArray atIndex:(int)index;
+- (void)photoSource:(id <PhotoSource>)photoSource retreivedMorePhotos:(NSArray *)photoArray;
 - (void)photoSource:(id <PhotoSource>)photoSource encounteredAnError:(NSError *)error;
 
 

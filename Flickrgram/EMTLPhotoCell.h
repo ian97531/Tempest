@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class EMTLPhoto;
+@class EMTLProgressIndicatorViewController;
 
 @interface EMTLPhotoCell : UITableViewCell
 
@@ -19,6 +20,7 @@
 @property (nonatomic) int numFavorites;
 @property (nonatomic) int numComments;
 @property (nonatomic, strong) EMTLPhoto* photo;
+@property (nonatomic, strong) EMTLProgressIndicatorViewController *indicator;
 
 - (void)setImage:(UIImage *)image animated:(BOOL)animated;
 

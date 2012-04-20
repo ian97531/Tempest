@@ -15,6 +15,8 @@
 
 {
     BOOL loading;
+    long long expectingBytes;
+    float currentPercent;
 }
 
 @property (strong, readonly) NSURL *URL;

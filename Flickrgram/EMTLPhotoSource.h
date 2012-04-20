@@ -25,7 +25,7 @@
 
 @protocol PhotoConsumer <NSObject>
 
-- (void)photoSource:(id <PhotoSource>)photoSource addedPhotosToArray:(NSArray *)photoArray atIndex:(int)index;
+- (void)photoSource:(id <PhotoSource>)photoSource retreivedMorePhotos:(NSArray *)photoArray;
 - (void)photoSource:(id <PhotoSource>)photoSource encounteredAnError:(NSError *)error;
 
 @end
@@ -40,7 +40,6 @@
 
 @property (readonly, strong) NSString *user_id;
 @property (readonly, strong) NSString *username;
-@property (readonly, strong) NSMutableArray *photos;
 @property (readonly) BOOL expired;
 
 - (void)authorize;

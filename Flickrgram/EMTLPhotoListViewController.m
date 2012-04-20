@@ -7,6 +7,7 @@
 //
 
 #import "EMTLPhotoListViewController.h"
+#import "EMTLProgressIndicatorViewController.h"
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
 
@@ -17,6 +18,7 @@
 
 @synthesize photos;
 @synthesize table;
+@synthesize spinner;
 
 - (id)init
 {
@@ -37,15 +39,24 @@
     [sources addObject:source];
 }
 
-- (void)photoSource:(id <PhotoSource>)photoSource addedPhotosToArray:(NSArray *)photoArray atIndex:(int)index;
+- (void)photoSource:(id <PhotoSource>)photoSource retreivedMorePhotos:(NSArray *)photoArray;
 {
-    NSLog(@"photos added to array for service %@ at index %i", photoSource.key, index);
+    NSLog(@"photos added to array for service %@ at index", photoSource.key);
     
-    for (int i = index; i < photoArray.count; i++) {
-        [photos addObject:[photoArray objectAtIndex:i]];
+    // If we've got a spinner, we should stop it.
+    if(spinner) {
+        [UIView animateWithDuration:0.2 animations:^(void) {
+            spinner.view.layer.opacity = 0;
+        } completion:^(BOOL finished) {
+            [spinner stop];
+            [spinner.view removeFromSuperview];
+            spinner = nil;
+        }];
     }
-         
-    NSLog(@"Got %i (%i - %i) more photos from %@", photoArray.count - index, photoArray.count, index, photoSource.key);
+    
+    [photos addObjectsFromArray:photoArray];
+
+    NSLog(@"Got %i more photos from %@", photoArray.count, photoSource.key);
     
     [table reloadData];
 }
@@ -72,11 +83,19 @@
     table.dataSource = self;
     table.backgroundColor = [UIColor clearColor];
     table.layer.masksToBounds = YES;
+    table.showsVerticalScrollIndicator = NO;
+    
+    spinner = [[EMTLProgressIndicatorViewController alloc] initWithSmallSize:NO];
+    spinner.view.center = table.center;
+    spinner.view.layer.opacity = 0.2;
     
     [parent addSubview:backgroundImage];
     [parent addSubview:table];
+    [parent addSubview:spinner.view];
     
     self.view = parent;
+    
+    [spinner spin];
             
 }
 
@@ -112,7 +131,6 @@
         cell = [[EMTLPhotoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PhotoCell"];
         
     }
-    cell.imageView.image = nil;
     EMTLPhoto *photo = [photos objectAtIndex:indexPath.row];
     [photo loadPhotoIntoCell:cell];
     cell.ownerLabel.text = photo.username;
