@@ -48,7 +48,7 @@ double const kSecondsInAYear = 7776500;
         
         minYear = [minComponents year];
         minMonth = [minComponents month];
-        minDay = [minComponents day];
+        minDay = [minComponents day] + 5;
                 
         expired = NO;
         loading = NO;
@@ -81,8 +81,11 @@ double const kSecondsInAYear = 7776500;
         [args setObject:@"all" 
                  forKey:@"contacts"];
         
-        [args setObject:@"date_taken,date_upload,owner_name,description" 
+        [args setObject:@"date_taken,date_upload,owner_name,description,o_dims" 
                  forKey:@"extras"];
+        
+        [args setObject:@"date-posted-desc"
+                 forKey:@"sort"];
         
         [args setObject:[NSString stringWithFormat:@"%04d-%02d-%02d", minYear, minMonth, minDay]
                  forKey:@"min_upload_date"];
@@ -170,6 +173,17 @@ double const kSecondsInAYear = 7776500;
             [photoDict setObject:dateTaken forKey:@"date_taken"];
             [photoDict setObject:datePosted forKey:@"date_posted"];
             
+            // Set the aspect ratio
+            
+            if([photoDict objectForKey:@"o_width"] && [photoDict objectForKey:@"o_height"]) {
+                float o_width = [[photoDict objectForKey:@"o_width"] floatValue];
+                float o_height = [[photoDict objectForKey:@"o_height"] floatValue];
+                
+                [photoDict setObject:[NSNumber numberWithFloat:(o_width/o_height)] forKey:@"aspect_ratio"];
+            }
+            
+            
+            
             EMTLPhoto *photo = [[EMTLPhoto alloc] initWithDict:photoDict];
             photo.source = self;
             [photos addObject:photo];
@@ -204,13 +218,17 @@ double const kSecondsInAYear = 7776500;
             return loginInfo;
         }
         else if(!*error) {
+            NSLog(@"an error occurred in extract JSON");
             __autoreleasing NSError *newError = [NSError errorWithDomain:[loginInfo objectForKey:@"message"] code:[[loginInfo objectForKey:@"code"] intValue] userInfo:loginInfo];
             error = &newError;
         }
         
+        NSLog(@"an error occurred in extract JSON");
         return nil;
     }
     else {
+        
+        NSLog(@"an error occurred in extract JSON");
         __autoreleasing NSError *newError = [NSError errorWithDomain:ticket.body code:0 userInfo:nil];
         error = &newError;
         return nil;

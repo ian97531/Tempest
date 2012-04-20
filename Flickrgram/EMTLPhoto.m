@@ -26,6 +26,8 @@
 @synthesize source;
 @synthesize imageData;
 @synthesize connection;
+@synthesize aspect_ratio;
+
 
 - (id)initWithDict:(NSDictionary *)dict
 {
@@ -35,6 +37,7 @@
         loading = NO;
         expectingBytes = 0;
         currentPercent = 0;
+
         
         for (NSString *key in dict) {
             if ([key isEqualToString:@"owner"]) {
@@ -64,6 +67,10 @@
             else if ([key isEqualToString:@"date_posted"]) {
                 datePosted = [dict objectForKey:@"date_posted"];
             }
+            else if ([key isEqualToString:@"aspect_ratio"]) {
+                aspect_ratio = [dict objectForKey:@"aspect_ratio"];
+            }
+            
         }
         
     }
@@ -82,6 +89,36 @@
         [connection start];
     }
 
+}
+
+- (int)width
+{
+    if (container) {
+        return (int)container.frame.size.width;
+    }
+    else {
+        return 0;
+    }
+}
+
+- (int)height
+{
+    if (container) {
+        return (int)(container.frame.size.width / self.aspect_ratio.floatValue);
+    }
+    else {
+        return 0;
+    }
+}
+
+- (NSNumber *)aspect_ratio
+{
+    if(aspect_ratio) {
+        return aspect_ratio;
+    }
+    else {
+        return [NSNumber numberWithInt:1];
+    }
 }
 
 

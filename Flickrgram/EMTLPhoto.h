@@ -29,6 +29,7 @@
 @property (strong, readonly) NSDate *datePosted;
 @property (strong, readonly) NSString *photo_id;
 @property (strong, readonly) UIImage *image;
+@property (strong, readonly) NSNumber *aspect_ratio;
 @property (nonatomic, strong) EMTLPhotoCell *container;
 @property (nonatomic, strong) id <PhotoSource> source;
 @property (nonatomic, strong) NSMutableData *imageData;
@@ -40,6 +41,8 @@
 - (void)removeFromCell:(EMTLPhotoCell *)cell;
 - (NSString *)datePostedString;
 - (NSString *)dateTakenString;
+- (int)width;
+- (int)height;
 
 
 // NSURLConnectionDelegate method

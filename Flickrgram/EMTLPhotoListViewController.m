@@ -17,6 +17,7 @@
 @implementation EMTLPhotoListViewController
 
 @synthesize photos;
+@synthesize heights;
 @synthesize table;
 @synthesize spinner;
 
@@ -25,7 +26,8 @@
     self = [super init];
     if (self) {
         sources = [[NSMutableArray alloc] initWithCapacity:4];
-        photos = [[NSMutableArray alloc] initWithCapacity:80];
+        photos = [[NSMutableArray alloc] initWithCapacity:100];
+        heights = [[NSMutableArray alloc] initWithCapacity:100];
         
     }
     return self;
@@ -55,6 +57,10 @@
     }
     
     [photos addObjectsFromArray:photoArray];
+    
+    for (EMTLPhoto *photo in photoArray) {
+        [heights addObject:[NSNumber numberWithInt:(int)((300 / photo.aspect_ratio.floatValue) + 150)]];
+    }
 
     NSLog(@"Got %i more photos from %@", photoArray.count, photoSource.key);
     
@@ -74,8 +80,7 @@
     UIView *parent = [[UIView alloc] init];
     parent.backgroundColor = [UIColor blackColor];
     
-    UIImageView *backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"TableBackground.png"]];
-    
+    UIImageView *backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ClothBackground.png"]];
     
     table = [[UITableView alloc] initWithFrame:CGRectMake(backgroundImage.frame.origin.x, backgroundImage.frame.origin.y + 1, backgroundImage.frame.size.width, backgroundImage.frame.size.height - 2)];
     table.separatorColor = [UIColor clearColor];
@@ -119,7 +124,8 @@
 #pragma mark - UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 380;
+    return [[heights objectAtIndex:indexPath.row] intValue];
+
 }
 
 #pragma mark - UITableViewDataSource
@@ -133,6 +139,7 @@
     }
     EMTLPhoto *photo = [photos objectAtIndex:indexPath.row];
     [photo loadPhotoIntoCell:cell];
+    [cell setImageHeight:photo.height];
     cell.ownerLabel.text = photo.username;
     cell.dateLabel.text = [photo datePostedString];
     

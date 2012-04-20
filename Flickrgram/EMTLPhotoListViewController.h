@@ -18,6 +18,7 @@
 }
 
 @property (nonatomic, strong) NSMutableArray *photos;
+@property (nonatomic, strong) NSMutableArray *heights;
 @property (nonatomic, strong) UITableView *table;
 @property (nonatomic, strong) EMTLProgressIndicatorViewController *spinner;
 

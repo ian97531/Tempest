@@ -14,8 +14,14 @@
 @interface EMTLPhotoCell : UITableViewCell
 
 @property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) UIView *cardView;
+@property (nonatomic, strong) UIView *backgroundView;
+@property (nonatomic, strong) UIView *backgroundGutter;
 @property (nonatomic, strong) UILabel *ownerLabel;
 @property (nonatomic, strong) UILabel *dateLabel;
+@property (nonatomic, strong) UILabel *commentsLabel;
+@property (nonatomic, strong) UILabel *favoritesLabel;
+
 @property (nonatomic) BOOL isFavorite;
 @property (nonatomic) int numFavorites;
 @property (nonatomic) int numComments;
@@ -23,6 +29,6 @@
 @property (nonatomic, strong) EMTLProgressIndicatorViewController *indicator;
 
 - (void)setImage:(UIImage *)image animated:(BOOL)animated;
-
+- (void)setImageHeight:(int)height;
 
 @end
