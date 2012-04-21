@@ -58,6 +58,12 @@
 - (void)morePhotos;
 - (void)morePhotos:(int)num;
 
+- (void)getPhotoFavorites:(NSString *)photo_id delegate:(id)delegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
+- (void)getPhotoFavorites:(NSString *)photo_id page:(int)page delegate:(id)delegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;;
+- (void)getPhotoComments:(NSString *)photo_id delegate:(id)delegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
+
+- (NSDictionary *)extractJSON:(NSData *)data fromTicket:(OAServiceTicket *)ticket withError:(NSError **) error;
+
 
 
 @end

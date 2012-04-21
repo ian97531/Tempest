@@ -48,7 +48,7 @@ double const kSecondsInAYear = 7776500;
         
         minYear = [minComponents year];
         minMonth = [minComponents month];
-        minDay = [minComponents day] + 5;
+        minDay = [minComponents day];
                 
         expired = NO;
         loading = NO;
@@ -56,6 +56,60 @@ double const kSecondsInAYear = 7776500;
     
     return self;
 }
+
+- (void)getPhotoFavorites:(NSString *)photo_id delegate:(id)theDelegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector
+{
+    [self getPhotoFavorites:photo_id page:1 delegate:theDelegate didFinishSelector:finishSelector didFailSelector:failSelector];
+}
+
+- (void)getPhotoFavorites:(NSString *)photo_id page:(int)page delegate:(id)theDelegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector
+{
+    NSLog(@"Requesting page %i of favorites for photo_id %@ from %@.", page, photo_id, key);
+    
+    
+    NSMutableDictionary *args = [NSMutableDictionary dictionaryWithCapacity:4];
+    [args setObject:kFlickrAPIKey 
+             forKey:@"api_key"];
+    
+    [args setObject:photo_id
+             forKey:@"photo_id"];
+    
+    [args setObject:@"50"
+             forKey:@"per_page"];
+    
+    [args setObject:[NSString stringWithFormat:@"%i", page]
+             forKey:@"page"];
+    
+    
+    [self callMethod:@"flickr.photos.getFavorites" 
+       withArguments:args 
+            delegate:theDelegate
+   didFinishSelector:finishSelector
+     didFailSelector:failSelector];
+}
+
+
+
+- (void)getPhotoComments:(NSString *)photo_id delegate:(id)theDelegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector
+{
+    NSLog(@"Requesting comments for photo_id %@ from %@.", photo_id, key);
+    
+    
+    NSMutableDictionary *args = [NSMutableDictionary dictionaryWithCapacity:4];
+    [args setObject:kFlickrAPIKey 
+             forKey:@"api_key"];
+    
+    [args setObject:photo_id
+             forKey:@"photo_id"];
+    
+    
+    [self callMethod:@"flickr.photos.comments.getList" 
+         withArguments:args 
+              delegate:theDelegate
+     didFinishSelector:finishSelector
+       didFailSelector:failSelector];
+}
+
 
 - (void)morePhotos
 {
@@ -68,7 +122,7 @@ double const kSecondsInAYear = 7776500;
     if(!loading) {
         loading = YES;
         
-        NSLog(@"Requesting more photos from flickr.");
+        NSLog(@"Requesting more photos from %@.", key);
 
         
         NSMutableDictionary *args = [NSMutableDictionary dictionaryWithCapacity:4];

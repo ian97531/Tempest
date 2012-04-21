@@ -48,26 +48,27 @@
         
         [backgroundView addSubview:cardView];
         
-        backgroundGutter = [[UIImageView alloc] initWithFrame:CGRectMake(6, 44, 302, 302)];
+        //backgroundGutter = [[UIImageView alloc] initWithFrame:CGRectMake(6, 44, 302, 302)];
+        backgroundGutter = [[UIImageView alloc] initWithFrame:CGRectMake(6, 35, 302, 302)];
         backgroundGutter.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1];
         backgroundGutter.layer.borderWidth = 1;
         backgroundGutter.layer.borderColor = [UIColor colorWithWhite:0.9 alpha:1].CGColor;
         backgroundGutter.layer.cornerRadius = 2.7;
         
                 
-        imageView = [[UIImageView alloc] initWithFrame:CGRectMake(7, 45, 300, 300)];
-        //imageView.center = backgroundGutter.center;
+        //imageView = [[UIImageView alloc] initWithFrame:CGRectMake(7, 45, 300, 300)];
+        imageView = [[UIImageView alloc] initWithFrame:CGRectMake(7, 36, 300, 300)];
         imageView.layer.cornerRadius = 2;
         imageView.layer.masksToBounds = YES;
         imageView.contentMode = UIViewContentModeScaleAspectFill;
 
         
-        dateLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 5, 170, 40)];
+        dateLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 8, 170, 24)];
         dateLabel.backgroundColor = [UIColor clearColor];
-        dateLabel.font = [UIFont fontWithName:@"HelveticaNeue-Light" size:28];
-        dateLabel.textColor = [UIColor colorWithWhite:0.2 alpha:1];
+        dateLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20];
+        dateLabel.textColor = [UIColor colorWithWhite:0.3 alpha:1];
         
-        ownerLabel = [[UILabel alloc] initWithFrame:CGRectMake(185, 21, 120, 20)];
+        ownerLabel = [[UILabel alloc] initWithFrame:CGRectMake(185, 13, 120, 20)];
         ownerLabel.backgroundColor = [UIColor clearColor];
         ownerLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:12];
         ownerLabel.textColor = [UIColor colorWithWhite:0.44 alpha:1];
@@ -77,6 +78,9 @@
         indicator = [[EMTLProgressIndicatorViewController alloc] initWithSmallSize:YES];
         indicator.view.center = imageView.center;
         indicator.view.layer.opacity = 0.1;
+        
+        favoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, 0, 100, 12)];
+        commentsLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, 12, 100, 12)];
         
         self.backgroundColor = [UIColor clearColor];
         self.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -88,6 +92,9 @@
         [cardView addSubview:imageView];
         [cardView addSubview:dateLabel];
         [cardView addSubview:ownerLabel];
+        
+        [cardView addSubview:favoritesLabel];
+        [cardView addSubview:commentsLabel];
         
         
         [self.contentView addSubview:backgroundView];
@@ -114,7 +121,7 @@
         imageView.layer.opacity = 0;
         
         
-        [UIView animateWithDuration:0.4 animations:^(void) {
+        [UIView animateWithDuration:0.6 animations:^(void) {
             imageView.layer.opacity = 1;
             
         } completion:^(BOOL finished) {
@@ -127,7 +134,6 @@
 
 - (void)setImageHeight:(int)height
 {
-    
     int difference = height - imageView.frame.size.height;
     backgroundView.frame = CGRectMake(backgroundView.frame.origin.x, backgroundView.frame.origin.y, backgroundView.frame.size.width, backgroundView.frame.size.height + difference);
     cardView.frame = CGRectMake(cardView.frame.origin.x, cardView.frame.origin.y, cardView.frame.size.width, cardView.frame.size.height + difference);

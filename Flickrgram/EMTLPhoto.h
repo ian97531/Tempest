@@ -30,6 +30,11 @@
 @property (strong, readonly) NSString *photo_id;
 @property (strong, readonly) UIImage *image;
 @property (strong, readonly) NSNumber *aspect_ratio;
+@property (nonatomic, strong) NSNumber *numFavorites;
+@property (nonatomic, strong) NSNumber *numComments;
+@property (nonatomic, strong) NSNumber *isFavorite;
+@property (nonatomic, strong) NSMutableArray *favorites;
+@property (nonatomic, strong) NSMutableArray *comments;
 @property (nonatomic, strong) EMTLPhotoCell *container;
 @property (nonatomic, strong) id <PhotoSource> source;
 @property (nonatomic, strong) NSMutableData *imageData;
@@ -43,6 +48,13 @@
 - (NSString *)dateTakenString;
 - (int)width;
 - (int)height;
+
+
+- (void)getPhotoFavorites:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data;
+- (void)getPhotoFavorites:(OAServiceTicket *)ticket didFailWithError:(NSError *)error;
+
+- (void)getPhotoComments:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data;
+- (void)getPhotoComments:(OAServiceTicket *)ticket didFailWithError:(NSError *)error;
 
 
 // NSURLConnectionDelegate method

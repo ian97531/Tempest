@@ -27,6 +27,11 @@
 @synthesize imageData;
 @synthesize connection;
 @synthesize aspect_ratio;
+@synthesize numComments;
+@synthesize numFavorites;
+@synthesize isFavorite;
+@synthesize comments;
+@synthesize favorites;
 
 
 - (id)initWithDict:(NSDictionary *)dict
@@ -131,9 +136,35 @@
     if (!image && !loading) { 
         [self loadImage];
     }
-    else {
-        [container setImage:image animated:NO];
+    
+    
+    if (!favorites) {
+        [source getPhotoFavorites:photo_id 
+                         delegate:self 
+                didFinishSelector:@selector(getPhotoFavorites:didFinishWithData:) 
+                  didFailSelector:@selector(getPhotoFavorites:didFailWithError:)];
     }
+        
+    if (!comments) {
+        [source getPhotoComments:photo_id 
+                        delegate:self 
+               didFinishSelector:@selector(getPhotoComments:didFinishWithData:) 
+                 didFailSelector:@selector(getPhotoComments:didFailWithError:)];
+    }
+    
+    [self setupImageAnimated:NO];
+    
+}
+
+
+- (void)setupImageAnimated:(BOOL)animated
+{
+    if (image && numComments && numFavorites) {
+        [container setImage:image animated:animated];
+        container.favoritesLabel.text = [NSString stringWithFormat:@"%i likes", [numFavorites intValue]];
+        container.commentsLabel.text = [NSString stringWithFormat:@"%i comments", [numComments intValue]];
+    }
+    
 }
 
 - (void)removeFromCell:(EMTLPhotoCell *)cell 
@@ -156,7 +187,7 @@
     imageData = nil;
     if(container) {
         container.indicator.value = 100;
-        [container setImage:image animated:YES];
+        [self setupImageAnimated:YES];
     }
     
 }
@@ -262,6 +293,38 @@
     
     return [dateFormat stringFromDate:self.datePosted];
     
+}
+
+
+
+- (void)getPhotoFavorites:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
+{
+    NSError *error;
+    NSLog(@"Got favorites");
+    NSDictionary *favoritesDict = [source extractJSON:data fromTicket:ticket withError:&error];
+    numFavorites = [NSNumber numberWithInt:[[[favoritesDict objectForKey:@"photo"] objectForKey:@"total"] intValue]];
+    [self setupImageAnimated:YES];
+    
+}
+
+- (void)getPhotoFavorites:(OAServiceTicket *)ticket didFailWithError:(NSError *)error
+{
+    NSLog(@"Failed to get favorites.");
+}
+
+- (void)getPhotoComments:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
+{
+    NSError *error;
+    NSLog(@"Got comments");
+    NSDictionary *commentsDict = [source extractJSON:data fromTicket:ticket withError:&error];
+    numComments = [NSNumber numberWithInt:[[[commentsDict objectForKey:@"comments"] objectForKey:@"comment"] count]];
+    [self setupImageAnimated:YES];
+    
+}
+
+- (void)getPhotoComments:(OAServiceTicket *)ticket didFailWithError:(NSError *)error
+{
+    NSLog(@"Failed to get favorites.");
 }
 
 
