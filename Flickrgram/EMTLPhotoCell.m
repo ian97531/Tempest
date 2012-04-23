@@ -124,7 +124,7 @@
             imageView.layer.opacity = 1;
             
         } completion:^(BOOL finished) {
-            indicator.value = 0;
+            [indicator resetValue];
         }];
     }
     

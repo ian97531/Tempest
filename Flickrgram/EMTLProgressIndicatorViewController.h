@@ -30,6 +30,7 @@
 - (void)spinAtRate:(int)rate;
 - (void)stop;
 - (void)nextSpinState;
+- (void)resetValue;
 
 //- (void)showPercentage;
 

@@ -88,8 +88,14 @@
 
 - (void)setValue:(float)theValue
 {
-    value = (theValue > 100) ? 100 : (theValue < 0) ? 0 : theValue;
     
+    if (theValue > 100) {
+        value = 100;
+    }
+    else if (theValue > value) {
+        value = theValue;
+    }
+        
     int nextImage = (value) ? (int)floor((value/100.0) * 8.0) : 0;
     if (nextImage != currentFrame) {
         indicator.image = [frames objectAtIndex:nextImage];
@@ -97,6 +103,14 @@
     }
     
 }
+
+- (void)resetValue
+{
+    value = 0;
+    indicator.image = [frames objectAtIndex:0];
+    currentFrame = 0;
+}
+
 
 - (void)viewDidLoad
 {

@@ -14,7 +14,9 @@
 @interface EMTLPhoto : NSObject <NSURLConnectionDataDelegate>
 
 {
-    BOOL loading;
+    BOOL loadingImage;
+    BOOL loadingFavorites;
+    BOOL loadingComments;
     long long expectingBytes;
     float currentPercent;
 }

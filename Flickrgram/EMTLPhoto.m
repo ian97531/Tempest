@@ -37,7 +37,9 @@
     self = [super init];
     if(self) {
         
-        loading = NO;
+        loadingImage = NO;
+        loadingFavorites = NO;
+        loadingComments = NO;
         expectingBytes = 0;
         currentPercent = 0;
 
@@ -84,12 +86,29 @@
 
 - (void)loadImage
 {
-    if(!image && !loading) {
-        loading = YES;
+    if(!image && !loadingImage) {
+        loadingImage = YES;
         imageData = [NSMutableData data];
         NSURLRequest *request = [NSURLRequest requestWithURL:smallURL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:30];
         connection = [NSURLConnection connectionWithRequest:request delegate:self];
         [connection start];
+        
+    }
+    
+    if (!favorites && !loadingFavorites) {
+        loadingFavorites = YES;
+        [source getPhotoFavorites:photo_id 
+                         delegate:self 
+                didFinishSelector:@selector(getPhotoFavorites:didFinishWithData:) 
+                  didFailSelector:@selector(getPhotoFavorites:didFailWithError:)];
+    }
+    
+    if (!comments && !loadingComments) {
+        loadingComments = YES;
+        [source getPhotoComments:photo_id 
+                        delegate:self 
+               didFinishSelector:@selector(getPhotoComments:didFinishWithData:) 
+                 didFailSelector:@selector(getPhotoComments:didFailWithError:)];
     }
 
 }
@@ -131,23 +150,8 @@
     container = cell;
     cell.photo = self;
     cell.indicator.value = currentPercent;
-    if (!image && !loading) { 
-        [self loadImage];
-    }
-    
-    if (!favorites) {
-        [source getPhotoFavorites:photo_id 
-                         delegate:self 
-                didFinishSelector:@selector(getPhotoFavorites:didFinishWithData:) 
-                  didFailSelector:@selector(getPhotoFavorites:didFailWithError:)];
-    }
+    [self loadImage];
         
-    if (!comments) {
-        [source getPhotoComments:photo_id 
-                        delegate:self 
-               didFinishSelector:@selector(getPhotoComments:didFinishWithData:) 
-                 didFailSelector:@selector(getPhotoComments:didFailWithError:)];
-    }
     
     [self setupImageAnimated:NO];
     
@@ -161,6 +165,7 @@
         
         [container setFavorites:favorites animated:animated];
         [container setComments:comments animated:animated];
+        
     }
     
 }
@@ -170,7 +175,9 @@
     container = nil;
     if(connection) {
         [connection cancel];
-        loading = NO;
+        loadingImage = NO;
+        loadingComments = NO;
+        loadingFavorites = NO;
         if(!image) {
             imageData = nil;
         }
@@ -180,7 +187,7 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)theConnection
 {
     image = [UIImage imageWithData:imageData];
-    loading = NO;
+    loadingImage = NO;
     connection = nil;
     imageData = nil;
     if(container) {
@@ -200,7 +207,7 @@
 {
     [imageData appendData:data];
     
-    currentPercent = (((float)imageData.length)/(float)expectingBytes) * 100;
+    currentPercent += (((float)data.length)/(float)expectingBytes) * 80;
     container.indicator.value = currentPercent;
     
 }
@@ -209,7 +216,7 @@
 {
     NSLog(@"Failed to download %@", photo_id);
     //NSLog(error.localizedDescription);
-    loading = NO;
+    loadingImage = NO;
     connection = nil;
     imageData = nil;
 }
@@ -301,11 +308,14 @@
     
     if(ticket.didSucceed) {
         favorites = [[source extractFavorites:data forPhoto:self] mutableCopy];
+        currentPercent += 10;
+        container.indicator.value = currentPercent;
         [self setupImageAnimated:YES];
     }
     else {
         NSLog(@"There was an error getting favorites.");
     }
+    loadingFavorites = NO;
     
     
 }
@@ -313,6 +323,7 @@
 - (void)getPhotoFavorites:(OAServiceTicket *)ticket didFailWithError:(NSError *)error
 {
     NSLog(@"Failed to get favorites.");
+    loadingFavorites = NO;
 }
 
 - (void)getPhotoComments:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
@@ -321,11 +332,15 @@
     
     if (ticket.didSucceed) {
         comments = [[source extractComments:data] mutableCopy];
+        currentPercent += 10;
+        container.indicator.value = currentPercent;
         [self setupImageAnimated:YES];
     }
     else {
         NSLog(@"There was an error getting comments.");
     }
+    
+    loadingComments = NO;
     
     //[self setupImageAnimated:YES];
     
@@ -334,6 +349,7 @@
 - (void)getPhotoComments:(OAServiceTicket *)ticket didFailWithError:(NSError *)error
 {
     NSLog(@"Failed to get favorites.");
+    loadingComments = NO;
 }
 
 
