@@ -8,12 +8,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Flickrgram/EMTLFlickr.m"
-         timestampString = "356665960.832678"
+         timestampString = "356847649.273823"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "173"
-         endingLineNumber = "173"
-         landmarkName = "-moarPhotos:didFinishWithData:"
+         startingLineNumber = "375"
+         endingLineNumber = "375"
+         landmarkName = "-extractJSONFromData:withError:"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
@@ -21,38 +21,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Flickrgram/EMTLFlickr.m"
-         timestampString = "356665960.832678"
+         timestampString = "356847649.273823"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "285"
-         endingLineNumber = "285"
-         landmarkName = "-extractJSON:fromTicket:withError:"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Flickrgram/EMTLFlickr.m"
-         timestampString = "356665960.832678"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "280"
-         endingLineNumber = "280"
-         landmarkName = "-extractJSON:fromTicket:withError:"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Flickrgram/EMTLFlickr.m"
-         timestampString = "356665960.832678"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "275"
-         endingLineNumber = "275"
-         landmarkName = "-extractJSON:fromTicket:withError:"
+         startingLineNumber = "370"
+         endingLineNumber = "370"
+         landmarkName = "-extractJSONFromData:withError:"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

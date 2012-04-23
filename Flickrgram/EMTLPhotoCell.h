@@ -30,5 +30,7 @@
 
 - (void)setImage:(UIImage *)image animated:(BOOL)animated;
 - (void)setImageHeight:(int)height;
+- (void)setFavorites:(NSArray *)favorites animated:(BOOL)animated;
+- (void)setComments:(NSArray *)comments animated:(BOOL)animated;
 
 @end

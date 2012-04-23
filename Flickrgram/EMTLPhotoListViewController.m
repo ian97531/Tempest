@@ -89,6 +89,8 @@
     table.backgroundColor = [UIColor clearColor];
     table.layer.masksToBounds = YES;
     table.showsVerticalScrollIndicator = NO;
+    table.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 20)];
+    
     
     spinner = [[EMTLProgressIndicatorViewController alloc] initWithSmallSize:NO];
     spinner.view.center = table.center;
@@ -99,6 +101,7 @@
     [parent addSubview:spinner.view];
     
     self.view = parent;
+    self.wantsFullScreenLayout = YES;
     
     [spinner spin];
             
@@ -180,6 +183,7 @@
     NSLog(@"That image is %@", photo.photo_id);
     
 }
+
 
 
 @end

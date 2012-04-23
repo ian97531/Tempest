@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "EMTLPhotoSource.h"
 
+@class EMTLPhoto;
+
 @interface EMTLFlickr : NSObject <PhotoSource>
 
 {
@@ -64,8 +66,10 @@
 - (void)getPhotoFavorites:(NSString *)photo_id page:(int)page delegate:(id)delegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;;
 - (void)getPhotoComments:(NSString *)photo_id delegate:(id)delegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
 
+- (NSURL *)defaultUserIconURL;
+- (NSArray *)extractComments:(NSData *)data;
+- (NSArray *)extractFavorites:(NSData *)data forPhoto:(EMTLPhoto *)photo;
 
-- (NSDictionary *)extractJSON:(NSData *)data fromTicket:(OAServiceTicket *)ticket withError:(NSError **) error;
-
+- (NSDictionary *)extractJSONFromData:(NSData *)data withError:(NSError **) error;
 
 @end

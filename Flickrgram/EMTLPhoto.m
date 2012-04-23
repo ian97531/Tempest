@@ -27,8 +27,6 @@
 @synthesize imageData;
 @synthesize connection;
 @synthesize aspect_ratio;
-@synthesize numComments;
-@synthesize numFavorites;
 @synthesize isFavorite;
 @synthesize comments;
 @synthesize favorites;
@@ -137,7 +135,6 @@
         [self loadImage];
     }
     
-    
     if (!favorites) {
         [source getPhotoFavorites:photo_id 
                          delegate:self 
@@ -159,10 +156,11 @@
 
 - (void)setupImageAnimated:(BOOL)animated
 {
-    if (image && numComments && numFavorites) {
+    if (image && comments && favorites) {
         [container setImage:image animated:animated];
-        container.favoritesLabel.text = [NSString stringWithFormat:@"%i likes", [numFavorites intValue]];
-        container.commentsLabel.text = [NSString stringWithFormat:@"%i comments", [numComments intValue]];
+        
+        [container setFavorites:favorites animated:animated];
+        [container setComments:comments animated:animated];
     }
     
 }
@@ -299,11 +297,16 @@
 
 - (void)getPhotoFavorites:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
 {
-    NSError *error;
     NSLog(@"Got favorites");
-    NSDictionary *favoritesDict = [source extractJSON:data fromTicket:ticket withError:&error];
-    numFavorites = [NSNumber numberWithInt:[[[favoritesDict objectForKey:@"photo"] objectForKey:@"total"] intValue]];
-    [self setupImageAnimated:YES];
+    
+    if(ticket.didSucceed) {
+        favorites = [[source extractFavorites:data forPhoto:self] mutableCopy];
+        [self setupImageAnimated:YES];
+    }
+    else {
+        NSLog(@"There was an error getting favorites.");
+    }
+    
     
 }
 
@@ -314,11 +317,17 @@
 
 - (void)getPhotoComments:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
 {
-    NSError *error;
     NSLog(@"Got comments");
-    NSDictionary *commentsDict = [source extractJSON:data fromTicket:ticket withError:&error];
-    numComments = [NSNumber numberWithInt:[[[commentsDict objectForKey:@"comments"] objectForKey:@"comment"] count]];
-    [self setupImageAnimated:YES];
+    
+    if (ticket.didSucceed) {
+        comments = [[source extractComments:data] mutableCopy];
+        [self setupImageAnimated:YES];
+    }
+    else {
+        NSLog(@"There was an error getting comments.");
+    }
+    
+    //[self setupImageAnimated:YES];
     
 }
 

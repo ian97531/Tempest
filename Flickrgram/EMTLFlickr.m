@@ -9,6 +9,8 @@
 #import "EMTLFlickr.h"
 #import "APISecrets.h"
 #import "EMTLPhoto.h"
+#import "EMTLComment.h"
+#import "EMTLFavorite.h"
 
 NSString *const kFlickrRequestTokenURL = @"http://www.flickr.com/services/oauth/request_token";
 NSString *const kFlickrAuthorizationURL = @"http://www.flickr.com/services/oauth/authorize";
@@ -48,7 +50,7 @@ double const kSecondsInAYear = 7776500;
         
         minYear = [minComponents year];
         minMonth = [minComponents month];
-        minDay = [minComponents day];
+        minDay = [minComponents day] + 2;
                 
         expired = NO;
         loading = NO;
@@ -164,90 +166,96 @@ double const kSecondsInAYear = 7776500;
 
 - (void)moarPhotos:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
 {
-    NSError *error;
-    NSDictionary *newPhotos = [self extractJSON:data fromTicket:ticket withError:&error];
     
-    if(error) {
-        [photoDelegate photoSource:self encounteredAnError:error];
-        NSLog(@"There was an error interpreting the json from the request for more photos from %@", key);
-        return;
-    }
-    
-    if(newPhotos) {
-        NSLog(@"%@", [newPhotos description]);
+    if (ticket.didSucceed) {
+        NSError *error;
+        NSDictionary *newPhotos = [self extractJSONFromData:data withError:&error];
         
-        // Grab the paging information...
-        
-        currentPage = [[[newPhotos objectForKey:@"photos"] objectForKey:@"page"] intValue];
-        totalPages = [[[newPhotos objectForKey:@"photos"] objectForKey:@"pages"] intValue];
-        
-        // If we've run out of pages, we need to set a new date range to search and reset the page numbering.
-        if (currentPage >= totalPages) {
-            NSLog(@"Next search will change the date range.");
-            maxYear = minYear;
-            maxMonth = minMonth;
-            maxDay = minDay;
-            
-            if(minMonth - 3 < 1) {
-                minMonth = 12 + (minMonth - 3);
-                minYear = minYear - 1;
-            }
-            else {
-                minMonth = minMonth - 3;
-            }
-            
-            currentPage = 0;
-            totalPages = 0;
+        if(error) {
+            [photoDelegate photoSource:self encounteredAnError:error];
+            NSLog(@"There was an error interpreting the json from the request for more photos from %@", key);
+            return;
         }
         
-        NSMutableArray *photos = [[NSMutableArray alloc] initWithCapacity:[[[newPhotos objectForKey:@"photos"] objectForKey:@"total"] intValue]];
-        
-        // Clean up the photo information...
-        for (NSMutableDictionary *photoDict in [[newPhotos objectForKey:@"photos"] objectForKey:@"photo"]) {
+        if(newPhotos) {
+            NSLog(@"%@", [newPhotos description]);
             
-            // Construct the URLs
-            NSString *farm = [photoDict objectForKey:@"farm"];
-            NSString *server = [photoDict objectForKey:@"server"];
-            NSString *secret = [photoDict objectForKey:@"secret"];
-            NSString *photo_id = [photoDict objectForKey:@"id"];
+            // Grab the paging information...
             
-            NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://farm%@.staticflickr.com/%@/%@_%@_%@.jpg", farm, server, photo_id, secret, @"b"]];
-            NSURL *smallURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://farm%@.staticflickr.com/%@/%@_%@_%@.jpg", farm, server, photo_id, secret, @"z"]];
+            currentPage = [[[newPhotos objectForKey:@"photos"] objectForKey:@"page"] intValue];
+            totalPages = [[[newPhotos objectForKey:@"photos"] objectForKey:@"pages"] intValue];
             
-            [photoDict setObject:URL forKey:@"url"];
-            [photoDict setObject:smallURL forKey:@"small_url"];
-            
-            // Get the dates
-            
-            NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
-            dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-            NSDate* dateTaken = [dateFormatter dateFromString:[photoDict objectForKey:@"datetaken"]];
-            NSDate* datePosted = [NSDate dateWithTimeIntervalSince1970:[[photoDict objectForKey:@"dateupload"] doubleValue]];
-            
-            [photoDict setObject:dateTaken forKey:@"date_taken"];
-            [photoDict setObject:datePosted forKey:@"date_posted"];
-            
-            // Set the aspect ratio
-            
-            if([photoDict objectForKey:@"o_width"] && [photoDict objectForKey:@"o_height"]) {
-                float o_width = [[photoDict objectForKey:@"o_width"] floatValue];
-                float o_height = [[photoDict objectForKey:@"o_height"] floatValue];
+            // If we've run out of pages, we need to set a new date range to search and reset the page numbering.
+            if (currentPage >= totalPages) {
+                NSLog(@"Next search will change the date range.");
+                maxYear = minYear;
+                maxMonth = minMonth;
+                maxDay = minDay;
                 
-                [photoDict setObject:[NSNumber numberWithFloat:(o_width/o_height)] forKey:@"aspect_ratio"];
+                if(minMonth - 3 < 1) {
+                    minMonth = 12 + (minMonth - 3);
+                    minYear = minYear - 1;
+                }
+                else {
+                    minMonth = minMonth - 3;
+                }
+                
+                currentPage = 0;
+                totalPages = 0;
             }
             
+            NSMutableArray *photos = [[NSMutableArray alloc] initWithCapacity:[[[newPhotos objectForKey:@"photos"] objectForKey:@"total"] intValue]];
             
+            // Clean up the photo information...
+            for (NSMutableDictionary *photoDict in [[newPhotos objectForKey:@"photos"] objectForKey:@"photo"]) {
+                
+                // Construct the URLs
+                NSString *farm = [photoDict objectForKey:@"farm"];
+                NSString *server = [photoDict objectForKey:@"server"];
+                NSString *secret = [photoDict objectForKey:@"secret"];
+                NSString *photo_id = [photoDict objectForKey:@"id"];
+                
+                NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://farm%@.staticflickr.com/%@/%@_%@_%@.jpg", farm, server, photo_id, secret, @"b"]];
+                NSURL *smallURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://farm%@.staticflickr.com/%@/%@_%@_%@.jpg", farm, server, photo_id, secret, @"z"]];
+                
+                [photoDict setObject:URL forKey:@"url"];
+                [photoDict setObject:smallURL forKey:@"small_url"];
+                
+                // Get the dates
+                
+                NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
+                dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
+                NSDate* dateTaken = [dateFormatter dateFromString:[photoDict objectForKey:@"datetaken"]];
+                NSDate* datePosted = [NSDate dateWithTimeIntervalSince1970:[[photoDict objectForKey:@"dateupload"] doubleValue]];
+                
+                [photoDict setObject:dateTaken forKey:@"date_taken"];
+                [photoDict setObject:datePosted forKey:@"date_posted"];
+                
+                // Set the aspect ratio
+                
+                if([photoDict objectForKey:@"o_width"] && [photoDict objectForKey:@"o_height"]) {
+                    float o_width = [[photoDict objectForKey:@"o_width"] floatValue];
+                    float o_height = [[photoDict objectForKey:@"o_height"] floatValue];
+                    
+                    [photoDict setObject:[NSNumber numberWithFloat:(o_width/o_height)] forKey:@"aspect_ratio"];
+                }
+                
+                
+                
+                EMTLPhoto *photo = [[EMTLPhoto alloc] initWithDict:photoDict];
+                photo.source = self;
+                [photos addObject:photo];
+            }
             
-            EMTLPhoto *photo = [[EMTLPhoto alloc] initWithDict:photoDict];
-            photo.source = self;
-            [photos addObject:photo];
+            [photoDelegate photoSource:self retreivedMorePhotos:photos];
         }
-        
-        [photoDelegate photoSource:self retreivedMorePhotos:photos];
+        else {
+            expired = YES;
+        }
+       
     }
-    else {
-        expired = YES;
-    }
+    
+    
     loading = NO;
 
 
@@ -258,13 +266,100 @@ double const kSecondsInAYear = 7776500;
     NSLog(@"There was an error loading more photos from: %@", key);
     loading = NO;
 }
+
+- (NSURL *)defaultUserIconURL
+{
+    return [NSURL URLWithString:@"http://www.flickr.com/images/buddyicon.gif"];
+}
+
+- (NSArray *)extractComments:(NSData *)data
+{
+    NSError *error;
+    NSDictionary *commentsDict = [self extractJSONFromData:data withError:&error];
+    
+    if(error) {
+        [photoDelegate photoSource:self encounteredAnError:error];
+        NSLog(@"There was an error interpreting the json from the request for comments from %@", key);
+        return nil;
+    }
+    else {
+        NSMutableArray *comments = [NSMutableArray arrayWithCapacity:20];
+        
+        for (NSDictionary *commentDict in [[commentsDict objectForKey:@"comments"] objectForKey:@"comment"]) {
+            // Get the date
+            NSDate *comment_date = [NSDate dateWithTimeIntervalSince1970:[[commentDict objectForKey:@"datecreate"] doubleValue]];
+            [commentDict setValue:comment_date forKey:@"comment_date"];
+            
+            // Get the icon URL
+            int iconfarm = [[commentDict objectForKey:@"iconfarm"] intValue];
+            int iconserver = [[commentDict objectForKey:@"iconserver"] intValue];
+            NSString *nsid = [commentDict objectForKey:@"author"];
+            
+            if (iconfarm && iconserver) {
+                NSURL *userIconURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://farm%i.staticflickr.com/%i/buddyicons/%@.jpg", iconfarm, iconserver, nsid]];
+                [commentDict setValue:userIconURL forKey:@"icon_url"];
+            }
+            
+            [commentDict setValue:[commentDict objectForKey:@"_content"] forKey:@"comment"];
+            
+            [comments addObject:[[EMTLComment alloc] initWithDict:commentDict]];
+            
+            
+        }
+        
+        return comments;
+    }
+    
+}
+
+- (NSArray *)extractFavorites:(NSData *)data forPhoto:(EMTLPhoto *)photo;
+{
+    NSError *error;
+    NSDictionary *favoritesDict = [self extractJSONFromData:data withError:&error];
+    
+    if(error) {
+        [photoDelegate photoSource:self encounteredAnError:error];
+        NSLog(@"There was an error interpreting the json from the request for favorites from %@", key);
+        return nil;
+    }
+    else {
+        //NSLog(@"%@", [favoritesDict description]);
+        NSMutableArray *favorites = [NSMutableArray arrayWithCapacity:20];
+        
+        for (NSDictionary *favoriteDict in [[favoritesDict objectForKey:@"photo"] objectForKey:@"person"]) {
+            // Get the date
+            NSDate *favorite_date = [NSDate dateWithTimeIntervalSince1970:[[favoriteDict objectForKey:@"favedate"] doubleValue]];
+            [favoriteDict setValue:favorite_date forKey:@"favorite_date"];
+            
+            // Get the icon URL
+            int iconfarm = [[favoriteDict objectForKey:@"iconfarm"] intValue];
+            int iconserver = [[favoriteDict objectForKey:@"iconserver"] intValue];
+            NSString *nsid = [favoriteDict objectForKey:@"nsid"];
+            
+            if (iconfarm && iconserver) {
+                NSURL *userIconURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://farm%i.staticflickr.com/%i/buddyicons/%@.jpg", iconfarm, iconserver, nsid]];
+                [favoriteDict setValue:userIconURL forKey:@"icon_url"];
+            }
+                        
+            [favorites addObject:[[EMTLFavorite alloc] initWithDict:favoriteDict]];
+            
+            if ([nsid isEqualToString:user_id]) {
+                photo.isFavorite = YES;
+            }
+            
+            
+        }
+        return favorites;
+    }
     
 
-- (NSDictionary *)extractJSON:(NSData *)data fromTicket:(OAServiceTicket *)ticket withError:(NSError **) error
+}
+    
+
+- (NSDictionary *)extractJSONFromData:(NSData *)data withError:(NSError **) error;
 {
     NSLog(@"Extracting JSON response from %@", key);
     
-    if (ticket.didSucceed) {
         
         NSDictionary * loginInfo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:error];
         
@@ -279,14 +374,7 @@ double const kSecondsInAYear = 7776500;
         
         NSLog(@"an error occurred in extract JSON");
         return nil;
-    }
-    else {
-        
-        NSLog(@"an error occurred in extract JSON");
-        __autoreleasing NSError *newError = [NSError errorWithDomain:ticket.body code:0 userInfo:nil];
-        error = &newError;
-        return nil;
-    }
+    
 
 }
 
@@ -405,17 +493,25 @@ double const kSecondsInAYear = 7776500;
 - (void)testLoginFinished:(OAServiceTicket *)ticket withData:(NSData *)data
 {
     NSLog(@"Got a response for the test login for %@", key);
-    NSError *error;
-    NSDictionary *loginInfo = [self extractJSON:data fromTicket:ticket withError:&error];
     
-    if(!error) {
-        user_id = [[loginInfo objectForKey:@"user"] objectForKey:@"id"];
-        username = [[[loginInfo objectForKey:@"user"] objectForKey:@"username"] objectForKey:@"_content"];
-        [delegate authorizationCompleteForSource:self];
+    if (ticket.didSucceed) {
+        NSError *error;
+        NSDictionary *loginInfo = [self extractJSONFromData:data withError:&error];
+        
+        if(!error) {
+            user_id = [[loginInfo objectForKey:@"user"] objectForKey:@"id"];
+            username = [[[loginInfo objectForKey:@"user"] objectForKey:@"username"] objectForKey:@"_content"];
+            [delegate authorizationCompleteForSource:self];
+        }
+        else {
+            [delegate photoSource:self authorizationError:error];
+        }
     }
     else {
-        [delegate photoSource:self authorizationError:error];
+        [delegate photoSource:self authorizationError:nil];
     }
+    
+    
 
 }
     

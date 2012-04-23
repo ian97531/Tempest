@@ -30,9 +30,7 @@
 @property (strong, readonly) NSString *photo_id;
 @property (strong, readonly) UIImage *image;
 @property (strong, readonly) NSNumber *aspect_ratio;
-@property (nonatomic, strong) NSNumber *numFavorites;
-@property (nonatomic, strong) NSNumber *numComments;
-@property (nonatomic, strong) NSNumber *isFavorite;
+@property (nonatomic) BOOL isFavorite;
 @property (nonatomic, strong) NSMutableArray *favorites;
 @property (nonatomic, strong) NSMutableArray *comments;
 @property (nonatomic, strong) EMTLPhotoCell *container;

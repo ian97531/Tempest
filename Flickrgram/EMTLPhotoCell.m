@@ -9,6 +9,8 @@
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
 #import "EMTLProgressIndicatorViewController.h"
+#import "EMTLComment.h"
+#import "EMTLFavorite.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation EMTLPhotoCell
@@ -34,21 +36,16 @@
     if (self) {
         
         
-        backgroundView = [[UIView alloc] initWithFrame:CGRectMake(2, 10, 316, 392)];
+        backgroundView = [[UIView alloc] initWithFrame:CGRectMake(2, 10, 314, 385)];
         backgroundView.backgroundColor = [UIColor colorWithWhite:0.8 alpha:1];
         backgroundView.layer.cornerRadius = 2.8;
         
-        cardView = [[UIView alloc] initWithFrame:CGRectMake(1, 0, 314, 390)];
+        cardView = [[UIView alloc] initWithFrame:CGRectMake(1, 0, 314, 383)];
         cardView.backgroundColor = [UIColor whiteColor];
-        //cardView.layer.shadowColor = [UIColor colorWithWhite:0 alpha:1].CGColor;
-        //cardView.layer.shadowOffset = CGSizeMake(0, 1);
-        //cardView.layer.shadowRadius = 1;
-        //cardView.layer.shadowOpacity = 0.4;
         cardView.layer.cornerRadius = 2;
         
         [backgroundView addSubview:cardView];
         
-        //backgroundGutter = [[UIImageView alloc] initWithFrame:CGRectMake(6, 44, 302, 302)];
         backgroundGutter = [[UIImageView alloc] initWithFrame:CGRectMake(6, 35, 302, 302)];
         backgroundGutter.backgroundColor = [UIColor colorWithWhite:0.95 alpha:1];
         backgroundGutter.layer.borderWidth = 1;
@@ -56,7 +53,6 @@
         backgroundGutter.layer.cornerRadius = 2.7;
         
                 
-        //imageView = [[UIImageView alloc] initWithFrame:CGRectMake(7, 45, 300, 300)];
         imageView = [[UIImageView alloc] initWithFrame:CGRectMake(7, 36, 300, 300)];
         imageView.layer.cornerRadius = 2;
         imageView.layer.masksToBounds = YES;
@@ -64,12 +60,10 @@
 
         
         dateLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 8, 170, 24)];
-        dateLabel.backgroundColor = [UIColor clearColor];
         dateLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:20];
         dateLabel.textColor = [UIColor colorWithWhite:0.3 alpha:1];
         
         ownerLabel = [[UILabel alloc] initWithFrame:CGRectMake(185, 13, 120, 20)];
-        ownerLabel.backgroundColor = [UIColor clearColor];
         ownerLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:12];
         ownerLabel.textColor = [UIColor colorWithWhite:0.44 alpha:1];
         ownerLabel.textAlignment = UITextAlignmentRight;
@@ -79,8 +73,13 @@
         indicator.view.center = imageView.center;
         indicator.view.layer.opacity = 0.1;
         
-        favoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, 0, 100, 12)];
-        commentsLabel = [[UILabel alloc] initWithFrame:CGRectMake(40, 12, 100, 12)];
+        favoritesLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 343, 290, 14)];
+        favoritesLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12];
+        favoritesLabel.textColor = [UIColor colorWithWhite:0.3 alpha:1];
+        
+        commentsLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 361, 100, 14)];
+        commentsLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:12];
+        commentsLabel.textColor = [UIColor colorWithWhite:0.3 alpha:1];
         
         self.backgroundColor = [UIColor clearColor];
         self.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -132,6 +131,72 @@
     
 }
 
+- (void)setFavorites:(NSArray *)favorites animated:(BOOL)animated
+{
+    if (favorites.count) {
+        NSString *favoritesString = [NSString stringWithFormat:@"Liked by %@", [[favorites objectAtIndex:0] username]];
+        
+        // If there are fewer than five favorites, we'll see if the names fit on a single line.
+        if(favorites.count < 5) {
+            
+            for (int i = 1; i < favorites.count && i < 5; i++) {
+                EMTLFavorite *favorite = [favorites objectAtIndex:i];
+                favoritesString = [NSString stringWithFormat:@"%@, %@", favoritesString, favorite.username];
+            }
+            
+            float stringWidth = [favoritesString sizeWithFont:favoritesLabel.font].width;
+            
+            // If the names do fit on a single line, set the favorites label to the string of names 
+            if (stringWidth < 280) {
+                favoritesLabel.text = favoritesString;
+            }
+            
+            // Otherwise, the favorites label should display the total number of likes. 
+            else {
+                favoritesLabel.text = [NSString stringWithFormat:@"%i likes", favorites.count];
+            }
+        }
+        else {
+            favoritesLabel.text = [NSString stringWithFormat:@"%i likes", favorites.count];
+        }
+
+    }
+    else {
+        favoritesLabel.text = @"0 likes";
+    }
+        
+    if(animated) {
+        favoritesLabel.layer.opacity = 0;
+        
+        [UIView animateWithDuration:0.6 animations:^(void) {
+            favoritesLabel.layer.opacity = 1;
+            
+        }];
+    }
+    
+}
+
+- (void)setComments:(NSArray *)comments animated:(BOOL)animated
+{
+    if(comments.count == 1) {
+        commentsLabel.text = @"1 comment";
+    }
+    else {
+        commentsLabel.text = [NSString stringWithFormat:@"%i comments", comments.count];
+    }
+    
+    if(animated) {
+        commentsLabel.layer.opacity = 0;
+        
+        [UIView animateWithDuration:0.6 animations:^(void) {
+            commentsLabel.layer.opacity = 1;
+            
+        }];
+    }
+    
+    
+}
+
 - (void)setImageHeight:(int)height
 {
     int difference = height - imageView.frame.size.height;
@@ -140,6 +205,8 @@
     backgroundGutter.frame = CGRectMake(backgroundGutter.frame.origin.x, backgroundGutter.frame.origin.y, backgroundGutter.frame.size.width, height + 2);
     imageView.frame = CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y, imageView.frame.size.width, height);
     indicator.view.center = imageView.center;
+    favoritesLabel.frame = CGRectMake(favoritesLabel.frame.origin.x, favoritesLabel.frame.origin.y + difference, favoritesLabel.frame.size.width, favoritesLabel.frame.size.height);
+    commentsLabel.frame = CGRectMake(commentsLabel.frame.origin.x, commentsLabel.frame.origin.y + difference, commentsLabel.frame.size.width, commentsLabel.frame.size.height);
 }
 
 - (void)prepareForReuse
@@ -148,6 +215,8 @@
         [photo removeFromCell:self];
         photo = nil;
         imageView.image = nil;
+        commentsLabel.text = nil;
+        favoritesLabel.text = nil;
         
     }
 }
