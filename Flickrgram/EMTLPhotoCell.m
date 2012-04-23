@@ -217,6 +217,7 @@
         imageView.image = nil;
         commentsLabel.text = nil;
         favoritesLabel.text = nil;
+        [indicator resetValue];
         
     }
 }

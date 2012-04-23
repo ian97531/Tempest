@@ -95,6 +95,10 @@
     else if (theValue > value) {
         value = theValue;
     }
+    else {
+        NSLog(@"Trying to set the inicator to a lower value of %f when it's currently %f", theValue, value);
+        return;
+    }
         
     int nextImage = (value) ? (int)floor((value/100.0) * 8.0) : 0;
     if (nextImage != currentFrame) {
