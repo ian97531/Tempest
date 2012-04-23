@@ -54,6 +54,17 @@
 		EB69B28C153CDE59003D8422 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */; };
 		EB850DAC153DF3D30073BBAE /* EMTLFlickr.m in Sources */ = {isa = PBXBuildFile; fileRef = EB850DAB153DF3D30073BBAE /* EMTLFlickr.m */; };
 		EB850DB1153E3CD40073BBAE /* EMTLPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = EB850DB0153E3CD40073BBAE /* EMTLPhoto.m */; };
+		EB88B5BF1545FF4600E6A6EE /* Polaroid@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5BA1545FF4600E6A6EE /* Polaroid@2x.png */; };
+		EB88B5C01545FF4600E6A6EE /* PolaroidBlank@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5BB1545FF4600E6A6EE /* PolaroidBlank@2x.png */; };
+		EB88B5C11545FF4600E6A6EE /* PolaroidBottom@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5BC1545FF4600E6A6EE /* PolaroidBottom@2x.png */; };
+		EB88B5C21545FF4600E6A6EE /* PolaroidMiddle.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5BD1545FF4600E6A6EE /* PolaroidMiddle.png */; };
+		EB88B5C31545FF4600E6A6EE /* PolaroidTop@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5BE1545FF4600E6A6EE /* PolaroidTop@2x.png */; };
+		EB88B5C71545FF7300E6A6EE /* Polaroid.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5C51545FF7300E6A6EE /* Polaroid.png */; };
+		EB88B5C81545FF7300E6A6EE /* PolaroidBlank.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5C61545FF7300E6A6EE /* PolaroidBlank.png */; };
+		EB88B5CB154602B800E6A6EE /* PolaroidLowShadow.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5C9154602B800E6A6EE /* PolaroidLowShadow.png */; };
+		EB88B5CC154602B800E6A6EE /* PolaroidLowShadow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5CA154602B800E6A6EE /* PolaroidLowShadow@2x.png */; };
+		EB88B5CE1546067300E6A6EE /* Marker SD.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5CD1546067300E6A6EE /* Marker SD.ttf */; };
+		EB88B5D01546068A00E6A6EE /* CoertSchrift_Romaans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5CF1546068A00E6A6EE /* CoertSchrift_Romaans.ttf */; };
 		EB8AA1511540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8AA1501540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m */; };
 		EB8AA18B1540D1F6004C6DF8 /* Small-0.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA1791540D1F6004C6DF8 /* Small-0.png */; };
 		EB8AA18C1540D1F6004C6DF8 /* Small-0@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA17A1540D1F6004C6DF8 /* Small-0@2x.png */; };
@@ -220,6 +231,17 @@
 		EB850DAE153E0A710073BBAE /* APISecrets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APISecrets.h; sourceTree = "<group>"; };
 		EB850DAF153E3CD30073BBAE /* EMTLPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhoto.h; sourceTree = "<group>"; };
 		EB850DB0153E3CD40073BBAE /* EMTLPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhoto.m; sourceTree = "<group>"; };
+		EB88B5BA1545FF4600E6A6EE /* Polaroid@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Polaroid@2x.png"; sourceTree = "<group>"; };
+		EB88B5BB1545FF4600E6A6EE /* PolaroidBlank@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PolaroidBlank@2x.png"; sourceTree = "<group>"; };
+		EB88B5BC1545FF4600E6A6EE /* PolaroidBottom@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PolaroidBottom@2x.png"; sourceTree = "<group>"; };
+		EB88B5BD1545FF4600E6A6EE /* PolaroidMiddle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PolaroidMiddle.png; sourceTree = "<group>"; };
+		EB88B5BE1545FF4600E6A6EE /* PolaroidTop@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PolaroidTop@2x.png"; sourceTree = "<group>"; };
+		EB88B5C51545FF7300E6A6EE /* Polaroid.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Polaroid.png; sourceTree = "<group>"; };
+		EB88B5C61545FF7300E6A6EE /* PolaroidBlank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PolaroidBlank.png; sourceTree = "<group>"; };
+		EB88B5C9154602B800E6A6EE /* PolaroidLowShadow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PolaroidLowShadow.png; sourceTree = "<group>"; };
+		EB88B5CA154602B800E6A6EE /* PolaroidLowShadow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PolaroidLowShadow@2x.png"; sourceTree = "<group>"; };
+		EB88B5CD1546067300E6A6EE /* Marker SD.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Marker SD.ttf"; path = "../../../../Downloads/marker_sd/Marker SD.ttf"; sourceTree = "<group>"; };
+		EB88B5CF1546068A00E6A6EE /* CoertSchrift_Romaans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = CoertSchrift_Romaans.ttf; path = ../../../../Downloads/coertschrift/CoertSchrift_Romaans.ttf; sourceTree = "<group>"; };
 		EB8AA14F1540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLProgressIndicatorViewController.h; sourceTree = "<group>"; };
 		EB8AA1501540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLProgressIndicatorViewController.m; sourceTree = "<group>"; };
 		EB8AA1791540D1F6004C6DF8 /* Small-0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Small-0.png"; sourceTree = "<group>"; };
@@ -403,6 +425,8 @@
 		EB5221F915377A3A00785F97 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				EB88B5CF1546068A00E6A6EE /* CoertSchrift_Romaans.ttf */,
+				EB88B5CD1546067300E6A6EE /* Marker SD.ttf */,
 				EB5221FA15377A3A00785F97 /* Flickrgram-Info.plist */,
 				EB5221FB15377A3A00785F97 /* InfoPlist.strings */,
 				EB5221FE15377A3A00785F97 /* main.m */,
@@ -433,6 +457,7 @@
 		EB69B200153CD46B003D8422 /* Assets */ = {
 			isa = PBXGroup;
 			children = (
+				EB88B5B91545FF4600E6A6EE /* Polaroid */,
 				EB8AA1FA1541F9FA004C6DF8 /* ClothBackground.png */,
 				EB8AA1FB1541F9FB004C6DF8 /* ClothBackground@2x.png */,
 				EB8AA1FC1541F9FB004C6DF8 /* MetalBackground.png */,
@@ -514,6 +539,22 @@
 				EB69B20F153CD46B003D8422 /* sha1.h */,
 			);
 			path = Crypto;
+			sourceTree = "<group>";
+		};
+		EB88B5B91545FF4600E6A6EE /* Polaroid */ = {
+			isa = PBXGroup;
+			children = (
+				EB88B5C9154602B800E6A6EE /* PolaroidLowShadow.png */,
+				EB88B5CA154602B800E6A6EE /* PolaroidLowShadow@2x.png */,
+				EB88B5C51545FF7300E6A6EE /* Polaroid.png */,
+				EB88B5C61545FF7300E6A6EE /* PolaroidBlank.png */,
+				EB88B5BA1545FF4600E6A6EE /* Polaroid@2x.png */,
+				EB88B5BB1545FF4600E6A6EE /* PolaroidBlank@2x.png */,
+				EB88B5BC1545FF4600E6A6EE /* PolaroidBottom@2x.png */,
+				EB88B5BD1545FF4600E6A6EE /* PolaroidMiddle.png */,
+				EB88B5BE1545FF4600E6A6EE /* PolaroidTop@2x.png */,
+			);
+			path = Polaroid;
 			sourceTree = "<group>";
 		};
 		EB8AA1781540D1F6004C6DF8 /* ProgressIndicatorSmall */ = {
@@ -746,6 +787,17 @@
 				EB8AA1FF1541F9FB004C6DF8 /* ClothBackground@2x.png in Resources */,
 				EB8AA2001541F9FB004C6DF8 /* MetalBackground.png in Resources */,
 				EB8AA2011541F9FB004C6DF8 /* MetalBackground@2x.png in Resources */,
+				EB88B5BF1545FF4600E6A6EE /* Polaroid@2x.png in Resources */,
+				EB88B5C01545FF4600E6A6EE /* PolaroidBlank@2x.png in Resources */,
+				EB88B5C11545FF4600E6A6EE /* PolaroidBottom@2x.png in Resources */,
+				EB88B5C21545FF4600E6A6EE /* PolaroidMiddle.png in Resources */,
+				EB88B5C31545FF4600E6A6EE /* PolaroidTop@2x.png in Resources */,
+				EB88B5C71545FF7300E6A6EE /* Polaroid.png in Resources */,
+				EB88B5C81545FF7300E6A6EE /* PolaroidBlank.png in Resources */,
+				EB88B5CB154602B800E6A6EE /* PolaroidLowShadow.png in Resources */,
+				EB88B5CC154602B800E6A6EE /* PolaroidLowShadow@2x.png in Resources */,
+				EB88B5CE1546067300E6A6EE /* Marker SD.ttf in Resources */,
+				EB88B5D01546068A00E6A6EE /* CoertSchrift_Romaans.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

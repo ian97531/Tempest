@@ -47,5 +47,10 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Marker SD.ttf</string>
+		<string>CoertSchrift_Romaans.ttf</string>
+	</array>
 </dict>
 </plist>

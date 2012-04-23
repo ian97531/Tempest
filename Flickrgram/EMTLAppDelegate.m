@@ -50,6 +50,7 @@
     
     [self initializePhotoSources];
     
+    
     return YES;
 }
 

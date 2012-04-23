@@ -14,6 +14,7 @@
 @interface EMTLPhotoCell : UITableViewCell
 
 @property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) UIImageView *cardImageView;
 @property (nonatomic, strong) UIView *cardView;
 @property (nonatomic, strong) UIView *backgroundView;
 @property (nonatomic, strong) UIView *backgroundGutter;

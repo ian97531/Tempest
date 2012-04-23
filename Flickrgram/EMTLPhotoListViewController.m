@@ -59,7 +59,7 @@
     [photos addObjectsFromArray:photoArray];
     
     for (EMTLPhoto *photo in photoArray) {
-        [heights addObject:[NSNumber numberWithInt:(int)((300 / photo.aspect_ratio.floatValue) + 150)]];
+        [heights addObject:[NSNumber numberWithInt:(int)((294 / photo.aspect_ratio.floatValue) + 150)]];
     }
 
     NSLog(@"Got %i more photos from %@", photoArray.count, photoSource.key);
