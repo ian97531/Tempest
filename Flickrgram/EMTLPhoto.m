@@ -30,7 +30,7 @@
 @synthesize isFavorite;
 @synthesize comments;
 @synthesize favorites;
-
+@synthesize favoritesShortString;
 
 - (id)initWithDict:(NSDictionary *)dict
 {
@@ -163,11 +163,85 @@
     if (image && comments && favorites) {
         [container setImage:image animated:animated];
         
-        [container setFavorites:favorites animated:animated];
+        [container setFavoritesString:[self favoritesShortString] animated:animated];
+        container.favoritesArray = favorites;
         [container setComments:comments animated:animated];
         
     }
     
+}
+
+- (NSString *)favoritesShortString
+{
+    if (favoritesShortString) {
+        return favoritesShortString;
+    }
+    else {
+        if (favorites.count) {
+            NSString *favoritesString = nil;
+            
+            if(favorites.count == 1) {
+                favoritesString = [NSString stringWithFormat:@"Liked by %@", [[favorites objectAtIndex:0] username]];
+                
+            }
+            else if (favorites.count > 1){
+                favoritesString = [NSString stringWithFormat:@"%i likes", favorites.count];
+                
+                int availableWidth = [container favoriteStringSize];
+                NSString *testString = @"";
+                NSString *formatString = @"Liked by %@ and %i other%@";
+                NSString *fillerString = [[favorites objectAtIndex:0] username];
+                NSString *endString = @"s";
+                int remaining = favorites.count - 1;
+                if (remaining == 1) {
+                    endString = @"";
+                }
+                
+                testString = [NSString stringWithFormat:formatString, fillerString, remaining, endString];
+                
+                for (int i = 1; i < favorites.count && i < 8; i++) {
+                    
+                    if ([testString sizeWithFont:[container favoritesFont]].width < availableWidth) {
+                        favoritesString = testString;
+                        
+                        if (remaining == 1) {
+                            testString = [NSString stringWithFormat:@"Liked by %@ and %@", fillerString, [favorites.lastObject username]];
+                            if ([testString sizeWithFont:[container favoritesFont]].width < availableWidth) {
+                                favoritesString = testString;   
+                            }
+                            break;
+                        }
+                        
+                        fillerString = [NSString stringWithFormat:@"%@, %@", fillerString, [[favorites objectAtIndex:i] username]];
+                        remaining--;
+                        if (remaining == 1) {
+                            endString = @"";
+                        }
+                        testString = [NSString stringWithFormat:formatString, fillerString, remaining, endString];
+                        
+                    }
+                    else {
+                        break;
+                    }
+                    
+                }
+                                
+            }
+            else {
+                favoritesString = @"0 likes";
+            }
+            
+            favoritesShortString = favoritesString;
+            
+        }
+        else {
+            
+            favoritesShortString = @"0 likes";
+            
+        }
+        
+        return favoritesShortString;
+    }
 }
 
 - (void)removeFromCell:(EMTLPhotoCell *)cell 

@@ -39,6 +39,7 @@
 @property (nonatomic, strong) id <PhotoSource> source;
 @property (nonatomic, strong) NSMutableData *imageData;
 @property (nonatomic, strong) NSURLConnection *connection;
+@property (nonatomic, strong) NSString *favoritesShortString;
 
 - (id)initWithDict:(NSDictionary *)dict;
 - (void)loadImage;

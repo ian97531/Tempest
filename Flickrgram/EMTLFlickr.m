@@ -50,7 +50,7 @@ double const kSecondsInAYear = 7776500;
         
         minYear = [minComponents year];
         minMonth = [minComponents month];
-        minDay = [minComponents day] + 1;
+        minDay = [minComponents day];
                 
         expired = NO;
         loading = NO;
