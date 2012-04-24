@@ -65,6 +65,8 @@
 		EB88B5CC154602B800E6A6EE /* PolaroidLowShadow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5CA154602B800E6A6EE /* PolaroidLowShadow@2x.png */; };
 		EB88B5CE1546067300E6A6EE /* Marker SD.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5CD1546067300E6A6EE /* Marker SD.ttf */; };
 		EB88B5D01546068A00E6A6EE /* CoertSchrift_Romaans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5CF1546068A00E6A6EE /* CoertSchrift_Romaans.ttf */; };
+		EB88B5EE1546247D00E6A6EE /* PolaroidTextured4.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5EC1546247D00E6A6EE /* PolaroidTextured4.png */; };
+		EB88B5EF1546247D00E6A6EE /* PolaroidTextured4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5ED1546247D00E6A6EE /* PolaroidTextured4@2x.png */; };
 		EB8AA1511540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8AA1501540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m */; };
 		EB8AA18B1540D1F6004C6DF8 /* Small-0.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA1791540D1F6004C6DF8 /* Small-0.png */; };
 		EB8AA18C1540D1F6004C6DF8 /* Small-0@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA17A1540D1F6004C6DF8 /* Small-0@2x.png */; };
@@ -242,6 +244,8 @@
 		EB88B5CA154602B800E6A6EE /* PolaroidLowShadow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PolaroidLowShadow@2x.png"; sourceTree = "<group>"; };
 		EB88B5CD1546067300E6A6EE /* Marker SD.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Marker SD.ttf"; path = "../../../../Downloads/marker_sd/Marker SD.ttf"; sourceTree = "<group>"; };
 		EB88B5CF1546068A00E6A6EE /* CoertSchrift_Romaans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = CoertSchrift_Romaans.ttf; path = ../../../../Downloads/coertschrift/CoertSchrift_Romaans.ttf; sourceTree = "<group>"; };
+		EB88B5EC1546247D00E6A6EE /* PolaroidTextured4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PolaroidTextured4.png; sourceTree = "<group>"; };
+		EB88B5ED1546247D00E6A6EE /* PolaroidTextured4@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PolaroidTextured4@2x.png"; sourceTree = "<group>"; };
 		EB8AA14F1540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLProgressIndicatorViewController.h; sourceTree = "<group>"; };
 		EB8AA1501540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLProgressIndicatorViewController.m; sourceTree = "<group>"; };
 		EB8AA1791540D1F6004C6DF8 /* Small-0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Small-0.png"; sourceTree = "<group>"; };
@@ -544,6 +548,8 @@
 		EB88B5B91545FF4600E6A6EE /* Polaroid */ = {
 			isa = PBXGroup;
 			children = (
+				EB88B5EC1546247D00E6A6EE /* PolaroidTextured4.png */,
+				EB88B5ED1546247D00E6A6EE /* PolaroidTextured4@2x.png */,
 				EB88B5C9154602B800E6A6EE /* PolaroidLowShadow.png */,
 				EB88B5CA154602B800E6A6EE /* PolaroidLowShadow@2x.png */,
 				EB88B5C51545FF7300E6A6EE /* Polaroid.png */,
@@ -798,6 +804,8 @@
 				EB88B5CC154602B800E6A6EE /* PolaroidLowShadow@2x.png in Resources */,
 				EB88B5CE1546067300E6A6EE /* Marker SD.ttf in Resources */,
 				EB88B5D01546068A00E6A6EE /* CoertSchrift_Romaans.ttf in Resources */,
+				EB88B5EE1546247D00E6A6EE /* PolaroidTextured4.png in Resources */,
+				EB88B5EF1546247D00E6A6EE /* PolaroidTextured4@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

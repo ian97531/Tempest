@@ -20,6 +20,7 @@
 @property (nonatomic, strong) NSMutableArray *photos;
 @property (nonatomic, strong) NSMutableArray *heights;
 @property (nonatomic, strong) UITableView *table;
+@property (nonatomic, strong) NSIndexPath *currentIndex;
 @property (nonatomic, strong) EMTLProgressIndicatorViewController *spinner;
 
 - (void)addSource:(id <PhotoSource>)source;

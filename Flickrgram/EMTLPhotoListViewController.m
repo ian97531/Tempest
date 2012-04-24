@@ -20,6 +20,7 @@
 @synthesize heights;
 @synthesize table;
 @synthesize spinner;
+@synthesize currentIndex;
 
 - (id)init
 {
@@ -65,7 +66,10 @@
     NSLog(@"Got %i more photos from %@", photoArray.count, photoSource.key);
     
     [table reloadData];
+    [self preload];
 }
+
+
 
 
 - (void)photoSource:(id <PhotoSource>)photoSource encounteredAnError:(NSError *)error
@@ -146,16 +150,8 @@
     cell.ownerLabel.text = photo.username;
     cell.dateLabel.text = [photo datePostedString];
     
+    currentIndex = indexPath;
     
-    // Preload the next 3 images if they exist.
-    for (int i = 1; i < 3; i++) {
-        if(indexPath.row + i < photos.count) {
-            [[photos objectAtIndex:(indexPath.row + i)] loadImage];
-        }
-        else {
-            break;
-        }
-    }
     
     if(indexPath.row > photos.count - 10) {
         [[sources objectAtIndex:0] morePhotos];
@@ -164,6 +160,39 @@
     return cell;
 }
 
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    [self preloadImages:15];
+    
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    [self preloadImages:15];
+}
+
+
+- (void) preload
+{
+    [self preloadImages:5];
+}
+
+- (void) preloadImages:(int)num
+{
+    // Preload the next 3 images if they exist.
+    for (int i = 1; i < num; i++) {
+        if(currentIndex.row + i < photos.count) {
+            [[photos objectAtIndex:(currentIndex.row + i)] loadImage];
+        }
+        else {
+            break;
+        }
+    }
+    
+    if(currentIndex.row > photos.count - 20) {
+        [[sources objectAtIndex:0] morePhotos];
+    }
+}
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

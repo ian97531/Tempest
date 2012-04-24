@@ -50,7 +50,7 @@
         cardView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 405)];
         cardView.backgroundColor = [UIColor clearColor];
         
-        UIImage *cardImage = [[UIImage imageNamed:@"PolaroidLowShadow.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(38, 0, 70, 0)];
+        UIImage *cardImage = [[UIImage imageNamed:@"PolaroidTextured4.png"] resizableImageWithCapInsets:UIEdgeInsetsMake(38, 0, 70, 0)];
         
         cardImageView = [[UIImageView alloc] initWithImage:cardImage];
         cardImageView.frame = CGRectMake(0, 0, 320, 405);
@@ -72,7 +72,7 @@
         imageView.opaque = NO;
         imageView.layer.cornerRadius = 3;
         imageView.layer.borderWidth = 1;
-        imageView.layer.borderColor = [UIColor colorWithWhite:0.8 alpha:1].CGColor;
+        imageView.layer.borderColor = [UIColor colorWithWhite:0.9 alpha:1].CGColor;
         imageView.contentMode = UIViewContentModeScaleAspectFill;
 
         
@@ -153,6 +153,7 @@
 
 - (void)setFavorites:(NSArray *)favorites animated:(BOOL)animated
 {
+    
     if (favorites.count) {
         
         NSString *favoritesString = nil;

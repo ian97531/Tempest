@@ -66,7 +66,7 @@ double const kSecondsInAYear = 7776500;
 
 - (void)getPhotoFavorites:(NSString *)photo_id page:(int)page delegate:(id)theDelegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector
 {
-    NSLog(@"Requesting page %i of favorites for photo_id %@ from %@.", page, photo_id, key);
+    //NSLog(@"Requesting page %i of favorites for photo_id %@ from %@.", page, photo_id, key);
     
     
     NSMutableDictionary *args = [NSMutableDictionary dictionaryWithCapacity:4];
@@ -94,7 +94,7 @@ double const kSecondsInAYear = 7776500;
 
 - (void)getPhotoComments:(NSString *)photo_id delegate:(id)theDelegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector
 {
-    NSLog(@"Requesting comments for photo_id %@ from %@.", photo_id, key);
+    //NSLog(@"Requesting comments for photo_id %@ from %@.", photo_id, key);
     
     
     NSMutableDictionary *args = [NSMutableDictionary dictionaryWithCapacity:4];
@@ -358,7 +358,6 @@ double const kSecondsInAYear = 7776500;
 
 - (NSDictionary *)extractJSONFromData:(NSData *)data withError:(NSError **) error;
 {
-    NSLog(@"Extracting JSON response from %@", key);
     
         
         NSDictionary * loginInfo = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:error];
@@ -543,7 +542,7 @@ double const kSecondsInAYear = 7776500;
 - (void)callMethod:(NSString *)method withArguments:(NSDictionary *)args delegate:(id)theDelegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector
 {
     
-    NSLog(@"making a new method call for %@ for service: %@.", method, key);
+    //NSLog(@"making a new method call for %@ for service: %@.", method, key);
     NSURL *url = [NSURL URLWithString:kFlickrAPICallURL];
     
     OAMutableURLRequest *request = [[OAMutableURLRequest alloc] initWithURL:url

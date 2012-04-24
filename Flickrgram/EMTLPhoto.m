@@ -304,7 +304,6 @@
 
 - (void)getPhotoFavorites:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
 {
-    NSLog(@"Got favorites");
     
     if(ticket.didSucceed) {
         favorites = [[source extractFavorites:data forPhoto:self] mutableCopy];
@@ -328,7 +327,6 @@
 
 - (void)getPhotoComments:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
 {
-    NSLog(@"Got comments");
     
     if (ticket.didSucceed) {
         comments = [[source extractComments:data] mutableCopy];

@@ -96,7 +96,6 @@
         value = theValue;
     }
     else {
-        NSLog(@"Trying to set the inicator to a lower value of %f when it's currently %f", theValue, value);
         return;
     }
         

@@ -84,7 +84,7 @@
     
     [request prepare];
     
-    NSLog(@"Calling: %@", request.URL.absoluteString);
+    //NSLog(@"Calling: %@", request.URL.absoluteString);
 
 	connection = [[NSURLConnection alloc] initWithRequest:aRequest delegate:self];
 }
