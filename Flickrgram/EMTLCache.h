@@ -9,61 +9,72 @@
 #import <Foundation/Foundation.h>
 
 @class EMTLCache;
-typedef long long EMTLCacheRequestIdentifier;
+@class EMTLCachedObject;
+@class EMTLCacheRequest;
+
+typedef enum {
+    EMTLDictionary,
+    EMTLImage
+}EMTLDataType;
 
 @protocol EMTLCacheClient <NSObject>
 
 @required
-- (void)retreivedObject:(id)forDomain:(NSString *)domain key:(NSString *)key request_id:(EMTLCacheRequestIdentifier)request_id;
-- (void)unableToRetrieveObjectForDomain:(NSString *)domain key:(NSString *)key request_id:(EMTLCacheRequestIdentifier)request_id;
+- (void)retrievedObject:(id)object ForRequest:(EMTLCacheRequest *)request;
+- (void)unableToRetrieveObjectForRequest:(EMTLCacheRequest *)request;
 
 @optional
-- (void)fetchedBytes:(int)bytes ofTotal:(int)total forDomain:(NSString *)domain key:(NSString *)key request_id:(EMTLCacheRequestIdentifier)request_id;
+- (void)fetchedBytes:(int)bytes ofTotal:(int)total forRequest:(EMTLCacheRequest *)request;
 
 @end
+
 
 @protocol EMTLCacheHandler <NSObject>
 
-- (void)fetchObjectForDomain:(NSString *)domain key:(NSString *)key request_id:(EMTLCacheRequestIdentifier)request_id target:(EMTLCache *)cache;
-- (void)cancelRequest:(EMTLCacheRequestIdentifier)request_identifier;
+@required
+- (void)fetchObjectForRequest:(EMTLCacheRequest *)request;
+
+@optional
+- (void)cancelRequest:(EMTLCacheRequest *)request;
 
 @end
+
 
 @protocol EMTLCachePostProcessor <NSObject>
 
-- (id)processObjectForDomain:(NSString *)domain key:(NSString *)key request_id:(EMTLCacheRequestIdentifier)request_id;
+- (id)processObject:(id)object forRequest:(EMTLCacheRequest *)request;
 
 @end
+
+
 
 @interface EMTLCache : NSObject
 
 {
     NSCache *memoryCache;
+    NSMutableDictionary *diskAccessRecord;
     NSMutableDictionary *domainHandlers;
-    NSMutableDictionary *requests;
-    NSMutableDictionary *accessRecord;
-    NSMutableArray *pauseRequests;
+    NSMutableDictionary *postProcessors;
+    NSMutableArray *invocations;
+    NSMutableArray *pausingObjects;
+    NSString *cacheDir;
     
     BOOL paused;
 }
 
-
 + (id)cache;
-- (void)setObject:(id)object forDomain:(NSString *)domain key:(NSString *)key;
-
-// Methods for EMTLCacheClients
-- (EMTLCacheRequestIdentifier)getObjectForDomain:(NSString *)domain key:(NSString *)key toTarget:(id <EMTLCacheClient>)target;
-- (EMTLCacheRequestIdentifier)getObjectForDomain:(NSString *)domain key:(NSString *)key toTarget:(id <EMTLCacheClient>)target withHandler:(id <EMTLCacheHandler>)handler;
-- (EMTLCacheRequestIdentifier)getObjectForDomain:(NSString *)domain key:(NSString *)key toTarget:(id <EMTLCacheClient>)target withPostProcessor:(id <EMTLCachePostProcessor>)processor;
-- (EMTLCacheRequestIdentifier)getObjectForDomain:(NSString *)domain key:(NSString *)key toTarget:(id <EMTLCacheClient>)target withHandler:(id <EMTLCacheHandler>)handler withPostProcessor:(id <EMTLCachePostProcessor>)processor;
-- (void)cancelRequest:(EMTLCacheRequestIdentifier)request_identifier;
+- (id)init;
+- (void)setObject:(id <NSCoding>)object forDomain:(NSString *)domain forKey:(NSString *)key type:(EMTLDataType)type;
+- (id)objectInMemoryForRequest:(EMTLCacheRequest *)request;
+- (BOOL)objectOnDiskForRequest:(EMTLCacheRequest *)request;
+- (void)execute:(void (^)(void))block;
+- (void)clearQueue;
 
 // Methods for EMTLCacheHandlers and EMTLCachePostProcessors
 - (void)setHandler:(id <EMTLCacheHandler>)handler forDomain:(NSString *)domain;
 - (void)setPostProcessor:(id <EMTLCachePostProcessor>)processor forDomain:(NSString *)domain;
-- (void)fetchedObject:(id)object forDomain:(NSString *)domain key:(NSString *)key request_id:(EMTLCacheRequestIdentifier)request_id;
-- (void)fetchedBytes:(int)bytes ofTotal:(int)total forDomain:(NSString *)domain key:(NSString *)key request_id:(EMTLCacheRequestIdentifier)request_id;
-- (void)unableToFetchObjectForDomain:(NSString *)domain key:(NSString *)key request_id:(EMTLCacheRequestIdentifier)request_id;
+- (id <EMTLCacheHandler>)handlerForDomain:(NSString *)domain;
+- (id <EMTLCachePostProcessor>)postProcessorForDomain:(NSString *)domain;
 
 // Methods for UI Controllers
 - (void)requestPause:(id)object;
@@ -71,9 +82,28 @@ typedef long long EMTLCacheRequestIdentifier;
 
 @end
 
-@interface EMTLCachedObject : NSObject
 
-@property (nonatomic, strong) id object;
-@property (nonatomic, strong) NSDate *date_created;
+
+@interface EMTLCacheRequest : NSObject <NSCopying>
+
+@property (nonatomic, strong) NSString *domain;
+@property (nonatomic, strong) NSString *key;
+@property (nonatomic, strong) NSDate *newerThan;
+@property (nonatomic) EMTLDataType type;
+@property (nonatomic, assign) id <EMTLCacheClient> target;
+@property (nonatomic, assign) id <EMTLCacheHandler> handler;
+@property (nonatomic, assign) id <EMTLCachePostProcessor> processor;
+@property (nonatomic, strong, readonly) EMTLCache *cache;
+@property (nonatomic, strong) NSDictionary *userInfo;
+
+- (id)initWithDomain:(NSString *)domain key:(NSString *)key type:(EMTLDataType)type;
+- (void)execute;
+- (void)cancel;
+
+// For EMTLHandlers
+- (void)fetchedObject:(id)object;
+- (void)fetchedBytes:(int)bytes ofTotal:(int)total;
+- (void)unableToFetchObject;
+- (void)fetchedObjectFromDisk:(id)object withDate:(NSDate *)date;
 
 @end

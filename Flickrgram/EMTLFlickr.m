@@ -12,6 +12,7 @@
 #import "EMTLComment.h"
 #import "EMTLFavorite.h"
 
+
 NSString *const kFlickrRequestTokenURL = @"http://www.flickr.com/services/oauth/request_token";
 NSString *const kFlickrAuthorizationURL = @"http://www.flickr.com/services/oauth/authorize";
 NSString *const kFlickrAccessTokenURL = @"http://www.flickr.com/services/oauth/access_token";
@@ -30,6 +31,7 @@ double const kSecondsInAYear = 7776500;
 @synthesize user_id;
 @synthesize username;
 @synthesize expired;
+@synthesize requests;
 
 - (id)init
 {
@@ -54,6 +56,14 @@ double const kSecondsInAYear = 7776500;
                 
         expired = NO;
         loading = NO;
+        
+        requests = [NSMutableDictionary dictionaryWithCapacity:15];
+        
+        [[EMTLCache cache] setHandler:self forDomain:@"flickr-comments"];
+        [[EMTLCache cache] setPostProcessor:self forDomain:@"flickr-comments"];
+        [[EMTLCache cache] setHandler:self forDomain:@"flickr-favorites"];
+        [[EMTLCache cache] setPostProcessor:self forDomain:@"flickr-favorites"];
+        
     }
     
     return self;
@@ -307,7 +317,7 @@ double const kSecondsInAYear = 7776500;
     
 }
 
-- (NSArray *)extractFavorites:(NSData *)data forPhoto:(EMTLPhoto *)photo;
+- (NSArray *)extractFavorites:(NSData *)data;
 {
     NSError *error;
     NSDictionary *favoritesDict = [self extractJSONFromData:data withError:&error];
@@ -337,10 +347,6 @@ double const kSecondsInAYear = 7776500;
             }
                         
             [favorites addObject:[[EMTLFavorite alloc] initWithDict:favoriteDict]];
-            
-            if ([nsid isEqualToString:user_id]) {
-                photo.isFavorite = YES;
-            }
             
             
         }
@@ -589,5 +595,30 @@ double const kSecondsInAYear = 7776500;
                   didFailSelector:failSelector];
 
 }
+
+- (void)fetchObjectForRequest:(EMTLCacheRequest *)request
+{
+    
+}
+
+
+- (void)cancelRequest:(EMTLCacheRequest *)request
+{
+    
+}
+
+// EMTLCachePostProcessor method
+- (id)processObject:(id)object forRequest:(EMTLCacheRequest *)request
+{
+    if([request.domain isEqualToString:@"flickr-favorites"]) {
+        return [self extractFavorites:object];
+    }
+    else if ([request.domain isEqualToString:@"flickr-comments"]){
+        return [self extractComments:object];
+    }
+    return nil;
+}
+
+
 
 @end

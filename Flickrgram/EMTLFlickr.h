@@ -8,10 +8,11 @@
 
 #import <Foundation/Foundation.h>
 #import "EMTLPhotoSource.h"
+#import "EMTLCache.h"
 
 @class EMTLPhoto;
 
-@interface EMTLFlickr : NSObject <PhotoSource>
+@interface EMTLFlickr : NSObject <PhotoSource, EMTLCacheHandler, EMTLCachePostProcessor>
 
 {
     int currentPage;
@@ -40,6 +41,7 @@
 @property (readonly, strong) NSString *user_id;
 @property (readonly, strong) NSString *username;
 @property (readonly) BOOL expired;
+@property (nonatomic, strong) NSMutableDictionary *requests;
 
 - (void)authorize;
 - (void)authorizedWithVerifier:(NSString *)verfier;
@@ -68,8 +70,15 @@
 
 - (NSURL *)defaultUserIconURL;
 - (NSArray *)extractComments:(NSData *)data;
-- (NSArray *)extractFavorites:(NSData *)data forPhoto:(EMTLPhoto *)photo;
+- (NSArray *)extractFavorites:(NSData *)data;
 
 - (NSDictionary *)extractJSONFromData:(NSData *)data withError:(NSError **) error;
+
+// EMTLCacheHandler methods
+- (void)fetchObjectForRequest:(EMTLCacheRequest *)request;
+- (void)cancelRequest:(EMTLCacheRequest *)request;
+
+// EMTLCachePostProcessor method
+- (id)processObject:(id)object forRequest:(EMTLCacheRequest *)request;
 
 @end
