@@ -50,6 +50,13 @@
     
     [self initializePhotoSources];
     
+    for (NSString *name in [UIFont familyNames]) {
+        NSLog(@"Family name : %@", name);
+        for (NSString *font in [UIFont fontNamesForFamilyName:name]) {
+            NSLog(@"Font name : %@", font);             
+        }
+    }
+    
     
     return YES;
 }

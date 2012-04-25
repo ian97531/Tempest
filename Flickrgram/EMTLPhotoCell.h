@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "EMTLPhoto.h"
 
-@class EMTLPhoto;
 @class EMTLProgressIndicatorViewController;
 
-@interface EMTLPhotoCell : UITableViewCell <UITableViewDelegate, UITableViewDataSource>
+
+
+@interface EMTLPhotoCell : UITableViewCell <UITableViewDelegate, UITableViewDataSource, EMTLPhotoDelegate>
 
 @property (nonatomic, strong) UIImageView *imageView;
 @property (nonatomic, strong) UIImageView *cardImageView;
@@ -37,17 +39,11 @@
 @property (nonatomic, strong) EMTLPhoto* photo;
 @property (nonatomic, strong) EMTLProgressIndicatorViewController *indicator;
 
-- (void)setImage:(UIImage *)image animated:(BOOL)animated;
-- (void)setImageHeight:(int)height;
-- (void)setFavorites:(NSArray *)favorites;
-- (void)setFavoritesString:(NSString *)favoritesString animated:(BOOL)animated;
-- (void)setComments:(NSArray *)comments animated:(BOOL)animated;
+- (void)loadPhoto:(EMTLPhoto *)photo;
 - (void)switchToFavoritesView;
 - (void)switchToCommentsView;
 - (void)flipPhoto;
-- (float)favoriteStringSize;
 - (UIFont *)favoritesFont;
-
 
 // UITableViewDelegate methods
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -55,5 +51,17 @@
 // UITableViewDataSource methods
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
+
+// EMTLPhotoDelegate methods
+- (void)setImage:(UIImage *)image;
+- (void)setFavoritesString:(NSString *)favoritesString;
+- (void)setCommentsString:(NSString *)commentsString;
+- (void)setFavorites:(NSArray *)favorites;
+- (void)setComments:(NSArray *)comments;
+- (void)setProgressValue:(float)value;
++ (float)favoritesStringWidth;
++ (UIFont *)favoritesFont;
++ (float)commentsStringWidth;
++ (UIFont *)commentsFont;
 
 @end

@@ -8,11 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum {
+    kSmallProgressIndicator,
+    kLargeProgressIndicator,
+} EMTLProgressIndicatorSize;
 
 @interface EMTLProgressIndicatorViewController : UIViewController
 {
     NSArray *frames;
-    BOOL size;
+    EMTLProgressIndicatorSize size;
     BOOL spinner;
     UIImageView *indicator;
     UILabel *percentage;
@@ -25,12 +29,15 @@
 @property (nonatomic) float value;
 //@property (nonatomic, strong) UILabel *title;
 
-- (id)initWithSmallSize:(BOOL)smallSize;
++ (id)indicatorWithSize:(EMTLProgressIndicatorSize)size;
+
+- (id)initWithSize:(EMTLProgressIndicatorSize)size;
 - (void)spin;
 - (void)spinAtRate:(int)rate;
 - (void)stop;
 - (void)nextSpinState;
 - (void)resetValue;
+- (void)availableForReuse;
 
 //- (void)showPercentage;
 

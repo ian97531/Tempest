@@ -49,6 +49,10 @@
 	</array>
 	<key>UIAppFonts</key>
 	<array>
+		<string>billbonessans.ttf</string>
+		<string>Whatever.ttf</string>
+		<string>OMGWriteLikeWilliam.ttf</string>
+		<string>Agent _C.ttf</string>
 		<string>Marker SD.ttf</string>
 		<string>CoertSchrift_Romaans.ttf</string>
 	</array>

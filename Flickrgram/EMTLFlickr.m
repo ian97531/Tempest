@@ -50,7 +50,7 @@ double const kSecondsInAYear = 7776500;
         
         minYear = [minComponents year];
         minMonth = [minComponents month];
-        minDay = [minComponents day];
+        minDay = [minComponents day] + 2;
                 
         expired = NO;
         loading = NO;
@@ -137,7 +137,7 @@ double const kSecondsInAYear = 7776500;
         [args setObject:@"all" 
                  forKey:@"contacts"];
         
-        [args setObject:@"date_taken,date_upload,owner_name,description,o_dims" 
+        [args setObject:@"date_upload,owner_name,o_dims,last_update" 
                  forKey:@"extras"];
         
         [args setObject:@"date-posted-desc"
@@ -215,20 +215,15 @@ double const kSecondsInAYear = 7776500;
                 NSString *secret = [photoDict objectForKey:@"secret"];
                 NSString *photo_id = [photoDict objectForKey:@"id"];
                 
-                NSURL *URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://farm%@.staticflickr.com/%@/%@_%@_%@.jpg", farm, server, photo_id, secret, @"b"]];
-                NSURL *smallURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://farm%@.staticflickr.com/%@/%@_%@_%@.jpg", farm, server, photo_id, secret, @"z"]];
+                NSURL *image_URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://farm%@.staticflickr.com/%@/%@_%@_%@.jpg", farm, server, photo_id, secret, @"z"]];
                 
-                [photoDict setObject:URL forKey:@"url"];
-                [photoDict setObject:smallURL forKey:@"small_url"];
+                [photoDict setObject:image_URL forKey:@"url"];
                 
                 // Get the dates
-                
-                NSDateFormatter* dateFormatter = [[NSDateFormatter alloc] init];
-                dateFormatter.dateFormat = @"yyyy-MM-dd HH:mm:ss";
-                NSDate* dateTaken = [dateFormatter dateFromString:[photoDict objectForKey:@"datetaken"]];
+                NSDate* lastupdate = [NSDate dateWithTimeIntervalSince1970:[[photoDict objectForKey:@"lastupdate"] doubleValue]];
                 NSDate* datePosted = [NSDate dateWithTimeIntervalSince1970:[[photoDict objectForKey:@"dateupload"] doubleValue]];
                 
-                [photoDict setObject:dateTaken forKey:@"date_taken"];
+                [photoDict setObject:lastupdate forKey:@"date_updated"];
                 [photoDict setObject:datePosted forKey:@"date_posted"];
                 
                 // Set the aspect ratio

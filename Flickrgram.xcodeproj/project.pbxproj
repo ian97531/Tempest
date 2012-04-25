@@ -67,6 +67,11 @@
 		EB88B5D01546068A00E6A6EE /* CoertSchrift_Romaans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5CF1546068A00E6A6EE /* CoertSchrift_Romaans.ttf */; };
 		EB88B5EE1546247D00E6A6EE /* PolaroidTextured4.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5EC1546247D00E6A6EE /* PolaroidTextured4.png */; };
 		EB88B5EF1546247D00E6A6EE /* PolaroidTextured4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5ED1546247D00E6A6EE /* PolaroidTextured4@2x.png */; };
+		EB88B5F21547357C00E6A6EE /* EMTLCache.m in Sources */ = {isa = PBXBuildFile; fileRef = EB88B5F11547357C00E6A6EE /* EMTLCache.m */; };
+		EB88B5F81547811600E6A6EE /* Agent _C.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5F71547811600E6A6EE /* Agent _C.ttf */; };
+		EB88B5FA1547826300E6A6EE /* OMGWriteLikeWilliam.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5F91547826300E6A6EE /* OMGWriteLikeWilliam.ttf */; };
+		EB88B5FC154782BD00E6A6EE /* billbonessans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5FB154782BD00E6A6EE /* billbonessans.ttf */; };
+		EB88B5FE154782C400E6A6EE /* Whatever.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5FD154782C400E6A6EE /* Whatever.ttf */; };
 		EB8AA1511540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8AA1501540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m */; };
 		EB8AA18B1540D1F6004C6DF8 /* Small-0.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA1791540D1F6004C6DF8 /* Small-0.png */; };
 		EB8AA18C1540D1F6004C6DF8 /* Small-0@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA17A1540D1F6004C6DF8 /* Small-0@2x.png */; };
@@ -246,6 +251,12 @@
 		EB88B5CF1546068A00E6A6EE /* CoertSchrift_Romaans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = CoertSchrift_Romaans.ttf; path = ../../../../Downloads/coertschrift/CoertSchrift_Romaans.ttf; sourceTree = "<group>"; };
 		EB88B5EC1546247D00E6A6EE /* PolaroidTextured4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PolaroidTextured4.png; sourceTree = "<group>"; };
 		EB88B5ED1546247D00E6A6EE /* PolaroidTextured4@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PolaroidTextured4@2x.png"; sourceTree = "<group>"; };
+		EB88B5F01547357B00E6A6EE /* EMTLCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLCache.h; sourceTree = "<group>"; };
+		EB88B5F11547357C00E6A6EE /* EMTLCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLCache.m; sourceTree = "<group>"; };
+		EB88B5F71547811600E6A6EE /* Agent _C.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Agent _C.ttf"; path = "../../../../Downloads/Agent _C.ttf"; sourceTree = "<group>"; };
+		EB88B5F91547826300E6A6EE /* OMGWriteLikeWilliam.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = OMGWriteLikeWilliam.ttf; path = ../../../../Downloads/OMGWriteLikeWilliam.ttf; sourceTree = "<group>"; };
+		EB88B5FB154782BD00E6A6EE /* billbonessans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = billbonessans.ttf; path = ../../../../Downloads/billbonessans.ttf; sourceTree = "<group>"; };
+		EB88B5FD154782C400E6A6EE /* Whatever.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Whatever.ttf; path = ../../../../Downloads/Whatever.ttf; sourceTree = "<group>"; };
 		EB8AA14F1540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLProgressIndicatorViewController.h; sourceTree = "<group>"; };
 		EB8AA1501540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLProgressIndicatorViewController.m; sourceTree = "<group>"; };
 		EB8AA1791540D1F6004C6DF8 /* Small-0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Small-0.png"; sourceTree = "<group>"; };
@@ -417,6 +428,8 @@
 				EBAE52601544FCF300288C5E /* EMTLComment.m */,
 				EB8AA14F1540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.h */,
 				EB8AA1501540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m */,
+				EB88B5F01547357B00E6A6EE /* EMTLCache.h */,
+				EB88B5F11547357C00E6A6EE /* EMTLCache.m */,
 				EB850DAE153E0A710073BBAE /* APISecrets.h */,
 				EB52220415377A3A00785F97 /* Flickrgram.xcdatamodeld */,
 				EB69B201153CD46B003D8422 /* OAuthConsumer */,
@@ -429,6 +442,10 @@
 		EB5221F915377A3A00785F97 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				EB88B5FD154782C400E6A6EE /* Whatever.ttf */,
+				EB88B5FB154782BD00E6A6EE /* billbonessans.ttf */,
+				EB88B5F91547826300E6A6EE /* OMGWriteLikeWilliam.ttf */,
+				EB88B5F71547811600E6A6EE /* Agent _C.ttf */,
 				EB88B5CF1546068A00E6A6EE /* CoertSchrift_Romaans.ttf */,
 				EB88B5CD1546067300E6A6EE /* Marker SD.ttf */,
 				EB5221FA15377A3A00785F97 /* Flickrgram-Info.plist */,
@@ -806,6 +823,10 @@
 				EB88B5D01546068A00E6A6EE /* CoertSchrift_Romaans.ttf in Resources */,
 				EB88B5EE1546247D00E6A6EE /* PolaroidTextured4.png in Resources */,
 				EB88B5EF1546247D00E6A6EE /* PolaroidTextured4@2x.png in Resources */,
+				EB88B5F81547811600E6A6EE /* Agent _C.ttf in Resources */,
+				EB88B5FA1547826300E6A6EE /* OMGWriteLikeWilliam.ttf in Resources */,
+				EB88B5FC154782BD00E6A6EE /* billbonessans.ttf in Resources */,
+				EB88B5FE154782C400E6A6EE /* Whatever.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -871,6 +892,7 @@
 				EB8AA1511540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m in Sources */,
 				EBAE525D1544FCE900288C5E /* EMTLFavorite.m in Sources */,
 				EBAE52611544FCF300288C5E /* EMTLComment.m in Sources */,
+				EB88B5F21547357C00E6A6EE /* EMTLCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

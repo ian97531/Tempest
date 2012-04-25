@@ -19,23 +19,79 @@
 @synthesize value;
 //@synthesize title;
 
-- (id)initWithSmallSize:(BOOL)smallSize
+
+static NSMutableArray *availableSmallIndicators;
+static NSMutableArray *usedSmallIndicators;
+static NSArray *smallFrames;
+static NSArray *largeFrames;
+
++ (id)indicatorWithSize:(EMTLProgressIndicatorSize)size
 {
-    self = [super init];
-    if (self) {
-        
-        NSString *sizeString = (smallSize) ? @"Small" : @"Large";
-        NSMutableArray *theFrames = [NSMutableArray arrayWithCapacity:9];
+    
+    EMTLProgressIndicatorViewController *indicator;
+    
+    if (!availableSmallIndicators) {
+        availableSmallIndicators = [NSMutableArray arrayWithCapacity:4];
+        usedSmallIndicators = [NSMutableArray arrayWithCapacity:4];
+    }
+    
+    if (!smallFrames) {
+        NSMutableArray *theFrames = [NSMutableArray arrayWithCapacity:16];
         
         for (int i = 0; i < 16; i++) {
-            UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%@-%i.png", sizeString, i]];
+            UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%@-%i.png", @"Small", i]];
             [theFrames addObject:image];
         }
         
-        frames = [NSArray arrayWithArray:theFrames];
+        smallFrames = [NSArray arrayWithArray:theFrames];
+        
+    }
+    
+    if (!largeFrames) {
+        NSMutableArray *theFrames = [NSMutableArray arrayWithCapacity:16];
+        
+        for (int i = 0; i < 16; i++) {
+            UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%@-%i.png", @"Large", i]];
+            [theFrames addObject:image];
+        }
+        
+        largeFrames = [NSArray arrayWithArray:theFrames];
+        
+    }
+    
+    if (size == kSmallProgressIndicator) {
+        
+        @synchronized(availableSmallIndicators) {
+            if(availableSmallIndicators.count) {
+                indicator = [availableSmallIndicators lastObject];
+                [availableSmallIndicators removeLastObject];
+            }
+            else {
+                indicator = [[EMTLProgressIndicatorViewController alloc] initWithSize:kSmallProgressIndicator];
+            }
+            
+        }
+        
+        return indicator;
+        
+    }
+    else {
+        
+        return [[EMTLProgressIndicatorViewController alloc] initWithSize:kLargeProgressIndicator];
+    }
+    
+}
+
+
+- (id)initWithSize:(EMTLProgressIndicatorSize)theSize
+{
+    self = [super init];
+    if (self) {
+                
         value = 0;
         currentFrame = 0;
-        size = smallSize;
+        size = theSize;
+        frames = (theSize == kSmallProgressIndicator) ? smallFrames : largeFrames;
     }
     return self;
 }
@@ -74,8 +130,7 @@
 - (void)loadView
 {
     
-    CGRect theFrame = (size) ? CGRectMake(0, 0, 100, 100) : CGRectMake(0, 0, 150, 150);
-    //CGRect indicatorFrame = (size) ? CGRectMake(0, 0, 100, 100) : CGRectMake(0, 0, 200, 200);
+    CGRect theFrame = (size == kSmallProgressIndicator) ? CGRectMake(0, 0, 100, 100) : CGRectMake(0, 0, 150, 150);
     UIView *parentView = [[UIView alloc] initWithFrame:theFrame];
     
     indicator = [[UIImageView alloc] initWithImage:[frames objectAtIndex:0]];
@@ -112,6 +167,16 @@
     value = 0;
     indicator.image = [frames objectAtIndex:0];
     currentFrame = 0;
+}
+
+- (void)availableForReuse
+{
+    [self.view removeFromSuperview];
+    [self resetValue];
+    
+    if (size == kSmallProgressIndicator) {
+        [availableSmallIndicators insertObject:self atIndex:0];
+    }
 }
 
 

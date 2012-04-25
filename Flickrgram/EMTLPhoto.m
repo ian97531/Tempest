@@ -12,13 +12,12 @@
 
 @implementation EMTLPhoto
 
-@synthesize URL;
-@synthesize smallURL;
+@synthesize image_URL;
 @synthesize title;
 @synthesize user_id;
 @synthesize username;
 @synthesize description;
-@synthesize dateTaken;
+@synthesize dateUpdated;
 @synthesize datePosted;
 @synthesize photo_id;
 @synthesize image;
@@ -31,6 +30,8 @@
 @synthesize comments;
 @synthesize favorites;
 @synthesize favoritesShortString;
+@synthesize datePostedString;
+@synthesize currentPercent;
 
 - (id)initWithDict:(NSDictionary *)dict
 {
@@ -40,6 +41,7 @@
         loadingImage = NO;
         loadingFavorites = NO;
         loadingComments = NO;
+        loadRequested = YES;
         expectingBytes = 0;
         currentPercent = 0;
 
@@ -54,26 +56,20 @@
             else if ([key isEqualToString:@"title"]) {
                 title = [dict objectForKey:@"title"];
             }
-            else if ([key isEqualToString:@"description"]) {
-                description = [dict objectForKey:@"description"];
-            }
             else if ([key isEqualToString:@"id"]) {
                 photo_id = [dict objectForKey:@"id"];
             }
             else if ([key isEqualToString:@"url"]) {
-                URL = [dict objectForKey:@"url"];
-            }
-            else if ([key isEqualToString:@"small_url"]) {
-                smallURL = [dict objectForKey:@"small_url"];
-            }
-            else if ([key isEqualToString:@"date_taken"]) {
-                dateTaken = [dict objectForKey:@"date_taken"];
+                image_URL = [dict objectForKey:@"url"];
             }
             else if ([key isEqualToString:@"date_posted"]) {
                 datePosted = [dict objectForKey:@"date_posted"];
             }
             else if ([key isEqualToString:@"aspect_ratio"]) {
                 aspect_ratio = [dict objectForKey:@"aspect_ratio"];
+            }
+            else if ([key isEqualToString:@"date_updated"]) {
+                dateUpdated = [dict objectForKey:@"date_updated"];
             }
             
         }
@@ -84,12 +80,12 @@
     
 }
 
-- (void)loadImage
+- (void)loadData
 {
     if(!image && !loadingImage) {
         loadingImage = YES;
         imageData = [NSMutableData data];
-        NSURLRequest *request = [NSURLRequest requestWithURL:smallURL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:30];
+        NSURLRequest *request = [NSURLRequest requestWithURL:image_URL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:30];
         connection = [NSURLConnection connectionWithRequest:request delegate:self];
         [connection start];
         
@@ -110,28 +106,35 @@
                didFinishSelector:@selector(getPhotoComments:didFinishWithData:) 
                  didFailSelector:@selector(getPhotoComments:didFailWithError:)];
     }
-
+    
+    if (!datePostedString) {
+        [self datePostedString];
+    }
 }
 
-- (int)width
+- (BOOL)isReady
 {
-    if (container) {
-        return (int)container.frame.size.width;
+    if (image && comments && favorites) {
+        return YES;
     }
-    else {
-        return 0;
+    
+    return NO;
+}
+
+- (void)cancel
+{
+    if(connection) {
+        [connection cancel];
+        loadingImage = NO;
+        loadingComments = NO;
+        loadingFavorites = NO;
+        if(!image) {
+            imageData = nil;
+        }
     }
 }
 
-- (int)height
-{
-    if (container) {
-        return (int)(container.frame.size.width / self.aspect_ratio.floatValue);
-    }
-    else {
-        return 0;
-    }
-}
+
 
 - (NSNumber *)aspect_ratio
 {
@@ -144,32 +147,7 @@
 }
 
 
-- (void)loadPhotoIntoCell:(EMTLPhotoCell *)cell
-{
-    
-    container = cell;
-    cell.photo = self;
-    cell.indicator.value = currentPercent;
-    [self loadImage];
-        
-    
-    [self setupImageAnimated:NO];
-    
-}
 
-
-- (void)setupImageAnimated:(BOOL)animated
-{
-    if (image && comments && favorites) {
-        [container setImage:image animated:animated];
-        
-        [container setFavoritesString:[self favoritesShortString] animated:animated];
-        container.favoritesArray = favorites;
-        [container setComments:comments animated:animated];
-        
-    }
-    
-}
 
 - (NSString *)favoritesShortString
 {
@@ -177,150 +155,144 @@
         return favoritesShortString;
     }
     else {
+        favoritesShortString = nil;
         if (favorites.count) {
-            NSString *favoritesString = nil;
             
-            if(favorites.count == 1) {
-                favoritesString = [NSString stringWithFormat:@"Liked by %@", [[favorites objectAtIndex:0] username]];
-                
+            int availableWidth = [EMTLPhotoCell favoritesStringWidth] - 5;
+            UIFont *theFont = [EMTLPhotoCell favoritesFont];
+            int totalLikes = favorites.count;
+                    
+            NSString *prefix = @"Liked by ";
+            NSString *suffix = [NSString stringWithFormat:@" and %i others", totalLikes];
+            
+            int sizeUsedWithoutSuffix = [prefix sizeWithFont:theFont].width;
+            int sizeUsedWithSuffix = sizeUsedWithoutSuffix + [suffix sizeWithFont:theFont].width;
+            
+            int i = 0;
+            NSMutableArray *namesWithSuffix = [NSMutableArray arrayWithCapacity:4];
+            NSMutableArray *namesWithoutSuffix = [NSMutableArray arrayWithCapacity:5];
+            
+            if([photo_id isEqualToString:@"6899018088"] ) {
+                NSLog(@"found it");
             }
-            else if (favorites.count > 1){
-                favoritesString = [NSString stringWithFormat:@"%i likes", favorites.count];
+            
+            // First we need to see what we can fit on the line.
+            while (i < favorites.count) {
+                NSString *nameString;
                 
-                int availableWidth = [container favoriteStringSize];
-                NSString *testString = @"";
-                NSString *formatString = @"Liked by %@ and %i other%@";
-                NSString *fillerString = [[favorites objectAtIndex:0] username];
-                NSString *endString = @"s";
-                int remaining = favorites.count - 1;
-                if (remaining == 1) {
-                    endString = @"";
+                // Construct the string that would be added.
+                if (i == 0) {
+                    nameString = [[favorites objectAtIndex:0] username];
+                }
+                else {
+                    nameString = [NSString stringWithFormat:@", %@", [[favorites objectAtIndex:i] username]];
                 }
                 
-                testString = [NSString stringWithFormat:formatString, fillerString, remaining, endString];
+                // Size the string that would be added.
+                int nameSize = [nameString sizeWithFont:theFont].width;
                 
-                for (int i = 1; i < favorites.count && i < 8; i++) {
-                    
-                    if ([testString sizeWithFont:[container favoritesFont]].width < availableWidth) {
-                        favoritesString = testString;
-                        
-                        if (remaining == 1) {
-                            testString = [NSString stringWithFormat:@"Liked by %@ and %@", fillerString, [favorites.lastObject username]];
-                            if ([testString sizeWithFont:[container favoritesFont]].width < availableWidth) {
-                                favoritesString = testString;   
-                            }
-                            break;
-                        }
-                        
-                        fillerString = [NSString stringWithFormat:@"%@, %@", fillerString, [[favorites objectAtIndex:i] username]];
-                        remaining--;
-                        if (remaining == 1) {
-                            endString = @"";
-                        }
-                        testString = [NSString stringWithFormat:formatString, fillerString, remaining, endString];
-                        
-                    }
-                    else {
-                        break;
-                    }
-                    
+                // Add this size to both versions of the final string
+                sizeUsedWithoutSuffix += nameSize;
+                sizeUsedWithSuffix += nameSize;
+                
+                // If the name fits for either of the versions, record it.
+                if (sizeUsedWithSuffix < availableWidth) {
+                    [namesWithSuffix addObject:nameString];
                 }
-                                
+                
+                if (sizeUsedWithoutSuffix < availableWidth) {
+                    [namesWithoutSuffix addObject:nameString];
+                }
+                
+                // If both are too big, break out. Otherwise, keep going.
+                if (sizeUsedWithoutSuffix >= availableWidth && sizeUsedWithSuffix >= availableWidth) {
+                    break;
+                }
+                else {
+                    i++;
+                }
+                 
+            }
+                        
+            // If we used all of the names we don't need the suffix.
+            if (i == favorites.count) {
+                NSString *nameString = [namesWithoutSuffix objectAtIndex:0];
+               
+                for (int j = 1; i < namesWithoutSuffix.count; i++) {
+                    nameString = [NSString stringWithFormat:@"%@%@", nameString, [namesWithoutSuffix objectAtIndex:j]];
+                }
+                
+                favoritesShortString = [NSString stringWithFormat:@"%@%@", prefix, nameString];
+            }
+            
+            // If we weren't able to use all of the names, we need to add the suffix " and x others"
+            else if (i > 0) {
+                
+                NSString *nameString = [namesWithSuffix objectAtIndex:0];
+                int j;
+                for (j = 1; j < namesWithSuffix.count; j++) {
+                    nameString = [NSString stringWithFormat:@"%@%@", nameString, [namesWithSuffix objectAtIndex:j]];
+                }
+                
+                // If more than one name made it in, we want a comma at the end.
+                if (j > 1) {
+                    nameString = [NSString stringWithFormat:@"%@,", nameString];
+                }
+                
+                // How many were left unnamed?
+                int remainder = favorites.count - namesWithSuffix.count;
+                
+                // If it was one, we need "other" to be singular, otherwise plural.
+                if (remainder == 1) {
+                    favoritesShortString = [NSString stringWithFormat:@"%@%@ and %i other", prefix, nameString, remainder];
+                }
+                else {
+                    favoritesShortString = [NSString stringWithFormat:@"%@%@ and %i others", prefix, nameString, remainder];
+                }
+                
             }
             else {
-                favoritesString = @"0 likes";
+                if (favorites.count == 1) {
+                    favoritesShortString = @"1 like";
+                }
+                else {
+                    favoritesShortString = [NSString stringWithFormat:@"%i likes", favorites.count];
+                }
+                
             }
-            
-            favoritesShortString = favoritesString;
-            
+                    
+        
         }
         else {
-            
             favoritesShortString = @"0 likes";
-            
         }
-        
+            
         return favoritesShortString;
     }
 }
 
-- (void)removeFromCell:(EMTLPhotoCell *)cell 
-{
-    container = nil;
-    if(connection) {
-        [connection cancel];
-        loadingImage = NO;
-        loadingComments = NO;
-        loadingFavorites = NO;
-        if(!image) {
-            imageData = nil;
-        }
-    }
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)theConnection
-{
-    image = [UIImage imageWithData:imageData];
-    loadingImage = NO;
-    connection = nil;
-    imageData = nil;
-    if(container) {
-        container.indicator.value = 100;
-        [self setupImageAnimated:YES];
-    }
-    
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
-{
-    expectingBytes = response.expectedContentLength;
-}
 
 
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+- (NSString *)commentsShortString
 {
-    [imageData appendData:data];
-    
-    currentPercent += (((float)data.length)/(float)expectingBytes) * 80;
-    container.indicator.value = currentPercent;
-    
-}
-
-- (void)connection:(NSURLConnection *)theConnection didFailWithError:(NSError *)error
-{
-    NSLog(@"Failed to download %@", photo_id);
-    //NSLog(error.localizedDescription);
-    loadingImage = NO;
-    connection = nil;
-    imageData = nil;
-}
-
-- (NSString *)dateTakenString 
-{
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    NSDate *now = [NSDate date];
-    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDateComponents *nowComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:now];
-    NSDateComponents *dateComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:dateTaken];
-    
-    int nowYear = [nowComponents year];
-        
-    int dateYear = [dateComponents year];
-        
-    if (nowYear == dateYear)
-    {
-        [dateFormat setDateFormat:@"MMM. d"];
+    if (comments.count == 1) {
+        return @"1 comment";
     }
     else {
-        [dateFormat setDateFormat:@"MMM. d, y"];
+        return [NSString stringWithFormat:@"%i comments", comments.count];
     }
     
-    return [dateFormat stringFromDate:self.dateTaken];
-
 }
+
+
 
 - (NSString *)datePostedString 
 {
+    
+    if (datePostedString) {
+        return datePostedString;
+    }
+    
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     NSDate *now = [NSDate date];
     NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
@@ -334,13 +306,6 @@
     int dateYear = [dateComponents year];
     int dateMonth = [dateComponents month];
     int dateDay = [dateComponents day];
-    
-    if(nowYear == dateYear && nowMonth == dateMonth) {
-        
-        
-        
-    }
-    
     
     if (nowYear == dateYear)
     {
@@ -370,25 +335,83 @@
         [dateFormat setDateFormat:@"MMM d, y"];
     }
     
-    return [dateFormat stringFromDate:self.datePosted];
+    datePostedString = [dateFormat stringFromDate:self.datePosted];
+    
+    return datePostedString;
     
 }
 
 
 
+- (void)connectionDidFinishLoading:(NSURLConnection *)theConnection
+{
+    image = [UIImage imageWithData:imageData];
+    loadingImage = NO;
+    connection = nil;
+    imageData = nil;
+    if(container) {
+        [container setProgressValue:100];
+        [container setImage:image];
+    }
+    
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    expectingBytes = response.expectedContentLength;
+}
+
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
+    [imageData appendData:data];
+    
+    currentPercent += (((float)data.length)/(float)expectingBytes) * 80;
+    [container setProgressValue:currentPercent];
+    
+}
+
+- (void)connection:(NSURLConnection *)theConnection didFailWithError:(NSError *)error
+{
+    NSLog(@"Failed to download %@", photo_id);
+    //NSLog(error.localizedDescription);
+    loadingImage = NO;
+    connection = nil;
+    imageData = nil;
+}
+
+
+
+
+
 - (void)getPhotoFavorites:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
 {
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul);
     
-    if(ticket.didSucceed) {
-        favorites = [[source extractFavorites:data forPhoto:self] mutableCopy];
-        currentPercent += 10;
-        container.indicator.value = currentPercent;
-        [self setupImageAnimated:YES];
-    }
-    else {
-        NSLog(@"There was an error getting favorites.");
-    }
-    loadingFavorites = NO;
+    dispatch_async(queue, ^{
+        if(ticket.didSucceed) {
+            favorites = [[source extractFavorites:data forPhoto:self] mutableCopy];
+            currentPercent += 10;
+            [self favoritesShortString];
+            
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [container setProgressValue:currentPercent];
+                [container setFavoritesString:favoritesShortString];
+                [container setFavorites:favorites];
+                //NSLog(@"got favorites for %@", photo_id);
+            });
+            
+            
+        }
+        else {
+            NSLog(@"There was an error getting favorites.");
+        }
+        loadingFavorites = NO;
+            
+        
+    });
+    
+    
     
     
 }
@@ -401,18 +424,31 @@
 
 - (void)getPhotoComments:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
 {
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul);
     
-    if (ticket.didSucceed) {
-        comments = [[source extractComments:data] mutableCopy];
-        currentPercent += 10;
-        container.indicator.value = currentPercent;
-        [self setupImageAnimated:YES];
-    }
-    else {
-        NSLog(@"There was an error getting comments.");
-    }
+    dispatch_async(queue, ^{
+        if (ticket.didSucceed) {
+            comments = [[source extractComments:data] mutableCopy];
+            currentPercent += 10;
+            
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [container setProgressValue:currentPercent];
+                [container setCommentsString:[self commentsShortString]];
+                [container setComments:comments];
+                //NSLog(@"got comments for %@", photo_id);
+            });
+            
+            
+        }
+        else {
+            NSLog(@"There was an error getting comments.");
+        }
+        
+        loadingComments = NO;
+            
+        
+    });
     
-    loadingComments = NO;
     
     //[self setupImageAnimated:YES];
     

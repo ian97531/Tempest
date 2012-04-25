@@ -52,7 +52,7 @@
         [cardView addSubview:cardImageView];
                 
         backgroundGutter = [[UIImageView alloc] initWithFrame:CGRectMake(13, 36, 294, 300)];
-        backgroundGutter.backgroundColor = [UIColor colorWithWhite:0 alpha:0.89];
+        backgroundGutter.backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.89];
         backgroundGutter.layer.borderWidth = 1;
         backgroundGutter.layer.borderColor = [UIColor colorWithWhite:0.8 alpha:1].CGColor;
         backgroundGutter.layer.cornerRadius = 3;
@@ -80,20 +80,17 @@
         ownerLabel.layer.masksToBounds = YES;
         ownerLabel.backgroundColor = [UIColor clearColor];
         
-        indicator = [[EMTLProgressIndicatorViewController alloc] initWithSmallSize:YES];
-        indicator.view.center = imageView.center;
-        indicator.view.layer.opacity = 0.1;
         
         favoritesButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        favoritesButton.frame = CGRectMake(16, 347, 288, 16);
-        favoritesButton.titleLabel.font = [UIFont fontWithName:@"MarkerSD" size:14];
+        favoritesButton.frame = CGRectMake(16, 347, [EMTLPhotoCell favoritesStringWidth], 16);
+        favoritesButton.titleLabel.font = [EMTLPhotoCell favoritesFont];
         [favoritesButton setTitleColor:[UIColor colorWithWhite:0 alpha:0.6] forState:UIControlStateNormal];
         [favoritesButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
         [favoritesButton addTarget:self action:@selector(switchToFavoritesView) forControlEvents:UIControlEventTouchUpInside];
         
         commentsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        commentsButton.frame = CGRectMake(16, 369, 100, 16);
-        commentsButton.titleLabel.font = [UIFont fontWithName:@"MarkerSD" size:14];
+        commentsButton.frame = CGRectMake(16, 369, [EMTLPhotoCell commentsStringWidth], 16);
+        commentsButton.titleLabel.font = [EMTLPhotoCell commentsFont];
         [commentsButton setTitleColor:[UIColor colorWithWhite:0 alpha:0.6] forState:UIControlStateNormal];
         [commentsButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
         
@@ -102,7 +99,6 @@
         
         
         [cardView addSubview:backgroundGutter];
-        [cardView addSubview:indicator.view];
         [cardView addSubview:imageView];
         [cardView addSubview:dateLabel];
         [cardView addSubview:ownerLabel];
@@ -143,6 +139,28 @@
     return self;
 }
 
+- (void)loadPhoto:(EMTLPhoto *)thePhoto
+{
+    photo = thePhoto;
+    photo.container = self;
+    
+    ownerLabel.text = photo.username;
+    dateLabel.text = photo.datePostedString;
+
+    if(photo.isReady) {
+        imageView.image = photo.image;
+        [favoritesButton setTitle:photo.favoritesShortString forState:UIControlStateNormal];
+        [commentsButton setTitle:photo.commentsShortString forState:UIControlStateNormal];
+    }
+    else {
+        indicator = [EMTLProgressIndicatorViewController indicatorWithSize:kSmallProgressIndicator];
+        indicator.value = photo.currentPercent;
+        indicator.view.layer.opacity = 0.2;
+        [cardView insertSubview:indicator.view belowSubview:imageView];
+        [photo loadData];
+    }
+}
+
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
 {
@@ -151,114 +169,64 @@
     // Configure the view for the selected state
 }
 
-- (void)setImage:(UIImage *)image animated:(BOOL)animated
+- (void)setFrame:(CGRect)frame
 {
     
-    imageView.image = image;
+    [super setFrame:frame];
     
-    if (animated) {
-        imageView.layer.opacity = 0;
-        
-        
-        [UIView animateWithDuration:0.6 animations:^(void) {
-            imageView.layer.opacity = 1;
-            
-        } completion:^(BOOL finished) {
-            [indicator resetValue];
-        }];
+    CGRect cardRect = CGRectMake(cardView.frame.origin.x, cardView.frame.origin.y, cardView.frame.size.width, frame.size.height - 45);
+    cardView.frame = cardRect;
+    cardImageView.frame = cardRect;
+    
+    CGRect imageRect = CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y, imageView.frame.size.width, frame.size.height - 150);
+    imageView.frame = imageRect;
+    backgroundGutter.frame = imageRect;
+    
+    if(indicator) {
+        indicator.view.center = imageView.center;
     }
     
+    favoritesButton.frame = CGRectMake(favoritesButton.frame.origin.x, frame.size.height - 102, favoritesButton.frame.size.width, favoritesButton.frame.size.height);
+    commentsButton.frame = CGRectMake(commentsButton.frame.origin.x, frame.size.height - 78, commentsButton.frame.size.width, commentsButton.frame.size.height);
     
 }
 
-- (void)setFavoritesString:(NSString *)favoritesString animated:(BOOL)animated
-{
-    
-    [favoritesButton setTitle:favoritesString forState:UIControlStateNormal];
-    
-    if(animated) {
-        favoritesButton.layer.opacity = 0;
-        
-        [UIView animateWithDuration:0.6 animations:^(void) {
-            favoritesButton.layer.opacity = 1;
-            
-        }];
-    }
-    
-}
 
-- (float)favoriteStringSize
-{
-    return favoritesButton.frame.size.width;
-}
-
-- (UIFont *)favoritesFont
-{
-    return favoritesButton.titleLabel.font;
-}
-
-- (void)setComments:(NSArray *)comments animated:(BOOL)animated
-{
-    if(comments.count == 1) {
-        [commentsButton setTitle:@"1 comment" forState:UIControlStateNormal];
-    }
-    else {
-        [commentsButton setTitle:[NSString stringWithFormat:@"%i comments", comments.count] forState:UIControlStateNormal];
-    }
-    
-    if(animated) {
-        commentsButton.layer.opacity = 0;
-        
-        [UIView animateWithDuration:0.6 animations:^(void) {
-            commentsButton.layer.opacity = 1;
-            
-        }];
-    }
-    
-    
-}
-
-- (void)setImageHeight:(int)height
-{
-    int difference = height - imageView.frame.size.height;
-
-    
-    cardView.frame = CGRectMake(cardView.frame.origin.x, cardView.frame.origin.y, cardView.frame.size.width, cardView.frame.size.height + difference);
-    cardImageView.frame = CGRectMake(cardImageView.frame.origin.x, cardImageView.frame.origin.y, cardImageView.frame.size.width, cardImageView.frame.size.height + difference);
-    backgroundGutter.frame = CGRectMake(backgroundGutter.frame.origin.x, backgroundGutter.frame.origin.y, backgroundGutter.frame.size.width, height);
-    imageView.frame = CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y, imageView.frame.size.width, height);
-    indicator.view.center = imageView.center;
-    favoritesButton.frame = CGRectMake(favoritesButton.frame.origin.x, favoritesButton.frame.origin.y + difference, favoritesButton.frame.size.width, favoritesButton.frame.size.height);
-    commentsButton.frame = CGRectMake(commentsButton.frame.origin.x, commentsButton.frame.origin.y + difference, commentsButton.frame.size.width, commentsButton.frame.size.height);
-    
-    
-    
-}
+//- (void)setImageHeight:(int)height
+//{
+//    int difference = height - imageView.frame.size.height;
+//
+//    
+//    cardView.frame = CGRectMake(cardView.frame.origin.x, cardView.frame.origin.y, cardView.frame.size.width, cardView.frame.size.height + difference);
+//    cardImageView.frame = CGRectMake(cardImageView.frame.origin.x, cardImageView.frame.origin.y, cardImageView.frame.size.width, cardImageView.frame.size.height + difference);
+//    backgroundGutter.frame = CGRectMake(backgroundGutter.frame.origin.x, backgroundGutter.frame.origin.y, backgroundGutter.frame.size.width, height);
+//    imageView.frame = CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y, imageView.frame.size.width, height);
+//    indicator.view.center = imageView.center;
+//    favoritesButton.frame = CGRectMake(favoritesButton.frame.origin.x, favoritesButton.frame.origin.y + difference, favoritesButton.frame.size.width, favoritesButton.frame.size.height);
+//    commentsButton.frame = CGRectMake(commentsButton.frame.origin.x, commentsButton.frame.origin.y + difference, commentsButton.frame.size.width, commentsButton.frame.size.height);
+//    
+//    
+//    
+//}
 
 - (void)prepareForReuse
 {
     if(photo) {
-        [photo removeFromCell:self];
+        [photo cancel];
+        photo.container = nil;
         photo = nil;
+        
+        if (indicator) {
+            [indicator availableForReuse];
+            indicator = nil;
+        }
+                
         imageView.image = nil;
         [favoritesButton setTitle:@"" forState:UIControlStateNormal];
         [commentsButton setTitle:@"" forState:UIControlStateNormal];
-        [indicator resetValue];
         currentTableData = nil;
         commentsArray = nil;
         favoritesArray = nil;
-        
-        [favoritesTitle removeFromSuperview];
-        [commentsTitle removeFromSuperview];
-        [listTable removeFromSuperview];
-        
-        [self.contentView addSubview:backgroundGutter];
-        [self.contentView addSubview:indicator.view];
-        [self.contentView addSubview:imageView];
-        [self.contentView addSubview:ownerLabel];
-        [self.contentView addSubview:dateLabel];
-        [self.contentView addSubview:favoritesButton];
-        [self.contentView addSubview:commentsButton];
         
     }
 }
@@ -344,5 +312,78 @@
 }
 
 
+#pragma mark - EMTLPhotoDelegate methods
+
+- (void)setImage:(UIImage *)image
+{
+    imageView.image = image;
+    imageView.layer.opacity = 0;
+        
+    [UIView animateWithDuration:0.6 animations:^(void) {
+        imageView.layer.opacity = 1;
+        
+    } completion:^(BOOL finished) {
+        [indicator availableForReuse];
+        indicator = nil;
+    }];
+
+}
+
+
+- (void)setFavoritesString:(NSString *)favoritesString
+{
+    [favoritesButton setTitle:favoritesString forState:UIControlStateNormal];
+    
+    favoritesButton.layer.opacity = 0;
+    [UIView animateWithDuration:0.6 animations:^(void) {
+        favoritesButton.layer.opacity = 1;
+    }];
+    
+}
+
+- (void)setCommentsString:(NSString *)commentsString
+{
+    [commentsButton setTitle:commentsString forState:UIControlStateNormal];
+    
+    commentsButton.layer.opacity = 0;
+    [UIView animateWithDuration:0.6 animations:^(void) {
+        commentsButton.layer.opacity = 1;
+    }];
+}
+
+- (void)setFavorites:(NSArray *)favorites
+{
+    favoritesArray = favorites;
+}
+
+- (void)setComments:(NSArray *)comments
+{
+    commentsArray = comments;
+}
+
++ (float)favoritesStringWidth
+{
+    return 288;
+}
+
++ (UIFont *)favoritesFont
+{
+    return [UIFont fontWithName:@"Whatever" size:14];
+}
+
++ (float)commentsStringWidth
+{
+    return 288;
+}
+
++ (UIFont *)commentsFont
+{
+    return [UIFont fontWithName:@"Whatever" size:14];
+}
+
+- (void)setProgressValue:(float)value
+{
+    indicator.value = value;
+}
 
 @end
