@@ -14,6 +14,7 @@
 		EB5221FD15377A3A00785F97 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EB5221FB15377A3A00785F97 /* InfoPlist.strings */; };
 		EB5221FF15377A3A00785F97 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EB5221FE15377A3A00785F97 /* main.m */; };
 		EB52220315377A3A00785F97 /* EMTLAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EB52220215377A3A00785F97 /* EMTLAppDelegate.m */; };
+		EB52220615377A3A00785F97 /* Flickrgram.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = EB52220415377A3A00785F97 /* Flickrgram.xcdatamodeld */; };
 		EB52220E15377A3A00785F97 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB52220D15377A3A00785F97 /* SenTestingKit.framework */; };
 		EB52220F15377A3A00785F97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F015377A3A00785F97 /* UIKit.framework */; };
 		EB52221015377A3A00785F97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F215377A3A00785F97 /* Foundation.framework */; };
@@ -174,6 +175,7 @@
 		EB52220015377A3A00785F97 /* Flickrgram-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Flickrgram-Prefix.pch"; sourceTree = "<group>"; };
 		EB52220115377A3A00785F97 /* EMTLAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMTLAppDelegate.h; sourceTree = "<group>"; };
 		EB52220215377A3A00785F97 /* EMTLAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EMTLAppDelegate.m; sourceTree = "<group>"; };
+		EB52220515377A3A00785F97 /* Flickrgram.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Flickrgram.xcdatamodel; sourceTree = "<group>"; };
 		EB52220C15377A3A00785F97 /* FlickrgramTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlickrgramTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB52220D15377A3A00785F97 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		EB52221615377A3A00785F97 /* FlickrgramTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FlickrgramTests-Info.plist"; sourceTree = "<group>"; };
@@ -419,12 +421,12 @@
 				EB88B5F01547357B00E6A6EE /* EMTLCache.h */,
 				EB88B5F11547357C00E6A6EE /* EMTLCache.m */,
 				EB850DAE153E0A710073BBAE /* APISecrets.h */,
+				EB52220415377A3A00785F97 /* Flickrgram.xcdatamodeld */,
 				EB69B201153CD46B003D8422 /* OAuthConsumer */,
 				EB69B200153CD46B003D8422 /* Assets */,
 				EB5221F915377A3A00785F97 /* Supporting Files */,
 			);
-			name = Flickrgram;
-			path = Tempest;
+			path = Flickrgram;
 			sourceTree = "<group>";
 		};
 		EB5221F915377A3A00785F97 /* Supporting Files */ = {
@@ -694,7 +696,7 @@
 				CLASSPREFIX = EMTL;
 				LastUpgradeCheck = 0430;
 			};
-			buildConfigurationList = EB5221E615377A3A00785F97 /* Build configuration list for PBXProject "Tempest" */;
+			buildConfigurationList = EB5221E615377A3A00785F97 /* Build configuration list for PBXProject "Flickrgram" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -856,6 +858,7 @@
 				EB69B1FE153CD42A003D8422 /* EMTLPhotoSource.h in Sources */,
 				EB5221FF15377A3A00785F97 /* main.m in Sources */,
 				EB52220315377A3A00785F97 /* EMTLAppDelegate.m in Sources */,
+				EB52220615377A3A00785F97 /* Flickrgram.xcdatamodeld in Sources */,
 				EB69B241153CD46B003D8422 /* NSMutableURLRequest+Parameters.m in Sources */,
 				EB69B242153CD46B003D8422 /* NSString+URLEncoding.m in Sources */,
 				EB69B243153CD46B003D8422 /* NSURL+Base.m in Sources */,
@@ -1025,7 +1028,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		EB5221E615377A3A00785F97 /* Build configuration list for PBXProject "Tempest" */ = {
+		EB5221E615377A3A00785F97 /* Build configuration list for PBXProject "Flickrgram" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EB52221D15377A3A00785F97 /* Debug */,
@@ -1053,6 +1056,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		EB52220415377A3A00785F97 /* Flickrgram.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				EB52220515377A3A00785F97 /* Flickrgram.xcdatamodel */,
+			);
+			currentVersion = EB52220515377A3A00785F97 /* Flickrgram.xcdatamodel */;
+			path = Flickrgram.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = EB5221E315377A3A00785F97 /* Project object */;
 }
