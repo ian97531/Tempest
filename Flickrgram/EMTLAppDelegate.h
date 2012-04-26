@@ -35,8 +35,8 @@
 - (void)initializePhotoSources;
 
 // Authorizable Methods
-- (void)photoSource:(id <PhotoSource>)photoSource authorizationError:(NSError *)error;
 - (void)photoSource:(id <PhotoSource>)photoSource requiresAuthorizationAtURL:(NSURL *)url;
-- (void)authorizationCompleteForSource:(id <PhotoSource>)photoSource;
+- (void)authorizationCompleteForPhotoSource:(id <PhotoSource>)photoSource;
+- (void)authorizationErrorForPhotoSource:(id <PhotoSource>)photoSource;
 
 @end

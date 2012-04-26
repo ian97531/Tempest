@@ -153,7 +153,6 @@ static NSArray *largeFrames;
     else {
         return;
     }
-        
     int nextImage = (value) ? (int)floor((value/100.0) * 8.0) : 0;
     if (nextImage != currentFrame) {
         indicator.image = [frames objectAtIndex:nextImage];

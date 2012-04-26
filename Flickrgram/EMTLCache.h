@@ -12,10 +12,13 @@
 @class EMTLCachedObject;
 @class EMTLCacheRequest;
 
+
 typedef enum {
-    EMTLDictionary,
+    EMTLKeyedObject,
     EMTLImage
-}EMTLDataType;
+} EMTLDataType;
+
+
 
 @protocol EMTLCacheClient <NSObject>
 
@@ -31,18 +34,14 @@ typedef enum {
 
 @protocol EMTLCacheHandler <NSObject>
 
-@required
-- (void)fetchObjectForRequest:(EMTLCacheRequest *)request;
-
-@optional
-- (void)cancelRequest:(EMTLCacheRequest *)request;
+- (NSURLRequest *)urlRequestForRequest:(EMTLCacheRequest *)request;
 
 @end
 
 
 @protocol EMTLCachePostProcessor <NSObject>
 
-- (id)processObject:(id)object forRequest:(EMTLCacheRequest *)request;
+- (id)processData:(NSData *)data forRequest:(EMTLCacheRequest *)request;
 
 @end
 
@@ -62,13 +61,14 @@ typedef enum {
     BOOL paused;
 }
 
+@property (nonatomic, strong) NSMutableDictionary *runningRequests;
+
 + (id)cache;
 - (id)init;
-- (void)setObject:(id <NSCoding>)object forDomain:(NSString *)domain forKey:(NSString *)key type:(EMTLDataType)type;
+- (void)setObject:(id)object key:(NSString *)key type:(EMTLDataType)type;
 - (id)objectInMemoryForRequest:(EMTLCacheRequest *)request;
 - (BOOL)objectOnDiskForRequest:(EMTLCacheRequest *)request;
-- (void)execute:(void (^)(void))block;
-- (void)clearQueue;
+- (BOOL)objectIsCachedForRequest:(EMTLCacheRequest *)request;
 
 // Methods for EMTLCacheHandlers and EMTLCachePostProcessors
 - (void)setHandler:(id <EMTLCacheHandler>)handler forDomain:(NSString *)domain;
@@ -76,34 +76,45 @@ typedef enum {
 - (id <EMTLCacheHandler>)handlerForDomain:(NSString *)domain;
 - (id <EMTLCachePostProcessor>)postProcessorForDomain:(NSString *)domain;
 
-// Methods for UI Controllers
-- (void)requestPause:(id)object;
-- (void)requestResume:(id)object;
-
 @end
 
 
 
-@interface EMTLCacheRequest : NSObject <NSCopying>
+@interface EMTLCacheRequest : NSObject <NSURLConnectionDataDelegate>
+{
+    NSURLConnection *connection;
+    NSMutableData *receivedData;
+    uint totalSize;
+    
+}
 
 @property (nonatomic, strong) NSString *domain;
 @property (nonatomic, strong) NSString *key;
+@property (nonatomic, strong, readonly) NSString *combinedKey;
 @property (nonatomic, strong) NSDate *newerThan;
+@property (nonatomic, strong) NSURL *url;
 @property (nonatomic) EMTLDataType type;
 @property (nonatomic, assign) id <EMTLCacheClient> target;
 @property (nonatomic, assign) id <EMTLCacheHandler> handler;
 @property (nonatomic, assign) id <EMTLCachePostProcessor> processor;
 @property (nonatomic, strong, readonly) EMTLCache *cache;
 @property (nonatomic, strong) NSDictionary *userInfo;
+@property (nonatomic, strong) NSMutableArray *siblingRequests;
 
++ (id)requestWithDomain:(NSString *)theDomain key:(NSString *)theKey type:(EMTLDataType)theType;
 - (id)initWithDomain:(NSString *)domain key:(NSString *)key type:(EMTLDataType)type;
-- (void)execute;
+- (id)fetch;
 - (void)cancel;
 
-// For EMTLHandlers
-- (void)fetchedObject:(id)object;
-- (void)fetchedBytes:(int)bytes ofTotal:(int)total;
-- (void)unableToFetchObject;
+// For EMTLCache and EMTLCacheRequests
+- (void)unableToFetchObjectFromDisk;
 - (void)fetchedObjectFromDisk:(id)object withDate:(NSDate *)date;
+- (void)fetchedObject:(id)object fromAnotherRequest:(EMTLCache *)request;
+
+// NSURLConnectionDataDelegate
+- (void)connection:(NSURLConnection *)aConnection didReceiveResponse:(NSURLResponse *)aResponse;
+- (void)connection:(NSURLConnection *)aConnection didFailWithError:(NSError *)error;
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 
 @end

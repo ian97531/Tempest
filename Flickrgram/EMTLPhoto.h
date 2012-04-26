@@ -8,56 +8,54 @@
 
 #import <Foundation/Foundation.h>
 #import "EMTLPhotoSource.h"
+#import "EMTLCache.h"
 
 @protocol EMTLPhotoDelegate <NSObject>
 
-- (void)setImage:(UIImage *)image;
-- (void)setFavoritesString:(NSString *)favoritesString;
-- (void)setCommentsString:(NSString *)commentsString;
-- (void)setFavorites:(NSArray *)favorites;
-- (void)setComments:(NSArray *)comments;
-- (void)setProgressValue:(float)value;
 + (float)favoritesStringWidth;
 + (UIFont *)favoritesFont;
 + (float)commentsStringWidth;
 + (UIFont *)commentsFont;
 
+- (void)setFavoritesString:(NSString *)favoritesString;
+- (void)setCommentsString:(NSString *)commentsString;
+
+
 @end
 
 
-@interface EMTLPhoto : NSObject <NSURLConnectionDataDelegate>
+@interface EMTLPhoto : NSObject <NSURLConnectionDataDelegate, EMTLCacheClient>
 
 {
-    BOOL loadingImage;
-    BOOL loadingFavorites;
-    BOOL loadingComments;
-    BOOL loadRequested;
-    long long expectingBytes;
+    EMTLCacheRequest *favoritesRequest;
+    EMTLCacheRequest *commentsRequest;
+    NSString *favoritesDomain;
+    NSString *commentsDomain;
+
 }
 
-@property (strong, readonly) NSURL *image_URL;
-@property (strong, readonly) NSString *title;
-@property (strong, readonly) NSString *user_id;
-@property (strong, readonly) NSString *username;
-@property (strong, readonly) NSString *description;
-@property (strong, readonly) NSDate *datePosted;
-@property (strong, readonly) NSDate *dateUpdated;
-@property (strong, readonly) NSString *photo_id;
-@property (strong, readonly) UIImage *image;
-@property (strong, readonly) NSNumber *aspect_ratio;
-@property (nonatomic) BOOL isFavorite;
-@property (nonatomic, strong) NSMutableArray *favorites;
-@property (nonatomic, strong) NSMutableArray *comments;
+@property (nonatomic, strong, readonly) NSURL *imageURL;
+@property (nonatomic, strong, readonly) NSString *title;
+@property (nonatomic, strong, readonly) NSString *userID;
+@property (nonatomic, strong, readonly) NSString *username;
+@property (nonatomic, strong, readonly) NSDate *datePosted;
+@property (nonatomic, strong, readonly) NSDate *dateUpdated;
+@property (nonatomic, strong, readonly) NSString *photoID;
+@property (nonatomic, strong, readonly) NSNumber *aspectRatio;
+@property (nonatomic, strong, readonly) NSString *imageDomain;
+@property (nonatomic, strong, readonly) NSArray *favorites;
+@property (nonatomic, strong, readonly) NSArray *comments;
+@property (nonatomic, strong, readonly) NSString *favoritesShortString;
+@property (nonatomic, strong, readonly) NSString *datePostedString;
+@property (nonatomic, readonly) BOOL isFavorite;
+
 @property (nonatomic, assign) id <EMTLPhotoDelegate> container;
 @property (nonatomic, assign) id <PhotoSource> source;
-@property (nonatomic, strong) NSMutableData *imageData;
-@property (nonatomic, strong) NSURLConnection *connection;
-@property (nonatomic, strong) NSString *favoritesShortString;
-@property (nonatomic, strong) NSString *datePostedString;
-@property (nonatomic) float currentPercent;
+
 
 - (id)initWithDict:(NSDictionary *)dict;
 
+- (void)preloadData;
 - (void)loadData;
 - (void)cancel;
 - (BOOL)isReady;
@@ -66,19 +64,11 @@
 - (NSString *)favoritesShortString;
 - (NSString *)commentsShortString;
 
+// EMTLCacheClient methods
+- (void)retrievedObject:(id)object ForRequest:(EMTLCacheRequest *)request;
+- (void)fetchedBytes:(int)bytes ofTotal:(int)total forRequest:(EMTLCacheRequest *)request;
+- (void)unableToRetrieveObjectForRequest:(EMTLCacheRequest *)request;
 
-- (void)getPhotoFavorites:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data;
-- (void)getPhotoFavorites:(OAServiceTicket *)ticket didFailWithError:(NSError *)error;
-
-- (void)getPhotoComments:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data;
-- (void)getPhotoComments:(OAServiceTicket *)ticket didFailWithError:(NSError *)error;
-
-
-// NSURLConnectionDelegate method
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error;
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response;
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 
 
 @end

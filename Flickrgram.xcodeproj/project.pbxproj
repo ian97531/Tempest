@@ -151,8 +151,6 @@
 		EB8CC2D7153F68EE00DD01F1 /* Item3@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8CC2D5153F68EE00DD01F1 /* Item3@2x.png */; };
 		EB8CC2DA153F6A9600DD01F1 /* Item4.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8CC2D8153F6A9600DD01F1 /* Item4.png */; };
 		EB8CC2DB153F6A9600DD01F1 /* Item4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8CC2D9153F6A9600DD01F1 /* Item4@2x.png */; };
-		EBAE525D1544FCE900288C5E /* EMTLFavorite.m in Sources */ = {isa = PBXBuildFile; fileRef = EBAE525C1544FCE900288C5E /* EMTLFavorite.m */; };
-		EBAE52611544FCF300288C5E /* EMTLComment.m in Sources */ = {isa = PBXBuildFile; fileRef = EBAE52601544FCF300288C5E /* EMTLComment.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -337,10 +335,6 @@
 		EB8CC2D5153F68EE00DD01F1 /* Item3@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Item3@2x.png"; sourceTree = "<group>"; };
 		EB8CC2D8153F6A9600DD01F1 /* Item4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Item4.png; sourceTree = "<group>"; };
 		EB8CC2D9153F6A9600DD01F1 /* Item4@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Item4@2x.png"; sourceTree = "<group>"; };
-		EBAE525B1544FCE900288C5E /* EMTLFavorite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFavorite.h; sourceTree = "<group>"; };
-		EBAE525C1544FCE900288C5E /* EMTLFavorite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFavorite.m; sourceTree = "<group>"; };
-		EBAE525F1544FCF300288C5E /* EMTLComment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLComment.h; sourceTree = "<group>"; };
-		EBAE52601544FCF300288C5E /* EMTLComment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLComment.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -422,10 +416,6 @@
 				EB850DAB153DF3D30073BBAE /* EMTLFlickr.m */,
 				EB850DAF153E3CD30073BBAE /* EMTLPhoto.h */,
 				EB850DB0153E3CD40073BBAE /* EMTLPhoto.m */,
-				EBAE525B1544FCE900288C5E /* EMTLFavorite.h */,
-				EBAE525C1544FCE900288C5E /* EMTLFavorite.m */,
-				EBAE525F1544FCF300288C5E /* EMTLComment.h */,
-				EBAE52601544FCF300288C5E /* EMTLComment.m */,
 				EB8AA14F1540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.h */,
 				EB8AA1501540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m */,
 				EB88B5F01547357B00E6A6EE /* EMTLCache.h */,
@@ -890,8 +880,6 @@
 				EB850DAC153DF3D30073BBAE /* EMTLFlickr.m in Sources */,
 				EB850DB1153E3CD40073BBAE /* EMTLPhoto.m in Sources */,
 				EB8AA1511540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m in Sources */,
-				EBAE525D1544FCE900288C5E /* EMTLFavorite.m in Sources */,
-				EBAE52611544FCF300288C5E /* EMTLComment.m in Sources */,
 				EB88B5F21547357C00E6A6EE /* EMTLCache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

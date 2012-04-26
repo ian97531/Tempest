@@ -8,12 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "EMTLPhoto.h"
+#import "EMTLCache.h"
 
 @class EMTLProgressIndicatorViewController;
 
 
-
-@interface EMTLPhotoCell : UITableViewCell <UITableViewDelegate, UITableViewDataSource, EMTLPhotoDelegate>
+@interface EMTLPhotoCell : UITableViewCell <EMTLPhotoDelegate, EMTLCacheClient>
+{
+    EMTLCacheRequest *imageRequest;
+    BOOL fadeContents;
+}
 
 @property (nonatomic, strong) UIImageView *imageView;
 @property (nonatomic, strong) UIImageView *cardImageView;
@@ -25,43 +29,24 @@
 @property (nonatomic, strong) UIButton *favoritesButton;
 @property (nonatomic, strong) UIButton *commentsButton;
 
-@property (nonatomic, strong) UIButton *favoritesTitle;
-@property (nonatomic, strong) UIButton *commentsTitle;
-@property (nonatomic, strong) UITableView *listTable;
-@property (nonatomic, strong) NSArray *currentTableData;
-@property (nonatomic, strong) NSArray *favoritesArray;
-@property (nonatomic, strong) NSArray *commentsArray;
-
-
-@property (nonatomic) BOOL isFavorite;
-@property (nonatomic) int numFavorites;
-@property (nonatomic) int numComments;
 @property (nonatomic, strong) EMTLPhoto* photo;
 @property (nonatomic, strong) EMTLProgressIndicatorViewController *indicator;
 
 - (void)loadPhoto:(EMTLPhoto *)photo;
 - (void)switchToFavoritesView;
-- (void)switchToCommentsView;
-- (void)flipPhoto;
-- (UIFont *)favoritesFont;
-
-// UITableViewDelegate methods
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
-
-// UITableViewDataSource methods
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 
 // EMTLPhotoDelegate methods
-- (void)setImage:(UIImage *)image;
 - (void)setFavoritesString:(NSString *)favoritesString;
 - (void)setCommentsString:(NSString *)commentsString;
-- (void)setFavorites:(NSArray *)favorites;
-- (void)setComments:(NSArray *)comments;
-- (void)setProgressValue:(float)value;
+
 + (float)favoritesStringWidth;
 + (UIFont *)favoritesFont;
 + (float)commentsStringWidth;
 + (UIFont *)commentsFont;
+
+// EMTLCacheClient methods
+- (void)retrievedObject:(id)object ForRequest:(EMTLCacheRequest *)request;
+- (void)fetchedBytes:(int)bytes ofTotal:(int)total forRequest:(EMTLCacheRequest *)request;
+- (void)unableToRetrieveObjectForRequest:(EMTLCacheRequest *)request;
 
 @end

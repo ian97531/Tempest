@@ -9,8 +9,6 @@
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
 #import "EMTLProgressIndicatorViewController.h"
-#import "EMTLComment.h"
-#import "EMTLFavorite.h"
 #import <QuartzCore/QuartzCore.h>
 
 @implementation EMTLPhotoCell
@@ -22,20 +20,11 @@
 @synthesize backgroundGutter;
 @synthesize ownerLabel;
 @synthesize dateLabel;
-@synthesize isFavorite;
-@synthesize numFavorites;
-@synthesize numComments;
 @synthesize photo;
 @synthesize indicator;
 @synthesize favoritesButton;
 @synthesize commentsButton;
 
-@synthesize favoritesTitle;
-@synthesize commentsTitle;
-@synthesize listTable;
-@synthesize currentTableData;
-@synthesize commentsArray;
-@synthesize favoritesArray;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -57,7 +46,6 @@
         backgroundGutter.layer.borderColor = [UIColor colorWithWhite:0.8 alpha:1].CGColor;
         backgroundGutter.layer.cornerRadius = 3;
         backgroundGutter.layer.masksToBounds = YES;
-        
                 
         imageView = [[UIImageView alloc] initWithFrame:CGRectMake(13, 36, 294, 300)];
         imageView.layer.masksToBounds = YES;
@@ -66,7 +54,6 @@
         imageView.layer.borderWidth = 1;
         imageView.layer.borderColor = [UIColor colorWithWhite:0.9 alpha:1].CGColor;
         imageView.contentMode = UIViewContentModeScaleAspectFill;
-
         
         dateLabel = [[UILabel alloc] initWithFrame:CGRectMake(16, 13, 170, 20)];
         dateLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:15];
@@ -79,7 +66,6 @@
         ownerLabel.textAlignment = UITextAlignmentRight;
         ownerLabel.layer.masksToBounds = YES;
         ownerLabel.backgroundColor = [UIColor clearColor];
-        
         
         favoritesButton = [UIButton buttonWithType:UIButtonTypeCustom];
         favoritesButton.frame = CGRectMake(16, 347, [EMTLPhotoCell favoritesStringWidth], 16);
@@ -94,11 +80,17 @@
         [commentsButton setTitleColor:[UIColor colorWithWhite:0 alpha:0.6] forState:UIControlStateNormal];
         [commentsButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
         
+        indicator = [EMTLProgressIndicatorViewController indicatorWithSize:kSmallProgressIndicator];
+        indicator.view.center = imageView.center;
+        indicator.view.layer.opacity = 0.2;
+        
+        
         self.backgroundColor = [UIColor clearColor];
         self.selectionStyle = UITableViewCellSelectionStyleNone;
         
         
         [cardView addSubview:backgroundGutter];
+        [cardView addSubview:indicator.view];
         [cardView addSubview:imageView];
         [cardView addSubview:dateLabel];
         [cardView addSubview:ownerLabel];
@@ -106,34 +98,7 @@
         [cardView addSubview:commentsButton];
         [cardView addSubview:favoritesButton];
         
-        
         [self.contentView addSubview:cardView];
-        
-        
-        // Setup favorites card
-        favoritesTitle = [UIButton buttonWithType:UIButtonTypeCustom];
-        favoritesTitle.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:15];
-        [favoritesTitle setTitle:@"Favorites" forState:UIControlStateNormal];
-        [favoritesTitle setTitleColor:[UIColor colorWithWhite:0 alpha:0.6] forState:UIControlStateNormal];
-        favoritesTitle.frame = CGRectMake(0, 13, cardView.frame.size.width/2, 20);
-        
-        
-        
-        commentsTitle = [UIButton buttonWithType:UIButtonTypeCustom];
-        commentsTitle.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:15];
-        [commentsTitle setTitle:@"Comments" forState:UIControlStateNormal];
-        [commentsTitle setTitleColor:[UIColor colorWithWhite:0 alpha:0.6] forState:UIControlStateNormal];
-        commentsTitle.frame = CGRectMake(cardView.frame.size.width/2, 13, cardView.frame.size.width/2, 20);
-        
-        listTable = [[UITableView alloc] initWithFrame:CGRectMake(20, 35, 280, 300) style:UITableViewStylePlain];
-        listTable.delegate = self;
-        listTable.dataSource = self;
-        listTable.backgroundColor = [UIColor clearColor];
-        listTable.separatorColor = [UIColor clearColor];
-        
-        currentTableData = nil;
-        
-        
         
     }
     return self;
@@ -146,28 +111,25 @@
     
     ownerLabel.text = photo.username;
     dateLabel.text = photo.datePostedString;
+    
+    imageRequest = [EMTLCacheRequest requestWithDomain:photo.imageDomain key:photo.photoID type:EMTLImage];
+    imageRequest.url = photo.imageURL;
+    imageRequest.target = self;
+    UIImage *image = [imageRequest fetch];
+    
+    if(image) {
+        imageView.image = image;
+    }
 
     if(photo.isReady) {
-        imageView.image = photo.image;
         [favoritesButton setTitle:photo.favoritesShortString forState:UIControlStateNormal];
         [commentsButton setTitle:photo.commentsShortString forState:UIControlStateNormal];
     }
     else {
-        indicator = [EMTLProgressIndicatorViewController indicatorWithSize:kSmallProgressIndicator];
-        indicator.value = photo.currentPercent;
-        indicator.view.layer.opacity = 0.2;
-        [cardView insertSubview:indicator.view belowSubview:imageView];
         [photo loadData];
     }
 }
 
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
-    [super setSelected:selected animated:animated];
-
-    // Configure the view for the selected state
-}
 
 - (void)setFrame:(CGRect)frame
 {
@@ -192,22 +154,6 @@
 }
 
 
-//- (void)setImageHeight:(int)height
-//{
-//    int difference = height - imageView.frame.size.height;
-//
-//    
-//    cardView.frame = CGRectMake(cardView.frame.origin.x, cardView.frame.origin.y, cardView.frame.size.width, cardView.frame.size.height + difference);
-//    cardImageView.frame = CGRectMake(cardImageView.frame.origin.x, cardImageView.frame.origin.y, cardImageView.frame.size.width, cardImageView.frame.size.height + difference);
-//    backgroundGutter.frame = CGRectMake(backgroundGutter.frame.origin.x, backgroundGutter.frame.origin.y, backgroundGutter.frame.size.width, height);
-//    imageView.frame = CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y, imageView.frame.size.width, height);
-//    indicator.view.center = imageView.center;
-//    favoritesButton.frame = CGRectMake(favoritesButton.frame.origin.x, favoritesButton.frame.origin.y + difference, favoritesButton.frame.size.width, favoritesButton.frame.size.height);
-//    commentsButton.frame = CGRectMake(commentsButton.frame.origin.x, commentsButton.frame.origin.y + difference, commentsButton.frame.size.width, commentsButton.frame.size.height);
-//    
-//    
-//    
-//}
 
 - (void)prepareForReuse
 {
@@ -216,27 +162,22 @@
         photo.container = nil;
         photo = nil;
         
-        if (indicator) {
-            [indicator availableForReuse];
-            indicator = nil;
-        }
+        [indicator resetValue];
+        [imageRequest cancel];
+        imageRequest = nil;
                 
         imageView.image = nil;
         [favoritesButton setTitle:@"" forState:UIControlStateNormal];
         [commentsButton setTitle:@"" forState:UIControlStateNormal];
-        currentTableData = nil;
-        commentsArray = nil;
-        favoritesArray = nil;
-        
+
     }
 }
 
 
+
 - (void)switchToFavoritesView
 {
-    currentTableData = favoritesArray;
-    [listTable reloadData];
-    listTable.frame = imageView.frame;
+
 
     [UIView beginAnimations:nil context:nil];
 	[UIView setAnimationDuration:0.6];
@@ -252,23 +193,10 @@
     [favoritesButton removeFromSuperview];
     [commentsButton removeFromSuperview];
     
-	[cardView addSubview:favoritesTitle];
-    [cardView addSubview:commentsTitle];
-    [cardView addSubview:listTable];
+
 	[UIView commitAnimations];
 }
 
-
-- (void)switchToCommentsView
-{
-    
-}
-
-
-- (void)flipPhoto
-{
-    
-}
 
 #pragma mark - UITableViewDelegate methods
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -277,59 +205,9 @@
     
 }
 
-#pragma mark - UITableViewDataSource methods
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"FavoritesCell"];
-    
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"FavoritesCell"];
-        cell.backgroundColor = [UIColor clearColor];
-        cell.textLabel.font = [UIFont fontWithName:@"MarkerSD" size:14];
-        
-    }
-    
-    cell.textLabel.text = [NSString stringWithFormat:@"Liked by %@", [[currentTableData objectAtIndex:indexPath.row] username]];
-    
-    
-    return cell;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    if (currentTableData) {
-        return currentTableData.count;
-    }
-    else {
-        return 0;
-    }
-}
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    return 1;
-}
 
 
 #pragma mark - EMTLPhotoDelegate methods
-
-- (void)setImage:(UIImage *)image
-{
-    imageView.image = image;
-    imageView.layer.opacity = 0;
-        
-    [UIView animateWithDuration:0.6 animations:^(void) {
-        imageView.layer.opacity = 1;
-        
-    } completion:^(BOOL finished) {
-        [indicator availableForReuse];
-        indicator = nil;
-    }];
-
-}
-
-
 - (void)setFavoritesString:(NSString *)favoritesString
 {
     [favoritesButton setTitle:favoritesString forState:UIControlStateNormal];
@@ -351,15 +229,6 @@
     }];
 }
 
-- (void)setFavorites:(NSArray *)favorites
-{
-    favoritesArray = favorites;
-}
-
-- (void)setComments:(NSArray *)comments
-{
-    commentsArray = comments;
-}
 
 + (float)favoritesStringWidth
 {
@@ -381,9 +250,35 @@
     return [UIFont fontWithName:@"Whatever" size:14];
 }
 
-- (void)setProgressValue:(float)value
+#pragma mark - EMTLCacheClient methods
+- (void)retrievedObject:(id)object ForRequest:(EMTLCacheRequest *)request
 {
-    indicator.value = value;
+    if([request.domain isEqualToString:photo.imageDomain]) {
+        imageView.image = (UIImage *)object;
+        indicator.value = 100;
+        //imageView.layer.opacity = 0;
+        imageRequest = nil;
+        
+        [UIView animateWithDuration:0.6 animations:^(void) {
+            imageView.layer.opacity = 1;
+            
+        } completion:^(BOOL finished) {
+            [indicator resetValue];
+        }];
+
+    }
 }
+
+- (void)unableToRetrieveObjectForRequest:(EMTLCacheRequest *)request
+{
+    NSLog(@"Was unable to retrieve the image for %@ %@.", request.domain, request.key);
+}
+
+
+- (void)fetchedBytes:(int)bytes ofTotal:(int)total forRequest:(EMTLCacheRequest *)request
+{
+    indicator.value = ((float)bytes/(float)total) * 100;
+}
+
 
 @end

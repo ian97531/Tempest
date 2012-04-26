@@ -44,7 +44,7 @@
             realm:(NSString *)aRealm
 signatureProvider:(id<OASignatureProviding>)aProvider {
     if ((self = [super initWithURL:aUrl
-           cachePolicy:NSURLRequestReloadIgnoringCacheData
+           cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData
 	   timeoutInterval:10.0])) {
     
 		consumer = [aConsumer retain];

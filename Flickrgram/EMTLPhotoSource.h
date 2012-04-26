@@ -18,9 +18,9 @@
 
 @protocol Authorizable <NSObject>
 
-- (void)photoSource:(id <PhotoSource>)photoSource authorizationError:(NSError *)error;
 - (void)photoSource:(id <PhotoSource>)photoSource requiresAuthorizationAtURL:(NSURL *)url;
-- (void)authorizationCompleteForSource:(id <PhotoSource>)photoSource;
+- (void)authorizationCompleteForPhotoSource:(id <PhotoSource>)photoSource;
+- (void)authorizationErrorForPhotoSource:(id <PhotoSource>)photoSource;
 
 @end
 
@@ -31,44 +31,44 @@
 
 @end
 
+
+static NSString *const kPhotoUsername = @"user_name";
+static NSString *const kPhotoUserID = @"user_id";
+static NSString *const kPhotoTitle = @"photo_title";
+static NSString *const kPhotoID = @"photo_id";
+static NSString *const kPhotoImageURL = @"image_url";
+static NSString *const kPhotoImageAspectRatio = @"aspect_ratio";
+static NSString *const kPhotoDatePosted = @"date_posted";
+static NSString *const kPhotoDateUpdated = @"date_updated";
+
+static NSString *const kCacheCommentsDomain = @"comments_domain";
+static NSString *const kCacheFavoritesDomain = @"favorites_domain";
+static NSString *const kCacheImageDomain = @"image_domain";
+
+static NSString *const kCommentText = @"comment_text";
+static NSString *const kCommentDate = @"comment_date";
+static NSString *const kCommentUsername = @"user_name";
+static NSString *const kCommentUserID = @"user_id";
+static NSString *const kCommentIconURL = @"icon_url";
+
+static NSString *const kFavoriteDate = @"favorite_date";
+static NSString *const kFavoriteUsername = @"user_name";
+static NSString *const kFavoriteUserID = @"user_id";
+static NSString *const kFavoriteIconURL = @"icon_url";
+
     
 @protocol PhotoSource <NSObject>
 
 @property (nonatomic, assign) id <Authorizable> delegate;
 @property (nonatomic, assign) id <PhotoConsumer> photoDelegate;
 @property (readonly, nonatomic, strong) NSString *key;
-@property (readonly, nonatomic) NSURL *authorizationURL;
 
 @property (readonly, strong) NSString *user_id;
 @property (readonly, strong) NSString *username;
-@property (readonly) BOOL expired;
 
 - (void)authorize;
 - (void)authorizedWithVerifier:(NSString *)verfier;
-
-- (void)requestTokenTicket:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data;
-- (void)requestTokenTicket:(OAServiceTicket *)ticket didFailWithError:(NSError *)error;
-- (void)accessTokenTicket:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data;
-- (void)accessTokenTicket:(OAServiceTicket *)ticket didFailWithError:(NSError *)error;
-
-- (void)callMethod:(NSString *)method didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
-- (void)callMethod:(NSString *)method withArguments:(NSDictionary *)args didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
-- (void)callMethod:(NSString *)method delegate:(id)delegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
-- (void)callMethod:(NSString *)method withArguments:(NSDictionary *)args delegate:(id)delegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
-
 - (void)morePhotos;
-- (void)morePhotos:(int)num;
-
-- (void)getPhotoFavorites:(NSString *)photo_id delegate:(id)delegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
-- (void)getPhotoFavorites:(NSString *)photo_id page:(int)page delegate:(id)delegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;;
-- (void)getPhotoComments:(NSString *)photo_id delegate:(id)delegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector;
-
-- (NSURL *)defaultUserIconURL;
-- (NSArray *)extractComments:(NSData *)data;
-- (NSArray *)extractFavorites:(NSData *)data forPhoto:(EMTLPhoto *)photo;
-
-- (NSDictionary *)extractJSONFromData:(NSData *)data withError:(NSError **) error;
-
 
 
 @end

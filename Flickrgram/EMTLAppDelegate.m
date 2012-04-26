@@ -50,12 +50,12 @@
     
     [self initializePhotoSources];
     
-    for (NSString *name in [UIFont familyNames]) {
-        NSLog(@"Family name : %@", name);
-        for (NSString *font in [UIFont fontNamesForFamilyName:name]) {
-            NSLog(@"Font name : %@", font);             
-        }
-    }
+//    for (NSString *name in [UIFont familyNames]) {
+//        NSLog(@"Family name : %@", name);
+//        for (NSString *font in [UIFont fontNamesForFamilyName:name]) {
+//            NSLog(@"Font name : %@", font);             
+//        }
+//    }
     
     
     return YES;
@@ -121,7 +121,7 @@
     
 }
 
-- (void)photoSource:(id <PhotoSource>)photoSource authorizationError:(NSError *)error
+- (void)authorizationErrorForPhotoSource:(id <PhotoSource>)photoSource;
 {
     NSLog(@"authorization error for %@", photoSource.key);
 }
@@ -151,7 +151,7 @@
     [navController presentModalViewController:webController animated:YES];
 }
 
-- (void)authorizationCompleteForSource:(id <PhotoSource>)photoSource
+- (void)authorizationCompleteForPhotoSource:(id <PhotoSource>)photoSource;
 {
     NSLog(@"authorization complete for %@. user:%@, id: %@", photoSource.key, photoSource.username, photoSource.user_id);
     [feed addSource:photoSource];

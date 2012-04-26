@@ -12,67 +12,69 @@
 
 @implementation EMTLPhoto
 
-@synthesize image_URL;
+@synthesize imageURL;
 @synthesize title;
-@synthesize user_id;
+@synthesize userID;
 @synthesize username;
-@synthesize description;
 @synthesize dateUpdated;
 @synthesize datePosted;
-@synthesize photo_id;
-@synthesize image;
-@synthesize container;
-@synthesize source;
-@synthesize imageData;
-@synthesize connection;
-@synthesize aspect_ratio;
+@synthesize photoID;
+@synthesize aspectRatio;
 @synthesize isFavorite;
 @synthesize comments;
 @synthesize favorites;
 @synthesize favoritesShortString;
 @synthesize datePostedString;
-@synthesize currentPercent;
+@synthesize imageDomain;
+
+@synthesize container;
+@synthesize source;
+
 
 - (id)initWithDict:(NSDictionary *)dict
 {
     self = [super init];
     if(self) {
         
-        loadingImage = NO;
-        loadingFavorites = NO;
-        loadingComments = NO;
-        loadRequested = YES;
-        expectingBytes = 0;
-        currentPercent = 0;
-
-        
         for (NSString *key in dict) {
-            if ([key isEqualToString:@"owner"]) {
-                user_id = [dict objectForKey:@"owner"];
+            if ([key isEqualToString:kPhotoUserID]) {
+                userID = [dict objectForKey:kPhotoUserID];
             }
-            else if ([key isEqualToString:@"ownername"]) {
-                username = [dict objectForKey:@"ownername"];
+            else if ([key isEqualToString:kPhotoUsername]) {
+                username = [dict objectForKey:kPhotoUsername];
             }
-            else if ([key isEqualToString:@"title"]) {
-                title = [dict objectForKey:@"title"];
+            else if ([key isEqualToString:kPhotoTitle]) {
+                title = [dict objectForKey:kPhotoTitle];
             }
-            else if ([key isEqualToString:@"id"]) {
-                photo_id = [dict objectForKey:@"id"];
+            else if ([key isEqualToString:kPhotoID]) {
+                photoID = [dict objectForKey:kPhotoID];
             }
-            else if ([key isEqualToString:@"url"]) {
-                image_URL = [dict objectForKey:@"url"];
+            else if ([key isEqualToString:kPhotoImageURL]) {
+                imageURL = [dict objectForKey:kPhotoImageURL];
             }
-            else if ([key isEqualToString:@"date_posted"]) {
-                datePosted = [dict objectForKey:@"date_posted"];
+            else if ([key isEqualToString:kPhotoDatePosted]) {
+                datePosted = [dict objectForKey:kPhotoDatePosted];
             }
-            else if ([key isEqualToString:@"aspect_ratio"]) {
-                aspect_ratio = [dict objectForKey:@"aspect_ratio"];
+            else if ([key isEqualToString:kPhotoImageAspectRatio]) {
+                aspectRatio = [dict objectForKey:kPhotoImageAspectRatio];
             }
-            else if ([key isEqualToString:@"date_updated"]) {
-                dateUpdated = [dict objectForKey:@"date_updated"];
+            else if ([key isEqualToString:kPhotoDateUpdated]) {
+                dateUpdated = [dict objectForKey:kPhotoDateUpdated];
             }
-            
+            else if ([key isEqualToString:kCacheCommentsDomain]) {
+                commentsDomain = [dict objectForKey:kCacheCommentsDomain];
+            }
+            else if ([key isEqualToString:kCacheFavoritesDomain]) {
+                favoritesDomain = [dict objectForKey:kCacheFavoritesDomain];
+            }
+            else if ([key isEqualToString:kCacheImageDomain]) {
+                imageDomain = [dict objectForKey:kCacheImageDomain];
+            }
         }
+        
+        
+        
+        
         
     }
     
@@ -80,31 +82,32 @@
     
 }
 
+- (void)preloadData
+{
+    
+    
+    if (!favorites && !favoritesRequest) {
+        [favoritesRequest fetch];
+    }
+    
+    if (!comments && !commentsRequest) {
+        [commentsRequest fetch];
+    }
+}
+
 - (void)loadData
 {
-    if(!image && !loadingImage) {
-        loadingImage = YES;
-        imageData = [NSMutableData data];
-        NSURLRequest *request = [NSURLRequest requestWithURL:image_URL cachePolicy:NSURLRequestReturnCacheDataElseLoad timeoutInterval:30];
-        connection = [NSURLConnection connectionWithRequest:request delegate:self];
-        [connection start];
-        
+    
+    if (!favorites && !favoritesRequest) {
+        favoritesRequest = [EMTLCacheRequest requestWithDomain:favoritesDomain key:photoID type:EMTLKeyedObject];
+        favoritesRequest.target = self;
+        [favoritesRequest fetch];
     }
     
-    if (!favorites && !loadingFavorites) {
-        loadingFavorites = YES;
-        [source getPhotoFavorites:photo_id 
-                         delegate:self 
-                didFinishSelector:@selector(getPhotoFavorites:didFinishWithData:) 
-                  didFailSelector:@selector(getPhotoFavorites:didFailWithError:)];
-    }
-    
-    if (!comments && !loadingComments) {
-        loadingComments = YES;
-        [source getPhotoComments:photo_id 
-                        delegate:self 
-               didFinishSelector:@selector(getPhotoComments:didFinishWithData:) 
-                 didFailSelector:@selector(getPhotoComments:didFailWithError:)];
+    if (!comments && !commentsRequest) {
+        commentsRequest = [EMTLCacheRequest requestWithDomain:commentsDomain key:photoID type:EMTLKeyedObject];
+        commentsRequest.target = self;
+        [commentsRequest fetch];
     }
     
     if (!datePostedString) {
@@ -112,34 +115,34 @@
     }
 }
 
-- (BOOL)isReady
-{
-    if (image && comments && favorites) {
-        return YES;
-    }
-    
-    return NO;
-}
 
 - (void)cancel
 {
-    if(connection) {
-        [connection cancel];
-        loadingImage = NO;
-        loadingComments = NO;
-        loadingFavorites = NO;
-        if(!image) {
-            imageData = nil;
-        }
+
+    if(commentsRequest) {
+        [commentsRequest cancel];
+        commentsRequest = nil;
     }
+    
+    if (favoritesRequest) {
+        [favoritesRequest cancel];
+        favoritesRequest = nil;
+    }
+    
+}
+
+
+- (BOOL)isReady
+{
+    return (comments && favorites);
 }
 
 
 
-- (NSNumber *)aspect_ratio
+- (NSNumber *)aspectRatio
 {
-    if(aspect_ratio) {
-        return aspect_ratio;
+    if(aspectRatio) {
+        return aspectRatio;
     }
     else {
         return [NSNumber numberWithInt:1];
@@ -172,7 +175,7 @@
             NSMutableArray *namesWithSuffix = [NSMutableArray arrayWithCapacity:4];
             NSMutableArray *namesWithoutSuffix = [NSMutableArray arrayWithCapacity:5];
             
-            if([photo_id isEqualToString:@"6899018088"] ) {
+            if([photoID isEqualToString:@"6899018088"] ) {
                 NSLog(@"found it");
             }
             
@@ -182,10 +185,10 @@
                 
                 // Construct the string that would be added.
                 if (i == 0) {
-                    nameString = [[favorites objectAtIndex:0] username];
+                    nameString = [[favorites objectAtIndex:0] objectForKey:kFavoriteUsername];
                 }
                 else {
-                    nameString = [NSString stringWithFormat:@", %@", [[favorites objectAtIndex:i] username]];
+                    nameString = [NSString stringWithFormat:@", %@", [[favorites objectAtIndex:i] objectForKey:kFavoriteUsername]];
                 }
                 
                 // Size the string that would be added.
@@ -341,124 +344,35 @@
     
 }
 
-
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)theConnection
+#pragma mark - EMTLCacheClient methods
+- (void)retrievedObject:(id)object ForRequest:(EMTLCacheRequest *)request
 {
-    image = [UIImage imageWithData:imageData];
-    loadingImage = NO;
-    connection = nil;
-    imageData = nil;
-    if(container) {
-        [container setProgressValue:100];
-        [container setImage:image];
+    if (request.domain == commentsDomain) {
+        comments = (NSArray *)object;
+        [container setCommentsString:[self commentsShortString]];
+    }
+    else if(request.domain == favoritesDomain) {
+        favorites = (NSArray *)object;
+        [container setFavoritesString:[self favoritesShortString]];
     }
     
 }
 
-- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+- (void)fetchedBytes:(int)bytes ofTotal:(int)total forRequest:(EMTLCacheRequest *)request
 {
-    expectingBytes = response.expectedContentLength;
+    //NSLog(@"got %i bytes for %@ in domain %@", bytes, photoID, request.domain);
 }
 
-
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+- (void)unableToRetrieveObjectForRequest:(EMTLCacheRequest *)request
 {
-    [imageData appendData:data];
-    
-    currentPercent += (((float)data.length)/(float)expectingBytes) * 80;
-    [container setProgressValue:currentPercent];
-    
-}
-
-- (void)connection:(NSURLConnection *)theConnection didFailWithError:(NSError *)error
-{
-    NSLog(@"Failed to download %@", photo_id);
-    //NSLog(error.localizedDescription);
-    loadingImage = NO;
-    connection = nil;
-    imageData = nil;
+    //NSLog(@"Photo: %@ was unable to get %@ from the cache", photoID, request.domain);
 }
 
 
 
 
 
-- (void)getPhotoFavorites:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
-{
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul);
-    
-    dispatch_async(queue, ^{
-        if(ticket.didSucceed) {
-            favorites = [[source extractFavorites:data forPhoto:self] mutableCopy];
-            currentPercent += 10;
-            [self favoritesShortString];
-            
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                [container setProgressValue:currentPercent];
-                [container setFavoritesString:favoritesShortString];
-                [container setFavorites:favorites];
-                //NSLog(@"got favorites for %@", photo_id);
-            });
-            
-            
-        }
-        else {
-            NSLog(@"There was an error getting favorites.");
-        }
-        loadingFavorites = NO;
-            
-        
-    });
-    
-    
-    
-    
-}
 
-- (void)getPhotoFavorites:(OAServiceTicket *)ticket didFailWithError:(NSError *)error
-{
-    NSLog(@"Failed to get favorites.");
-    loadingFavorites = NO;
-}
-
-- (void)getPhotoComments:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
-{
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0ul);
-    
-    dispatch_async(queue, ^{
-        if (ticket.didSucceed) {
-            comments = [[source extractComments:data] mutableCopy];
-            currentPercent += 10;
-            
-            dispatch_sync(dispatch_get_main_queue(), ^{
-                [container setProgressValue:currentPercent];
-                [container setCommentsString:[self commentsShortString]];
-                [container setComments:comments];
-                //NSLog(@"got comments for %@", photo_id);
-            });
-            
-            
-        }
-        else {
-            NSLog(@"There was an error getting comments.");
-        }
-        
-        loadingComments = NO;
-            
-        
-    });
-    
-    
-    //[self setupImageAnimated:YES];
-    
-}
-
-- (void)getPhotoComments:(OAServiceTicket *)ticket didFailWithError:(NSError *)error
-{
-    NSLog(@"Failed to get favorites.");
-    loadingComments = NO;
-}
 
 
 

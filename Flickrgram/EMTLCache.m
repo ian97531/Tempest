@@ -9,8 +9,10 @@
 #import "EMTLCache.h"
 
 @implementation EMTLCache
+@synthesize runningRequests;
 
 static EMTLCache *cache;
+
 
 + (id)cache
 {
@@ -30,11 +32,21 @@ static EMTLCache *cache;
         postProcessors = [NSMutableDictionary dictionaryWithCapacity:10];
         invocations = [NSMutableArray arrayWithCapacity:100];
         pausingObjects = [NSMutableArray arrayWithCapacity:10];
+        runningRequests = [NSMutableDictionary dictionaryWithCapacity:10];
         
         NSArray *dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, 
                                                        NSUserDomainMask, YES);
         cacheDir = [dirPaths objectAtIndex:0];
         
+        // Populate the diskCacheArray so that we can use the file cache.
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSArray *cacheContents = [fileManager contentsOfDirectoryAtPath:cacheDir error:nil];
+        for (NSString *file in cacheContents) {
+            [diskAccessRecord setValue:[NSDate date] forKey:file];
+            NSLog(@"loading %@", file);
+        }
+        
+        NSLog(@"loaded %i items from disk cache", cacheContents.count);
         paused = NO;
 
     }
@@ -42,91 +54,80 @@ static EMTLCache *cache;
     return self;
 }
 
-- (void)setObject:(id <NSCoding>)object forDomain:(NSString *)domain key:(NSString *)key type:(EMTLDataType)type
+- (void)setObject:(id)object key:(NSString *)key type:(EMTLDataType)type
 {
-    NSString *combinedKey = [NSString stringWithFormat:@"%@-%@", domain, key];
-    [memoryCache setObject:object forKey:combinedKey];
     
-    [self execute:^(void) {
-        
-        NSData *data;
-        if (type == EMTLImage) {
-            data = UIImagePNGRepresentation((UIImage *)object);
+    [memoryCache setObject:object forKey:key];
+    
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0ul);
+    
+    dispatch_async(queue, ^{
+        if(![diskAccessRecord objectForKey:key]) {
+            [diskAccessRecord setObject:[NSDate date] forKey:key];
+            NSString *filePath = [NSString stringWithFormat:@"%@/%@", cacheDir, key];
+            if (type == EMTLImage) {
+                NSData *data = UIImagePNGRepresentation((UIImage *)object);
+                [data writeToFile:filePath atomically:YES];
+            }
+            else {
+                
+                [NSKeyedArchiver archiveRootObject:object toFile:filePath];
+                
+            }
         }
-        else {
-            NSMutableData *mutableData;
-            NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:mutableData];
-            [archiver encodeRootObject:object];
-            [archiver finishEncoding];
-            data = [NSData dataWithData:mutableData];
-        }
-        
-        if (data) {
-            [data writeToFile:[NSString stringWithFormat:@"%@/%@-%@.cache", cacheDir, domain, key] atomically:YES];
-        }
-        
-        [diskAccessRecord setObject:[NSDate date] forKey:combinedKey];
+    });
+    
+    
         
                 
         
-    }];
+
 }
 
 - (id)objectInMemoryForRequest:(EMTLCacheRequest *)request;
 {
-    return [memoryCache objectForKey:request.key];
+    return [memoryCache objectForKey:request.combinedKey];
 }
 
 - (BOOL)objectOnDiskForRequest:(EMTLCacheRequest *)request
 {
-    NSString *combinedKey = [NSString stringWithFormat:@"%@-%@", request.domain, request.key];
-    NSDate *date_stored = [diskAccessRecord objectForKey:combinedKey];
+    NSDate *date_stored = [diskAccessRecord objectForKey:request.combinedKey];
     if(date_stored) {
-        [self execute:^(void){
-            
-            NSData *data = [NSData dataWithContentsOfFile:[NSString stringWithFormat:@"%@/%@-%@.cache", cacheDir, request.domain, request.key]];
+        
+        dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0ul);
+        
+        dispatch_async(queue, ^{
+        
+            NSData *data = [NSData dataWithContentsOfFile:[NSString stringWithFormat:@"%@/%@-%@", cacheDir, request.domain, request.key]];
             
             id object;
             if (request.type == EMTLImage) {
                 object = [UIImage imageWithData:data];
             }
             else {
-                NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-                object = [unarchiver decodeObject];
-                [unarchiver finishDecoding];
+                object = [NSKeyedUnarchiver unarchiveObjectWithData:data];
             }
             
-            [memoryCache setObject:object forKey:combinedKey];
+            [memoryCache setObject:object forKey:request.combinedKey];
+            
+            dispatch_sync(dispatch_get_main_queue(), ^{
+                [request fetchedObjectFromDisk:object withDate:date_stored];
+            });
+            
+        });
 
-            [request fetchedObjectFromDisk:object withDate:date_stored];
-
-        }];
+        
         return YES;
     }
     
     return NO;
 }
 
-- (void)execute:(void (^)(void))block
+- (BOOL)objectIsCachedForRequest:(EMTLCacheRequest *)request
 {
-    
-    if (paused) {
-        [invocations addObject:block];
-    }
-    else {
-        block();
-    }
-    
-    
+    return ([memoryCache objectForKey:request.combinedKey] || [diskAccessRecord objectForKey:request.combinedKey]);
 }
 
-- (void)clearQueue
-{
-    while (invocations.count) {
-        void (^block)(void) = [invocations objectAtIndex:0];
-        block();
-    }
-}
 
 // Methods for EMTLCacheHandlers and EMTLCachePostProcessors
 - (void)setHandler:(id <EMTLCacheHandler>)handler forDomain:(NSString *)domain
@@ -149,22 +150,6 @@ static EMTLCache *cache;
     return [postProcessors objectForKey:domain];
 }
 
-// Methods for UI Controllers
-- (void)requestPause:(id)object
-{
-    paused = YES;
-    [pausingObjects addObject:object];
-}
-
-- (void)requestResume:(id)object
-{
-    [pausingObjects removeObject:object];
-    if(pausingObjects.count == 0) {
-        paused = NO;
-        [self clearQueue];
-    }
-    
-}
 
 @end
 
@@ -174,12 +159,22 @@ static EMTLCache *cache;
 
 @synthesize domain;
 @synthesize key;
+@synthesize combinedKey;
+@synthesize url;
 @synthesize newerThan;
 @synthesize target;
 @synthesize handler;
 @synthesize processor;
 @synthesize cache;
 @synthesize type;
+@synthesize userInfo;
+@synthesize siblingRequests;
+
++ (id)requestWithDomain:(NSString *)theDomain key:(NSString *)theKey type:(EMTLDataType)theType
+{
+    return [[EMTLCacheRequest alloc] initWithDomain:theDomain key:theKey type:theType];
+}
+
 
 - (id)initWithDomain:(NSString *)theDomain key:(NSString *)theKey type:(EMTLDataType)theType;
 {
@@ -187,101 +182,199 @@ static EMTLCache *cache;
     if (self) {
         domain = theDomain;
         key = theKey;
+        combinedKey = [NSString stringWithFormat:@"%@-%@", domain, key];
         type = theType;
         cache = [EMTLCache cache];
         newerThan = nil;
+        target = nil;
+        siblingRequests = [NSMutableArray arrayWithCapacity:5];
     }
     return self;
 }
 
-- (void)execute
+- (id)fetch
 {
+    // First check the in-memory cache
     id object = [cache objectInMemoryForRequest:self];
-    if (object) {
-        [target retrievedObject:object ForRequest:self];
-        return;
+    if (object && target) {
+        NSLog(@"using memory cache for %@-%@", domain, key);
+        return object;
     }
+    
+    // Next check the on-disk cache
     else if([cache objectOnDiskForRequest:self]) {
-        return;
+        NSLog(@"using disk cache for %@-%@", domain, key);
+        return nil;
     }
-
-    [self invokeHandler];
+    
+    // If nothing, try to download the object.
+    else if([self downloadObject]) {
+        NSLog(@"fetching from web for %@-%@", domain, key);
+        return nil;
+    }
+        
+    [target unableToRetrieveObjectForRequest:self];
+    return nil;
 }
 
 
 - (void)cancel
 {
-    [handler cancelRequest:self];
+    // If the object is being downloaded, this will cancel the download.
+    @synchronized(cache.runningRequests) {
+        EMTLCacheRequest *brother = [cache.runningRequests objectForKey:combinedKey];
+        if(brother == self) {
+            [cache.runningRequests removeObjectForKey:combinedKey];
+        }
+        if(connection) {
+            [connection cancel];
+        }
+    }
+    
+    
 }
 
-// For EMTLHandlers
-- (void)fetchedObject:(id)object
+// For EMTLCacheClients
+#pragma mark - Methods for EMTLCache
+- (void)unableToFetchObjectFromDisk
+{   
+    // If we couldn't get the object from disk, try to download it.
+    if (![self downloadObject] && target) {
+        [target unableToRetrieveObjectForRequest:self];
+    }
+}
+
+- (void)fetchedObjectFromDisk:(id)object withDate:(NSDate *)date
 {
+
+    // If we got the object and it's new enough, return it.
+    if (newerThan && [date compare:newerThan] == NSOrderedAscending) {
+        if (!target) {
+            return;
+        }
+        
+        [target retrievedObject:object ForRequest:self];
+        return;
+    }
     
+    // If we got the object and no date was specified, return it.
+    else if (!newerThan) {
+        if (!target) {
+            return;
+        }
+        
+        [target retrievedObject:object ForRequest:self];
+        return;
+    }
     
+    // Otherwise we got an object that's too old. We need to
+    // download a newer version if possible. If we can't
+    // download a newer version, let the client know.
+    if(![self downloadObject] && target) {
+        [target unableToRetrieveObjectForRequest:self];
+    }
+    
+}
+
+- (BOOL)downloadObject
+{
+    @synchronized(cache.runningRequests) {
+        EMTLCacheRequest *brother = [cache.runningRequests objectForKey:combinedKey];
+        if (brother && target) {
+            NSLog(@"adding myself to a sibling request");
+            [brother.siblingRequests addObject:self];
+            return YES;
+        }
+        else {
+            [cache.runningRequests setValue:self forKey:combinedKey];
+        }
+    }
+    
+    NSURLRequest *request;
+    
+    // If the client specified a specific URL for this resource, use that.
+    if(url) {
+        request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10.0];
+    }
+    else {
+        
+        // Otherwise, if a handler was given to get the resource, use that.
+        // If no, handler was given, check to see if this resource's domain has a handler.
+        if(!handler) {
+            handler = [cache handlerForDomain:domain];
+        }
+        
+        // Assuming we got a handler, get the request.
+        if (handler) {
+            request = [handler urlRequestForRequest:self];
+        }
+    }
+    
+    // If we have a valid NSURLRequest at this point, then run the request.
+    if (request) {
+        connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+        return YES;
+    }
+    else  {
+        return NO;
+    }
+
+}
+
+- (void)connection:(NSURLConnection *)aConnection didReceiveResponse:(NSURLResponse *)aResponse {
+    totalSize = (uint)aResponse.expectedContentLength;
+    receivedData = [NSMutableData data];
+}
+
+- (void)connection:(NSURLConnection *)aConnection didFailWithError:(NSError *)error {
+    
+    if (target) {
+        [target unableToRetrieveObjectForRequest:self];
+    }
+}
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
+    [receivedData appendData:data];
+    if(target) {
+        [target fetchedBytes:receivedData.length ofTotal:totalSize forRequest:self];
+    }
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+
+    id object;
     if(!processor) {
         processor = [cache postProcessorForDomain:domain];
     }
     
     if (processor) {
-        [cache execute:^(void){
-            id processedObject = [processor processObject:object forRequest:self];
-            [cache setObject:processedObject forDomain:domain key:key type:type];
-            [target retrievedObject:processedObject ForRequest:self];
-        }];
+        object = [processor processData:receivedData forRequest:self];
     }
+    else if (type == EMTLImage) {
+        object = [UIImage imageWithData:receivedData];
+    }
+    
     else {
-        [cache setObject:object forDomain:domain key:key type:type];
+        // This is dubious...
+        object = receivedData;
+    }
+    
+    [cache setObject:object key:combinedKey type:type];
+    
+    @synchronized(cache.runningRequests) {
+        [cache.runningRequests removeObjectForKey:combinedKey];
+    }
+    
+    if(target) {
         [target retrievedObject:object ForRequest:self];
     }
     
-    
-}
-
-
-- (void)fetchedBytes:(int)bytes ofTotal:(int)total
-{
-    if ([[target class] instancesRespondToSelector:@selector(fetchedBytes:ofTotal:forRequest:)]) {
-        [target fetchedBytes:bytes ofTotal:total forRequest:self];
-    }
-}
-
-- (void)unableToFetchObject
-{   
-    [target unableToRetrieveObjectForRequest:self];
-}
-
-- (void)fetchedObjectFromDisk:(id)object withDate:(NSDate *)date
-{
-    [cache setObject:object forDomain:domain key:key type:type];
-    if (newerThan && [date compare:newerThan] == NSOrderedAscending) {
-        [target retrievedObject:object ForRequest:self];
-        return;
-    }
-    else if (!newerThan) {
-        [target retrievedObject:object ForRequest:self];
-        return;
+    if(siblingRequests.count) {
+        for (EMTLCacheRequest *sibling in siblingRequests) {
+            [sibling.target retrievedObject:object ForRequest:sibling];
+        }
     }
     
-    [self invokeHandler];
-    
-}
-
-- (void)invokeHandler
-{
-    if(!handler) {
-        handler = [cache handlerForDomain:domain];
-    }
-    
-    if (handler) {
-        [cache execute:^(void) {
-            [handler fetchObjectForRequest:self];
-        }];
-    }
-    else {
-        [target unableToRetrieveObjectForRequest:self];
-    }
-
 }
 
 @end

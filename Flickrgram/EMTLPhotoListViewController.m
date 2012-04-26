@@ -92,7 +92,7 @@
     
     // Calculate the heights needed for each photo cell in the photoArray and save them.
     for (EMTLPhoto *photo in photoArray) {
-        [heights addObject:[NSNumber numberWithInt:(int)((294 / photo.aspect_ratio.floatValue) + 150)]];
+        [heights addObject:[NSNumber numberWithInt:(int)((294 / photo.aspectRatio.floatValue) + 150)]];
     }
 
     #ifdef DEBUG
@@ -102,7 +102,7 @@
     // Load the data into the table feed, and start pre-loading some of the EMTLPhotos
     // The preloading grabs the actual image, and comments and favorites.
     [table reloadData];
-    [self preload];
+    //[self preload];
 }
 
 
@@ -182,15 +182,7 @@
     
     // Get the photo for this cell from the photos array, pass in the cell
     EMTLPhoto *photo = [photos objectAtIndex:indexPath.row];
-    
     [cell loadPhoto:photo];
-    
-    //[cell setImageHeight:photo.height];
-
-    
-    currentIndex = indexPath;
-    
-    
     return cell;
 }
 
@@ -216,7 +208,7 @@
     // Preload the next 3 images if they exist.
     for (int i = 1; i < num; i++) {
         if(currentIndex.row + i < photos.count) {
-            [[photos objectAtIndex:(currentIndex.row + i)] loadData];
+            //[[photos objectAtIndex:(currentIndex.row + i)] loadData];
         }
         else {
             break;
@@ -243,7 +235,7 @@
 {
     
     EMTLPhoto *photo = [photos objectAtIndex:indexPath.row];
-    NSLog(@"That image is %@", photo.photo_id);
+    NSLog(@"That image is %@", photo.photoID);
     
 }
 
