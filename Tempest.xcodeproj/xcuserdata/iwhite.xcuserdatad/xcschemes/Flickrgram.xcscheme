@@ -15,8 +15,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EB5221EB15377A3A00785F97"
                BuildableName = "Flickrgram.app"
-               BlueprintName = "Flickrgram"
-               ReferencedContainer = "container:Flickrgram.xcodeproj">
+               BlueprintName = "Tempest"
+               ReferencedContainer = "container:Tempest.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,8 +33,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EB52220B15377A3A00785F97"
                BuildableName = "FlickrgramTests.octest"
-               BlueprintName = "FlickrgramTests"
-               ReferencedContainer = "container:Flickrgram.xcodeproj">
+               BlueprintName = "TempestTests"
+               ReferencedContainer = "container:Tempest.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -43,8 +43,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EB5221EB15377A3A00785F97"
             BuildableName = "Flickrgram.app"
-            BlueprintName = "Flickrgram"
-            ReferencedContainer = "container:Flickrgram.xcodeproj">
+            BlueprintName = "Tempest"
+            ReferencedContainer = "container:Tempest.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -62,8 +62,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EB5221EB15377A3A00785F97"
             BuildableName = "Flickrgram.app"
-            BlueprintName = "Flickrgram"
-            ReferencedContainer = "container:Flickrgram.xcodeproj">
+            BlueprintName = "Tempest"
+            ReferencedContainer = "container:Tempest.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -80,8 +80,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EB5221EB15377A3A00785F97"
             BuildableName = "Flickrgram.app"
-            BlueprintName = "Flickrgram"
-            ReferencedContainer = "container:Flickrgram.xcodeproj">
+            BlueprintName = "Tempest"
+            ReferencedContainer = "container:Tempest.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
