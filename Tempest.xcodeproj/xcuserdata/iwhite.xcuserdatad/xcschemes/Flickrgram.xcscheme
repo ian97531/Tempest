@@ -14,7 +14,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EB5221EB15377A3A00785F97"
-               BuildableName = "Flickrgram.app"
+               BuildableName = "Tempest.app"
                BlueprintName = "Tempest"
                ReferencedContainer = "container:Tempest.xcodeproj">
             </BuildableReference>
@@ -32,7 +32,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EB52220B15377A3A00785F97"
-               BuildableName = "FlickrgramTests.octest"
+               BuildableName = "TempestTests.octest"
                BlueprintName = "TempestTests"
                ReferencedContainer = "container:Tempest.xcodeproj">
             </BuildableReference>
@@ -42,7 +42,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EB5221EB15377A3A00785F97"
-            BuildableName = "Flickrgram.app"
+            BuildableName = "Tempest.app"
             BlueprintName = "Tempest"
             ReferencedContainer = "container:Tempest.xcodeproj">
          </BuildableReference>
@@ -61,7 +61,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EB5221EB15377A3A00785F97"
-            BuildableName = "Flickrgram.app"
+            BuildableName = "Tempest.app"
             BlueprintName = "Tempest"
             ReferencedContainer = "container:Tempest.xcodeproj">
          </BuildableReference>
@@ -79,7 +79,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EB5221EB15377A3A00785F97"
-            BuildableName = "Flickrgram.app"
+            BuildableName = "Tempest.app"
             BlueprintName = "Tempest"
             ReferencedContainer = "container:Tempest.xcodeproj">
          </BuildableReference>

@@ -158,7 +158,7 @@
 			containerPortal = EB5221E315377A3A00785F97 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = EB5221EB15377A3A00785F97;
-			remoteInfo = Flickrgram;
+			remoteInfo = Tempest;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -423,8 +423,7 @@
 				EB69B200153CD46B003D8422 /* Assets */,
 				EB5221F915377A3A00785F97 /* Supporting Files */,
 			);
-			name = Tempest;
-			path = Flickrgram;
+			path = Tempest;
 			sourceTree = "<group>";
 		};
 		EB5221F915377A3A00785F97 /* Supporting Files */ = {
@@ -452,7 +451,7 @@
 				EB52221515377A3A00785F97 /* Supporting Files */,
 			);
 			name = TempestTests;
-			path = FlickrgramTests;
+			path = TempestTests;
 			sourceTree = "<group>";
 		};
 		EB52221515377A3A00785F97 /* Supporting Files */ = {
@@ -663,7 +662,7 @@
 			dependencies = (
 			);
 			name = Tempest;
-			productName = Flickrgram;
+			productName = Tempest;
 			productReference = EB5221EC15377A3A00785F97 /* Tempest.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -682,7 +681,7 @@
 				EB52221315377A3A00785F97 /* PBXTargetDependency */,
 			);
 			name = TempestTests;
-			productName = FlickrgramTests;
+			productName = TempestTests;
 			productReference = EB52220C15377A3A00785F97 /* TempestTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
@@ -971,8 +970,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Flickrgram/Tempest-Prefix.pch";
-				INFOPLIST_FILE = "Flickrgram/Tempest-Info.plist";
+				GCC_PREFIX_HEADER = "Tempest/Tempest-Prefix.pch";
+				INFOPLIST_FILE = "Tempest/Tempest-Info.plist";
 				PRODUCT_NAME = Tempest;
 				WRAPPER_EXTENSION = app;
 			};
@@ -982,8 +981,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Flickrgram/Tempest-Prefix.pch";
-				INFOPLIST_FILE = "Flickrgram/Tempest-Info.plist";
+				GCC_PREFIX_HEADER = "Tempest/Tempest-Prefix.pch";
+				INFOPLIST_FILE = "Tempest/Tempest-Info.plist";
 				PRODUCT_NAME = Tempest;
 				WRAPPER_EXTENSION = app;
 			};
@@ -992,14 +991,14 @@
 		EB52222315377A3A00785F97 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Flickrgram.app/Flickrgram";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Tempest.app/Tempest";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Flickrgram/Flickrgram-Prefix.pch";
-				INFOPLIST_FILE = "FlickrgramTests/TempestTests-Info.plist";
+				GCC_PREFIX_HEADER = "Tempest/Tempest-Prefix.pch";
+				INFOPLIST_FILE = "TempestTests/TempestTests-Info.plist";
 				PRODUCT_NAME = TempestTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
@@ -1009,14 +1008,14 @@
 		EB52222415377A3A00785F97 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Flickrgram.app/Flickrgram";
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/Tempest.app/Tempest";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "Flickrgram/Flickrgram-Prefix.pch";
-				INFOPLIST_FILE = "FlickrgramTests/TempestTests-Info.plist";
+				GCC_PREFIX_HEADER = "Tempest/Tempest-Prefix.pch";
+				INFOPLIST_FILE = "TempestTests/TempestTests-Info.plist";
 				PRODUCT_NAME = TempestTests;
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = octest;
