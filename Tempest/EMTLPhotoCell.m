@@ -256,7 +256,7 @@
     if([request.domain isEqualToString:photo.imageDomain]) {
         imageView.image = (UIImage *)object;
         indicator.value = 100;
-        //imageView.layer.opacity = 0;
+        imageView.layer.opacity = 0;
         imageRequest = nil;
         
         [UIView animateWithDuration:0.6 animations:^(void) {

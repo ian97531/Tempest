@@ -66,7 +66,7 @@ static EMTLCache *cache;
             [diskAccessRecord setObject:[NSDate date] forKey:key];
             NSString *filePath = [NSString stringWithFormat:@"%@/%@", cacheDir, key];
             if (type == EMTLImage) {
-                NSData *data = UIImagePNGRepresentation((UIImage *)object);
+                NSData *data = UIImageJPEGRepresentation(object, 1);
                 [data writeToFile:filePath atomically:YES];
             }
             else {
@@ -102,7 +102,11 @@ static EMTLCache *cache;
             
             id object;
             if (request.type == EMTLImage) {
-                object = [UIImage imageWithData:data];
+                UIImage *image = [UIImage imageWithData:data];
+                UIGraphicsBeginImageContext(CGSizeMake(image.size.width, image.size.height));
+                [image drawAtPoint:CGPointZero];
+                UIGraphicsEndImageContext();
+                object = image;
             }
             else {
                 object = [NSKeyedUnarchiver unarchiveObjectWithData:data];
@@ -312,7 +316,9 @@ static EMTLCache *cache;
     
     // If we have a valid NSURLRequest at this point, then run the request.
     if (request) {
-        connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+        connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
+        [connection scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+        [connection start];
         return YES;
     }
     else  {
