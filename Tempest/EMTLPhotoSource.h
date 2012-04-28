@@ -14,61 +14,74 @@
 #import "OAMutableURLRequest.h"
 
 @class EMTLPhoto;
-@protocol PhotoSource;
+@class EMTLPhotoSource;
 
-@protocol Authorizable <NSObject>
+extern NSString *const kPhotoUsername;
+extern NSString *const kPhotoUserID;
+extern NSString *const kPhotoTitle;
+extern NSString *const kPhotoID;
+extern NSString *const kPhotoImageURL;
+extern NSString *const kPhotoImageAspectRatio;
+extern NSString *const kPhotoDatePosted;
+extern NSString *const kPhotoDateUpdated;
+extern NSString *const kPhotoComments;
+extern NSString *const kPhotoFavorites;
 
-- (void)photoSource:(id <PhotoSource>)photoSource requiresAuthorizationAtURL:(NSURL *)url;
-- (void)authorizationCompleteForPhotoSource:(id <PhotoSource>)photoSource;
-- (void)authorizationErrorForPhotoSource:(id <PhotoSource>)photoSource;
+extern NSString *const kCommentText;
+extern NSString *const kCommentDate;
+extern NSString *const kCommentUsername;
+extern NSString *const kCommentUserID;
+extern NSString *const kCommentIconURL;
+
+extern NSString *const kFavoriteDate;
+extern NSString *const kFavoriteUsername;
+extern NSString *const kFavoriteUserID;
+extern NSString *const kFavoriteIconURL;
+
+
+
+@protocol EMTLAccountManager <NSObject>
+
+- (void)photoSource:(EMTLPhotoSource *)photoSource requiresAuthorizationAtURL:(NSURL *)url;
+- (void)authorizationCompleteForPhotoSource:(EMTLPhotoSource *)photoSource;
+- (void)authorizationError:(NSError *)error forPhotoSource:(EMTLPhotoSource *)photoSource;
 
 @end
 
-@protocol PhotoConsumer <NSObject>
+@protocol EMTLPhotoConsumer <NSObject>
 
-- (void)photoSource:(id <PhotoSource>)photoSource retreivedMorePhotos:(NSArray *)photoArray;
-- (void)photoSource:(id <PhotoSource>)photoSource encounteredAnError:(NSError *)error;
+- (void)photoSourceMayChangePhotoList:(EMTLPhotoSource *)photoSource;
+- (void)photoSourceMayAddPhotosToPhotoList:(EMTLPhotoSource *)photoSource;
+- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhotoList:(NSDictionary *)changes;
+- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhotosAtIndexPaths:(NSArray *)indexPaths;
+- (void)photoSourceDoneChangingPhotoList:(EMTLPhotoSource *)photoSource;
 
 @end
-
-
-static NSString *const kPhotoUsername = @"user_name";
-static NSString *const kPhotoUserID = @"user_id";
-static NSString *const kPhotoTitle = @"photo_title";
-static NSString *const kPhotoID = @"photo_id";
-static NSString *const kPhotoImageURL = @"image_url";
-static NSString *const kPhotoImageAspectRatio = @"aspect_ratio";
-static NSString *const kPhotoDatePosted = @"date_posted";
-static NSString *const kPhotoDateUpdated = @"date_updated";
-
-static NSString *const kCacheCommentsDomain = @"comments_domain";
-static NSString *const kCacheFavoritesDomain = @"favorites_domain";
-static NSString *const kCacheImageDomain = @"image_domain";
-
-static NSString *const kCommentText = @"comment_text";
-static NSString *const kCommentDate = @"comment_date";
-static NSString *const kCommentUsername = @"user_name";
-static NSString *const kCommentUserID = @"user_id";
-static NSString *const kCommentIconURL = @"icon_url";
-
-static NSString *const kFavoriteDate = @"favorite_date";
-static NSString *const kFavoriteUsername = @"user_name";
-static NSString *const kFavoriteUserID = @"user_id";
-static NSString *const kFavoriteIconURL = @"icon_url";
 
     
-@protocol PhotoSource <NSObject>
+@interface EMTLPhotoSource : NSObject
+{
+    NSOperationQueue *operationQueue;
+    NSCache *imageCache;
+    NSString *diskCachePath;
+    NSArray *diskCachePhotos;
+}
 
-@property (nonatomic, assign) id <Authorizable> delegate;
-@property (nonatomic, assign) id <PhotoConsumer> photoDelegate;
-@property (readonly, nonatomic, strong) NSString *key;
+@property (nonatomic, assign) id <EMTLAccountManager> accountManager;
+@property (nonatomic, assign) id <EMTLPhotoConsumer> delegate;
 
-@property (readonly, strong) NSString *user_id;
-@property (readonly, strong) NSString *username;
+@property (nonatomic, strong) NSString *userID;
+@property (nonatomic, strong) NSString *username;
+@property (nonatomic, strong) NSArray *photoList;
 
 - (void)authorize;
 - (void)authorizedWithVerifier:(NSString *)verfier;
-- (void)morePhotos;
+
+- (void)updateNewestPhotos;
+- (void)retrieveOlderPhotos;
+
+- (NSString *)serviceName;
+
 
 
 @end

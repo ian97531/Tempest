@@ -11,7 +11,7 @@
 
 @class EMTLPhotoListViewController;
 
-@interface EMTLAppDelegate : UIResponder <UIApplicationDelegate, Authorizable>
+@interface EMTLAppDelegate : UIResponder <UIApplicationDelegate, EMTLAccountManager>
 
 
 @property (strong, nonatomic) UIWindow *window;
@@ -35,8 +35,8 @@
 - (void)initializePhotoSources;
 
 // Authorizable Methods
-- (void)photoSource:(id <PhotoSource>)photoSource requiresAuthorizationAtURL:(NSURL *)url;
-- (void)authorizationCompleteForPhotoSource:(id <PhotoSource>)photoSource;
-- (void)authorizationErrorForPhotoSource:(id <PhotoSource>)photoSource;
+- (void)photoSource:(EMTLPhotoSource *)photoSource requiresAuthorizationAtURL:(NSURL *)url;
+- (void)authorizationCompleteForPhotoSource:(EMTLPhotoSource *)photoSource;
+- (void)authorizationErrorForPhotoSource:(EMTLPhotoSource *)photoSource;
 
 @end

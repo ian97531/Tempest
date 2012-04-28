@@ -8,11 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import "EMTLPhotoSource.h"
-#import "EMTLCache.h"
 
 @class EMTLPhoto;
 
-@interface EMTLFlickr : NSObject <PhotoSource, EMTLCacheHandler, EMTLCachePostProcessor>
+@interface EMTLFlickr : EMTLPhotoSource
 
 {
     int currentPage;
@@ -33,21 +32,13 @@
     BOOL loading;
 }
 
-@property (nonatomic, assign) id <Authorizable> delegate;
-@property (nonatomic, assign) id <PhotoConsumer> photoDelegate;
-
-@property (readonly, nonatomic, strong) NSString *key;
-@property (readonly, strong) NSString *user_id;
-@property (readonly, strong) NSString *username;
 
 - (void)authorize;
 - (void)authorizedWithVerifier:(NSString *)verfier;
-- (void)morePhotos;
 
-// EMTLCacheHandler methods
-- (NSURLRequest *)urlRequestForRequest:(EMTLCacheRequest *)request;
+- (void)updateNewestPhotos;
+- (void)retrieveOlderPhotos;
 
-// EMTLCachePostProcessor method
-- (id)processData:(NSData *)data forRequest:(EMTLCacheRequest *)request;
+- (NSString *)serviceName;
 
 @end

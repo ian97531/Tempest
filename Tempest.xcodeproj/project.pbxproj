@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EB277F64154B1CD300C17FE2 /* EMTLPhotoSource.m in Sources */ = {isa = PBXBuildFile; fileRef = EB277F63154B1CD300C17FE2 /* EMTLPhotoSource.m */; };
 		EB5221F115377A3A00785F97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F015377A3A00785F97 /* UIKit.framework */; };
 		EB5221F315377A3A00785F97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F215377A3A00785F97 /* Foundation.framework */; };
 		EB5221F515377A3A00785F97 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F415377A3A00785F97 /* CoreGraphics.framework */; };
@@ -163,6 +164,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EB277F63154B1CD300C17FE2 /* EMTLPhotoSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoSource.m; sourceTree = "<group>"; };
 		EB5221EC15377A3A00785F97 /* Tempest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tempest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB5221F015377A3A00785F97 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		EB5221F215377A3A00785F97 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -365,6 +367,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EB277F61154B174100C17FE2 /* Old Sources */ = {
+			isa = PBXGroup;
+			children = (
+				EB69B1F0153CD26D003D8422 /* EMTLPhotoCell.h */,
+				EB69B1F1153CD26D003D8422 /* EMTLPhotoCell.m */,
+				EB8AA14F1540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.h */,
+				EB8AA1501540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m */,
+				EB88B5F01547357B00E6A6EE /* EMTLCache.h */,
+				EB88B5F11547357C00E6A6EE /* EMTLCache.m */,
+			);
+			name = "Old Sources";
+			sourceTree = "<group>";
+		};
 		EB5221E115377A3A00785F97 = {
 			isa = PBXGroup;
 			children = (
@@ -405,20 +420,16 @@
 			children = (
 				EB52220115377A3A00785F97 /* EMTLAppDelegate.h */,
 				EB52220215377A3A00785F97 /* EMTLAppDelegate.m */,
-				EB69B1F0153CD26D003D8422 /* EMTLPhotoCell.h */,
-				EB69B1F1153CD26D003D8422 /* EMTLPhotoCell.m */,
 				EB69B1F2153CD26D003D8422 /* EMTLPhotoListViewController.h */,
 				EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */,
 				EB69B1F4153CD26D003D8422 /* EMTLPhotoSource.h */,
+				EB277F63154B1CD300C17FE2 /* EMTLPhotoSource.m */,
 				EB850DAA153DF3D30073BBAE /* EMTLFlickr.h */,
 				EB850DAB153DF3D30073BBAE /* EMTLFlickr.m */,
 				EB850DAF153E3CD30073BBAE /* EMTLPhoto.h */,
 				EB850DB0153E3CD40073BBAE /* EMTLPhoto.m */,
-				EB8AA14F1540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.h */,
-				EB8AA1501540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m */,
-				EB88B5F01547357B00E6A6EE /* EMTLCache.h */,
-				EB88B5F11547357C00E6A6EE /* EMTLCache.m */,
 				EB850DAE153E0A710073BBAE /* APISecrets.h */,
+				EB277F61154B174100C17FE2 /* Old Sources */,
 				EB69B201153CD46B003D8422 /* OAuthConsumer */,
 				EB69B200153CD46B003D8422 /* Assets */,
 				EB5221F915377A3A00785F97 /* Supporting Files */,
@@ -450,7 +461,6 @@
 				EB52221B15377A3A00785F97 /* TempestTests.m */,
 				EB52221515377A3A00785F97 /* Supporting Files */,
 			);
-			name = TempestTests;
 			path = TempestTests;
 			sourceTree = "<group>";
 		};
@@ -878,6 +888,7 @@
 				EB850DB1153E3CD40073BBAE /* EMTLPhoto.m in Sources */,
 				EB8AA1511540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m in Sources */,
 				EB88B5F21547357C00E6A6EE /* EMTLCache.m in Sources */,
+				EB277F64154B1CD300C17FE2 /* EMTLPhotoSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

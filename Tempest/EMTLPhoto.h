@@ -50,9 +50,10 @@
 @property (nonatomic, readonly) BOOL isFavorite;
 
 @property (nonatomic, assign) id <EMTLPhotoDelegate> container;
-@property (nonatomic, assign) id <PhotoSource> source;
+@property (nonatomic, assign) EMTLPhotoSource *source;
 
 
++ (id)photoWithDict:(NSDictionary *)dict;
 - (id)initWithDict:(NSDictionary *)dict;
 
 - (void)preloadData;

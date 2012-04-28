@@ -11,19 +11,19 @@
 
 @class EMTLProgressIndicatorViewController;
 
-@interface EMTLPhotoListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, PhotoConsumer>
+@interface EMTLPhotoListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, EMTLPhotoConsumer>
 
-{
-    NSMutableArray *sources;
-}
-
-@property (nonatomic, strong) NSMutableArray *photos;
-@property (nonatomic, strong) NSMutableArray *heights;
+@property (nonatomic, strong) EMTLPhotoSource *source;
 @property (nonatomic, strong) UITableView *table;
-@property (nonatomic, strong) NSIndexPath *currentIndex;
 @property (nonatomic, strong) EMTLProgressIndicatorViewController *spinner;
 
-- (void)addSource:(id <PhotoSource>)source;
+
+// EMTLPhotoConsumer methods
+- (void)photoSourceMayChangePhotoList:(EMTLPhotoSource *)photoSource;
+- (void)photoSourceMayAddPhotosToPhotoList:(EMTLPhotoSource *)photoSource;
+- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhotoList:(NSDictionary *)changes;
+- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhotosAtIndexPaths:(NSArray *)indexPaths;
+- (void)photoSourceDoneChangingPhotoList:(EMTLPhotoSource *)photoSource;
 
 // UITableViewDelegate methods
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
@@ -32,9 +32,6 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
 
-// PhotoConsumer methods
-- (void)photoSource:(id <PhotoSource>)photoSource retreivedMorePhotos:(NSArray *)photoArray;
-- (void)photoSource:(id <PhotoSource>)photoSource encounteredAnError:(NSError *)error;
 
 
 @end

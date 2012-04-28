@@ -30,6 +30,10 @@
 @synthesize container;
 @synthesize source;
 
++ (id)photoWithDict:(NSDictionary *)dict
+{
+    return [[EMTLPhoto alloc] initWithDict:dict];
+}
 
 - (id)initWithDict:(NSDictionary *)dict
 {
@@ -61,15 +65,13 @@
             else if ([key isEqualToString:kPhotoDateUpdated]) {
                 dateUpdated = [dict objectForKey:kPhotoDateUpdated];
             }
-            else if ([key isEqualToString:kCacheCommentsDomain]) {
-                commentsDomain = [dict objectForKey:kCacheCommentsDomain];
+            else if ([key isEqualToString:kPhotoComments]) {
+                comments = [dict objectForKey:kPhotoComments];
             }
-            else if ([key isEqualToString:kCacheFavoritesDomain]) {
-                favoritesDomain = [dict objectForKey:kCacheFavoritesDomain];
+            else if ([key isEqualToString:kPhotoFavorites]) {
+                favorites = [dict objectForKey:kPhotoComments];
             }
-            else if ([key isEqualToString:kCacheImageDomain]) {
-                imageDomain = [dict objectForKey:kCacheImageDomain];
-            }
+
         }
         
         

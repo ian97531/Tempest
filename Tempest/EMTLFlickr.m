@@ -16,26 +16,16 @@ static NSString *const kFlickrAccessTokenURL = @"http://www.flickr.com/services/
 static NSString *const kFlickrAPICallURL = @"http://api.flickr.com/services/rest";
 static NSString *const kFlickrDefaultsServiceProviderName = @"flickr-access-token";
 static NSString *const kFlickrDefaultsPrefix = @"com.Elemental.Flickrgram";
-static NSString *const kFlickrFavoritesDomain = @"flickr.favorites";
-static NSString *const kFlickrCommentsDomain = @"flickr.comments";
-static NSString *const kFlickrImageDomain = @"flickr.image";
 
 static double const kSecondsInThreeMonths = 7776500;
 
 @implementation EMTLFlickr
 
-@synthesize delegate;
-@synthesize photoDelegate;
-@synthesize key;
-
-@synthesize user_id;
-@synthesize username;
 
 - (id)init
 {
     self = [super init];
     if (self) {
-        key = @"flickr";
         
         totalPages = 1;
         currentPage = 0;
@@ -44,7 +34,23 @@ static double const kSecondsInThreeMonths = 7776500;
         maxMonth = 0;
         maxDay = 0;
         
-        NSDate *minDate = [NSDate dateWithTimeIntervalSinceNow:-kSecondsInThreeMonths];
+        NSDate *minDate;
+        
+        // If the most recent photo in the cache was posted within the last 3 months,
+        // use that as the min date, otherwise, use 3 months ago.
+        if (self.photoList.count) {
+            NSDate *lastPhotoDate = [[self.photoList objectAtIndex:0] datePosted];
+            if ([lastPhotoDate timeIntervalSinceNow] > kSecondsInThreeMonths) {
+                minDate = [NSDate dateWithTimeIntervalSinceNow:-kSecondsInThreeMonths];
+            }
+            else {
+                minDate = lastPhotoDate;
+            }
+        }
+        else {
+            minDate = [NSDate dateWithTimeIntervalSinceNow:-kSecondsInThreeMonths];
+        }
+        
         NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
         NSDateComponents *minComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:minDate];
         
@@ -53,11 +59,6 @@ static double const kSecondsInThreeMonths = 7776500;
         minDay = [minComponents day] + 2;
                 
         loading = NO;
-                
-        [[EMTLCache cache] setHandler:self forDomain:kFlickrCommentsDomain];
-        [[EMTLCache cache] setPostProcessor:self forDomain:kFlickrCommentsDomain];
-        [[EMTLCache cache] setHandler:self forDomain:kFlickrFavoritesDomain];
-        [[EMTLCache cache] setPostProcessor:self forDomain:kFlickrFavoritesDomain];
         
     }
     
@@ -96,7 +97,7 @@ static double const kSecondsInThreeMonths = 7776500;
         
     }
     
-    NSLog(@"No token was found for %@ in the user defaults. Requesting a new token...", key);
+    NSLog(@"No token was found for %@ in the user defaults. Requesting a new token...", self.serviceName);
     
     NSURL *url = [NSURL URLWithString:kFlickrRequestTokenURL];
     
@@ -107,7 +108,7 @@ static double const kSecondsInThreeMonths = 7776500;
                                                           signatureProvider:nil];
     
     [request setOAuthParameterName:@"oauth_callback" 
-                         withValue:[NSString stringWithFormat:@"flickrgram://%@/verify-auth", key]];
+                         withValue:[NSString stringWithFormat:@"flickrgram://%@/verify-auth", self.serviceName]];
     
     [request setHTTPMethod:@"POST"];
     
@@ -155,6 +156,21 @@ static double const kSecondsInThreeMonths = 7776500;
     
 }
 
+- (void)updateNewestPhotos
+{
+    
+}
+
+- (void)retrieveOlderPhotos
+{
+    
+}
+
+- (NSString *)serviceName;
+{
+    return @"flickr";
+}
+
 
 /*
  * morePhotos: sends a request for 3 months worth of photos. Each request
@@ -171,7 +187,7 @@ static double const kSecondsInThreeMonths = 7776500;
         loading = YES;
         
         #ifdef DEBUG
-        NSLog(@"Requesting more photos from %@.", key);
+        NSLog(@"Requesting more photos from %@.", self.serviceName);
         #endif
         
         NSMutableDictionary *args = [NSMutableDictionary dictionaryWithCapacity:4];
@@ -215,45 +231,6 @@ static double const kSecondsInThreeMonths = 7776500;
 
 
 
-
-#pragma mark - EMTLCacheHander methods
-
-/*
- * urlRequestForRequest: is called by EMTLCacheRequest when it needs
- * to download a resource from the internet. This function must return
- * an NSURLRequest* that can be used to fetch that resource.
- */
-- (NSURLRequest *)urlRequestForRequest:(EMTLCacheRequest *)request
-{
-    if([request.domain isEqualToString:kFlickrFavoritesDomain]) {
-        return [self getNSURLRequestForFavorites:request.key];
-    }
-    else if ([request.domain isEqualToString:kFlickrCommentsDomain]){
-        return [self getNSURLRequestForComments:request.key];
-    }
-    return nil;
-}
-
-
-
-
-#pragma mark - EMTLCachePostProcessor methods
-
-/*
- * processObject:forRequest: is called once EMTLCacheRequest has 
- * downloaded the data for an object from the internet. This method
- * is responsible for converting that data into a usable object;
- */
-- (id)processData:(NSData *)data forRequest:(EMTLCacheRequest *)request
-{
-    if([request.domain isEqualToString:kFlickrFavoritesDomain]) {
-        return [self processFavorites:data];
-    }
-    else if ([request.domain isEqualToString:kFlickrCommentsDomain]){
-        return [self processComments:data];
-    }
-    return nil;
-}
 
 
 
@@ -353,7 +330,7 @@ static double const kSecondsInThreeMonths = 7776500;
     NSDictionary *favoritesDict = [self dictionaryFromResponseData:data];
     
     if(!favoritesDict) {
-        NSLog(@"There was an error interpreting the json response for favorites from %@", key);
+        NSLog(@"There was an error interpreting the json response for favorites from %@", self.serviceName);
         return nil;
     }
     else {
@@ -402,7 +379,7 @@ static double const kSecondsInThreeMonths = 7776500;
     NSDictionary *commentsDict = [self dictionaryFromResponseData:data];
     
     if(!commentsDict) {
-        NSLog(@"There was an error interpreting the json response for comments from %@", key);
+        NSLog(@"There was an error interpreting the json response for comments from %@", self.serviceName);
         return nil;
     }
     
@@ -465,25 +442,25 @@ static double const kSecondsInThreeMonths = 7776500;
         
         NSString *url = [NSString stringWithFormat:@"%@?perms=write&oauth_token=%@", kFlickrAuthorizationURL, requestToken.key];
         
-        [delegate photoSource:self requiresAuthorizationAtURL:[NSURL URLWithString:url]];
+        [self.accountManager photoSource:self requiresAuthorizationAtURL:[NSURL URLWithString:url]];
         return;
     }
     
-    NSLog(@"Got an error in requestTokenTicket:withData:. The ticket did not succeed for %@", key);
-    [delegate authorizationErrorForPhotoSource:self];
+    NSLog(@"Got an error in requestTokenTicket:withData:. The ticket did not succeed for %@", self.serviceName);
+    [self.accountManager authorizationError:[NSError errorWithDomain:self.serviceName code:0 userInfo:nil] forPhotoSource:self];
     
 }
 
 
 - (void)requestTokenTicket:(OAServiceTicket *)ticket didFailWithError:(NSError *)error
 {
-    [delegate authorizationErrorForPhotoSource:self];
+    [self.accountManager authorizationError:[NSError errorWithDomain:self.serviceName code:0 userInfo:nil] forPhotoSource:self];
 }
 
 
 - (void)accessTokenTicket:(OAServiceTicket *)ticket didFinishWithData:(NSData *)data
 {
-    NSLog(@"Got a response for the access ticket for %@", key);
+    NSLog(@"Got a response for the access ticket for %@", self.serviceName);
     if (ticket.didSucceed) {
         
         NSString *responseBody = [[NSString alloc] initWithData:data
@@ -503,16 +480,16 @@ static double const kSecondsInThreeMonths = 7776500;
         return;
     }
     
-    NSLog(@"Got an error in accessTicketToken:withData:. The ticket did not succeed for %@", key);
-    [delegate authorizationErrorForPhotoSource:self];
+    NSLog(@"Got an error in accessTicketToken:withData:. The ticket did not succeed for %@", self.serviceName);
+    [self.accountManager authorizationError:[NSError errorWithDomain:self.serviceName code:0 userInfo:nil] forPhotoSource:self];
     
 }
 
 
 - (void)accessTokenTicket:(OAServiceTicket *)ticket didFailWithError:(NSError *)error
 {
-    NSLog(@"got an error while trying to get the access token for %@", key);
-    [delegate authorizationErrorForPhotoSource:self];
+    NSLog(@"got an error while trying to get the access token for %@", self.serviceName);
+    [self.accountManager authorizationError:[NSError errorWithDomain:self.serviceName code:0 userInfo:nil] forPhotoSource:self];
 }
 
 
@@ -524,16 +501,16 @@ static double const kSecondsInThreeMonths = 7776500;
         NSDictionary *loginInfo = [self dictionaryFromResponseData:data];
         
         if(loginInfo) {
-            user_id = [[loginInfo objectForKey:@"user"] objectForKey:@"id"];
-            username = [[[loginInfo objectForKey:@"user"] objectForKey:@"username"] objectForKey:@"_content"];
-            [delegate authorizationCompleteForPhotoSource:self];
+            self.userID = [[loginInfo objectForKey:@"user"] objectForKey:@"id"];
+            self.username = [[[loginInfo objectForKey:@"user"] objectForKey:@"username"] objectForKey:@"_content"];
+            [self.accountManager authorizationCompleteForPhotoSource:self];
         }
         else {
-            [delegate authorizationErrorForPhotoSource:self];
+            [self.accountManager authorizationError:[NSError errorWithDomain:self.serviceName code:0 userInfo:nil] forPhotoSource:self];
         }
     }
     else {
-        [delegate authorizationErrorForPhotoSource:self];
+        [self.accountManager authorizationError:[NSError errorWithDomain:self.serviceName code:0 userInfo:nil] forPhotoSource:self];
     }
     
     
@@ -543,8 +520,8 @@ static double const kSecondsInThreeMonths = 7776500;
 
 - (void)testLoginFailed:(OAServiceTicket *)ticket withData:(NSError *)error
 {
-    NSLog(@"test login failed for %@", key);
-    [delegate authorizationErrorForPhotoSource:self];
+    NSLog(@"test login failed for %@", self.serviceName);
+    [self.accountManager authorizationError:[NSError errorWithDomain:self.serviceName code:0 userInfo:nil] forPhotoSource:self];
 }
 
 
@@ -556,7 +533,7 @@ static double const kSecondsInThreeMonths = 7776500;
         NSDictionary *newPhotos = [self dictionaryFromResponseData:data];
         
         if(!newPhotos) {
-            NSLog(@"There was an error interpreting the json response from the request for more photos from %@", key);
+            NSLog(@"There was an error interpreting the json response from the request for more photos from %@", self.serviceName);
             return;
         }
         
@@ -612,10 +589,7 @@ static double const kSecondsInThreeMonths = 7776500;
                 
                 [photoDict setObject:[NSNumber numberWithFloat:(o_width/o_height)] forKey:kPhotoImageAspectRatio];
             }
-            
-            [photoDict setObject:kFlickrCommentsDomain forKey:kCacheCommentsDomain];
-            [photoDict setObject:kFlickrFavoritesDomain forKey:kCacheFavoritesDomain];
-            [photoDict setObject:kFlickrImageDomain forKey:kCacheImageDomain];
+        
             
             [photoDict setObject:[photoDict objectForKey:@"id"] forKey:kPhotoID];
             [photoDict setObject:[photoDict objectForKey:@"owner"] forKey:kPhotoUserID];
@@ -627,7 +601,7 @@ static double const kSecondsInThreeMonths = 7776500;
             [photos addObject:photo];
         }
         
-        [photoDelegate photoSource:self retreivedMorePhotos:photos];
+        //[delegate photoSource:self retreivedMorePhotos:photos];
     }
     
     loading = NO;
@@ -636,7 +610,7 @@ static double const kSecondsInThreeMonths = 7776500;
 
 - (void)moarPhotos:(OAServiceTicket *)ticket didFailWithError:(NSError *)data
 {
-    NSLog(@"There was an error loading more photos from: %@", key);
+    NSLog(@"There was an error loading more photos from: %@", self.serviceName);
     loading = NO;
 }
 
@@ -652,11 +626,11 @@ static double const kSecondsInThreeMonths = 7776500;
         return dict;
     }
     else if(!error) {
-        NSLog(@"The response from %@ indicated an error.", key);
+        NSLog(@"The response from %@ indicated an error.", self.serviceName);
         NSLog(@"%@", [dict description]);
     }
     
-    NSLog(@"An error occurred while interpreting a JSON response from %@", key);
+    NSLog(@"An error occurred while interpreting a JSON response from %@", self.serviceName);
     return nil;
 }
 
