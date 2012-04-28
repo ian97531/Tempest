@@ -386,6 +386,7 @@
 				EB5221F815377A3A00785F97 /* Tempest */,
 				EB52221415377A3A00785F97 /* TempestTests */,
 				EB5221EF15377A3A00785F97 /* Frameworks */,
+				EB69B289153CDE40003D8422 /* libxml2.dylib */,
 				EB5221ED15377A3A00785F97 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -402,15 +403,14 @@
 		EB5221EF15377A3A00785F97 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */,
-				EB69B289153CDE40003D8422 /* libxml2.dylib */,
 				EB69B287153CDE3A003D8422 /* CFNetwork.framework */,
-				EB69B285153CDE2E003D8422 /* Security.framework */,
-				EB5221F015377A3A00785F97 /* UIKit.framework */,
-				EB5221F215377A3A00785F97 /* Foundation.framework */,
 				EB5221F415377A3A00785F97 /* CoreGraphics.framework */,
 				EB5221F615377A3A00785F97 /* CoreData.framework */,
+				EB5221F215377A3A00785F97 /* Foundation.framework */,
+				EB69B285153CDE2E003D8422 /* Security.framework */,
 				EB52220D15377A3A00785F97 /* SenTestingKit.framework */,
+				EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */,
+				EB5221F015377A3A00785F97 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
