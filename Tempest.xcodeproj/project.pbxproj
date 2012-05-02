@@ -23,11 +23,8 @@
 		EB52221C15377A3A00785F97 /* TempestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EB52221B15377A3A00785F97 /* TempestTests.m */; };
 		EB69B1F6153CD26D003D8422 /* EMTLPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F1153CD26D003D8422 /* EMTLPhotoCell.m */; };
 		EB69B1F7153CD26D003D8422 /* EMTLPhotoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */; };
-		EB69B1FA153CD42A003D8422 /* EMTLPhotoCell.h in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F0153CD26D003D8422 /* EMTLPhotoCell.h */; };
 		EB69B1FB153CD42A003D8422 /* EMTLPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F1153CD26D003D8422 /* EMTLPhotoCell.m */; };
-		EB69B1FC153CD42A003D8422 /* EMTLPhotoListViewController.h in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F2153CD26D003D8422 /* EMTLPhotoListViewController.h */; };
 		EB69B1FD153CD42A003D8422 /* EMTLPhotoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */; };
-		EB69B1FE153CD42A003D8422 /* EMTLPhotoSource.h in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F4153CD26D003D8422 /* EMTLPhotoSource.h */; };
 		EB69B241153CD46B003D8422 /* NSMutableURLRequest+Parameters.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B204153CD46B003D8422 /* NSMutableURLRequest+Parameters.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		EB69B242153CD46B003D8422 /* NSString+URLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B206153CD46B003D8422 /* NSString+URLEncoding.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		EB69B243153CD46B003D8422 /* NSURL+Base.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B208153CD46B003D8422 /* NSURL+Base.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -63,15 +60,9 @@
 		EB88B5C81545FF7300E6A6EE /* PolaroidBlank.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5C61545FF7300E6A6EE /* PolaroidBlank.png */; };
 		EB88B5CB154602B800E6A6EE /* PolaroidLowShadow.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5C9154602B800E6A6EE /* PolaroidLowShadow.png */; };
 		EB88B5CC154602B800E6A6EE /* PolaroidLowShadow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5CA154602B800E6A6EE /* PolaroidLowShadow@2x.png */; };
-		EB88B5CE1546067300E6A6EE /* Marker SD.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5CD1546067300E6A6EE /* Marker SD.ttf */; };
-		EB88B5D01546068A00E6A6EE /* CoertSchrift_Romaans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5CF1546068A00E6A6EE /* CoertSchrift_Romaans.ttf */; };
 		EB88B5EE1546247D00E6A6EE /* PolaroidTextured4.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5EC1546247D00E6A6EE /* PolaroidTextured4.png */; };
 		EB88B5EF1546247D00E6A6EE /* PolaroidTextured4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5ED1546247D00E6A6EE /* PolaroidTextured4@2x.png */; };
 		EB88B5F21547357C00E6A6EE /* EMTLCache.m in Sources */ = {isa = PBXBuildFile; fileRef = EB88B5F11547357C00E6A6EE /* EMTLCache.m */; };
-		EB88B5F81547811600E6A6EE /* Agent _C.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5F71547811600E6A6EE /* Agent _C.ttf */; };
-		EB88B5FA1547826300E6A6EE /* OMGWriteLikeWilliam.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5F91547826300E6A6EE /* OMGWriteLikeWilliam.ttf */; };
-		EB88B5FC154782BD00E6A6EE /* billbonessans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5FB154782BD00E6A6EE /* billbonessans.ttf */; };
-		EB88B5FE154782C400E6A6EE /* Whatever.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5FD154782C400E6A6EE /* Whatever.ttf */; };
 		EB8AA1511540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB8AA1501540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m */; };
 		EB8AA18B1540D1F6004C6DF8 /* Small-0.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA1791540D1F6004C6DF8 /* Small-0.png */; };
 		EB8AA18C1540D1F6004C6DF8 /* Small-0@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA17A1540D1F6004C6DF8 /* Small-0@2x.png */; };
@@ -245,16 +236,10 @@
 		EB88B5C61545FF7300E6A6EE /* PolaroidBlank.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PolaroidBlank.png; sourceTree = "<group>"; };
 		EB88B5C9154602B800E6A6EE /* PolaroidLowShadow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PolaroidLowShadow.png; sourceTree = "<group>"; };
 		EB88B5CA154602B800E6A6EE /* PolaroidLowShadow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PolaroidLowShadow@2x.png"; sourceTree = "<group>"; };
-		EB88B5CD1546067300E6A6EE /* Marker SD.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Marker SD.ttf"; path = "../../../../Downloads/marker_sd/Marker SD.ttf"; sourceTree = "<group>"; };
-		EB88B5CF1546068A00E6A6EE /* CoertSchrift_Romaans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = CoertSchrift_Romaans.ttf; path = ../../../../Downloads/coertschrift/CoertSchrift_Romaans.ttf; sourceTree = "<group>"; };
 		EB88B5EC1546247D00E6A6EE /* PolaroidTextured4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PolaroidTextured4.png; sourceTree = "<group>"; };
 		EB88B5ED1546247D00E6A6EE /* PolaroidTextured4@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PolaroidTextured4@2x.png"; sourceTree = "<group>"; };
 		EB88B5F01547357B00E6A6EE /* EMTLCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLCache.h; sourceTree = "<group>"; };
 		EB88B5F11547357C00E6A6EE /* EMTLCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLCache.m; sourceTree = "<group>"; };
-		EB88B5F71547811600E6A6EE /* Agent _C.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Agent _C.ttf"; path = "../../../../Downloads/Agent _C.ttf"; sourceTree = "<group>"; };
-		EB88B5F91547826300E6A6EE /* OMGWriteLikeWilliam.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = OMGWriteLikeWilliam.ttf; path = ../../../../Downloads/OMGWriteLikeWilliam.ttf; sourceTree = "<group>"; };
-		EB88B5FB154782BD00E6A6EE /* billbonessans.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = billbonessans.ttf; path = ../../../../Downloads/billbonessans.ttf; sourceTree = "<group>"; };
-		EB88B5FD154782C400E6A6EE /* Whatever.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Whatever.ttf; path = ../../../../Downloads/Whatever.ttf; sourceTree = "<group>"; };
 		EB8AA14F1540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLProgressIndicatorViewController.h; sourceTree = "<group>"; };
 		EB8AA1501540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLProgressIndicatorViewController.m; sourceTree = "<group>"; };
 		EB8AA1791540D1F6004C6DF8 /* Small-0.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Small-0.png"; sourceTree = "<group>"; };
@@ -440,12 +425,6 @@
 		EB5221F915377A3A00785F97 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				EB88B5FD154782C400E6A6EE /* Whatever.ttf */,
-				EB88B5FB154782BD00E6A6EE /* billbonessans.ttf */,
-				EB88B5F91547826300E6A6EE /* OMGWriteLikeWilliam.ttf */,
-				EB88B5F71547811600E6A6EE /* Agent _C.ttf */,
-				EB88B5CF1546068A00E6A6EE /* CoertSchrift_Romaans.ttf */,
-				EB88B5CD1546067300E6A6EE /* Marker SD.ttf */,
 				EB5221FA15377A3A00785F97 /* Tempest-Info.plist */,
 				EB5221FB15377A3A00785F97 /* InfoPlist.strings */,
 				EB5221FE15377A3A00785F97 /* main.m */,
@@ -817,14 +796,8 @@
 				EB88B5C81545FF7300E6A6EE /* PolaroidBlank.png in Resources */,
 				EB88B5CB154602B800E6A6EE /* PolaroidLowShadow.png in Resources */,
 				EB88B5CC154602B800E6A6EE /* PolaroidLowShadow@2x.png in Resources */,
-				EB88B5CE1546067300E6A6EE /* Marker SD.ttf in Resources */,
-				EB88B5D01546068A00E6A6EE /* CoertSchrift_Romaans.ttf in Resources */,
 				EB88B5EE1546247D00E6A6EE /* PolaroidTextured4.png in Resources */,
 				EB88B5EF1546247D00E6A6EE /* PolaroidTextured4@2x.png in Resources */,
-				EB88B5F81547811600E6A6EE /* Agent _C.ttf in Resources */,
-				EB88B5FA1547826300E6A6EE /* OMGWriteLikeWilliam.ttf in Resources */,
-				EB88B5FC154782BD00E6A6EE /* billbonessans.ttf in Resources */,
-				EB88B5FE154782C400E6A6EE /* Whatever.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -859,11 +832,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EB69B1FA153CD42A003D8422 /* EMTLPhotoCell.h in Sources */,
 				EB69B1FB153CD42A003D8422 /* EMTLPhotoCell.m in Sources */,
-				EB69B1FC153CD42A003D8422 /* EMTLPhotoListViewController.h in Sources */,
 				EB69B1FD153CD42A003D8422 /* EMTLPhotoListViewController.m in Sources */,
-				EB69B1FE153CD42A003D8422 /* EMTLPhotoSource.h in Sources */,
 				EB5221FF15377A3A00785F97 /* main.m in Sources */,
 				EB52220315377A3A00785F97 /* EMTLAppDelegate.m in Sources */,
 				EB69B241153CD46B003D8422 /* NSMutableURLRequest+Parameters.m in Sources */,
