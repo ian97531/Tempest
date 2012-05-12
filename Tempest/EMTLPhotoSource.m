@@ -6,7 +6,10 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 #import "EMTLPhotoSource.h"
+#import "EMTLPhotoSource_Private.h"
 #import "EMTLPhoto.h"
 
 NSString *const kPhotoUsername = @"user_name";
@@ -31,125 +34,33 @@ NSString *const kFavoriteUsername = @"user_name";
 NSString *const kFavoriteUserID = @"user_id";
 NSString *const kFavoriteIconURL = @"icon_url";
 
-@implementation EMTLPhotoSource
+@interface EMTLPhotoSource ()
+- (NSString *)_photoQueryIDFromQueryType:(EMTLPhotoQueryType)queryType andArguments:(NSDictionary *)arguments; // Assumes that argument keys and values are strings
 
-@synthesize delegate;
-@synthesize accountManager;
+- (NSSet *)_allQueries;
+- (EMTLPhotoQuery *)_photoQueryForQueryID:(NSString *)photoQueryID;
+- (void)_addPhotoQuery:(EMTLPhotoQuery *)query forQueryID:(NSString *)photoQueryID;
+- (void)_removePhotoQueryForQueryID:(NSString *)photoQueryID;
+
+- (void)_willChangeQuery:(EMTLPhotoQuery *)query;
+@end
+
+
+@implementation EMTLPhotoSource
 
 @synthesize userID;
 @synthesize username;
-@synthesize photoList;
 
 - (id)init
 {
     self = [super init];
-    if (self) {
-        imageCache = [[NSCache alloc] init];
-        operationQueue = [[NSOperationQueue alloc] init];
-        
-        [self initializeDiskCache];
-        
+    if (self)
+    {
+        _photoQueries = [NSMutableDictionary dictionary];
     }
     
     return self;
 }
-
-
-
-#pragma mark - Disk Caching
-- (void)initializeDiskCache
-{
-    NSLog(@"Initializng the on-disk cache for %@", self.serviceName);
-    
-    // Locate the disk cache.
-    NSArray *dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, 
-                                                            NSUserDomainMask, YES);
-    
-    diskCachePath = [NSString stringWithFormat:@"%@/%@-cache", [dirPaths objectAtIndex:0], self.serviceName];
-    NSLog(@"On-disk cache path for %@: %@", self.serviceName, diskCachePath);
-    
-    // Make sure it exists, if not, create it.
-    BOOL isDirectory;
-    if (![[NSFileManager defaultManager] fileExistsAtPath:diskCachePath isDirectory:&isDirectory]) {
-        NSLog(@"Creating new on-disk cache for %@", self.serviceName);
-        NSError *error;
-        [[NSFileManager defaultManager] createDirectoryAtPath:diskCachePath withIntermediateDirectories:YES attributes:nil error:&error];
-        
-        if(error) {
-            NSLog(@"There was an error setting up the on-disk cache for %@, proceeding without a disk cache.", self.serviceName);
-            NSLog(@"Error: %@", [error localizedDescription]);
-            diskCachePath = nil;
-        }
-    }
-    // If we were able to find a previously existing cache, load it's contents into memory.
-    [self loadFromDisk];
-}
-
-
-- (void)loadFromDisk
-{
-    NSLog(@"Loading cache from disk");
-    
-    // Get an enumerator for the files in the on-disk cache
-    NSURL *cachePath = [[NSURL alloc] initFileURLWithPath:diskCachePath];
-    NSArray *enumeratorKeys = [NSArray arrayWithObjects:NSURLNameKey, NSURLIsDirectoryKey, NSURLCreationDateKey, nil];
-    NSDirectoryEnumerator *cacheEnumerator = [[NSFileManager defaultManager] enumeratorAtURL:cachePath 
-                                                                  includingPropertiesForKeys:enumeratorKeys 
-                                                                                     options:NSDirectoryEnumerationSkipsHiddenFiles 
-                                                                                errorHandler:^(NSURL *url, NSError *error) {
-                                                                                    NSLog(@"error with url: %@", url.absoluteString);
-                                                                                    return YES;
-                                                                                }];
-    
-    NSMutableArray *photos = [NSMutableArray arrayWithCapacity:[self numberOfPhotosToCacheOnDisk]];
-    NSString *currentPhotoID;
-    NSURL *url;
-
-    while (url = [cacheEnumerator nextObject]) {
-        NSError *error;
-        NSNumber *isDirectory;
-        BOOL directoryReturned = [url getResourceValue:&isDirectory forKey:NSURLIsDirectoryKey error:&error];
-        
-        if (!directoryReturned) {
-            NSLog(@"Error while reading %@ from the on-disk cache for %@", [url absoluteString], self.serviceName);
-            NSLog(@"Error: %@", [error localizedDescription]);
-        }
-        else if([isDirectory boolValue]) {
-            currentPhotoID = [url lastPathComponent];
-        }
-        else if (! [isDirectory boolValue]) {
-            NSString *fileName = [url lastPathComponent];
-            if([fileName isEqualToString:@"image.jpg"]) {
-                UIImage *image = [UIImage imageWithContentsOfFile:url.path];
-                [imageCache setValue:image forKey:currentPhotoID];
-            }
-            else if([fileName isEqualToString:@"photo.plist"]) {
-                EMTLPhoto *photo = [EMTLPhoto photoWithDict:[NSDictionary dictionaryWithContentsOfFile:url.path]];
-                [photos addObject:photo];
-            }
-        }
-        
-    }
-    
-    // Sort the photos by date, newest photos first, oldest photos last
-    [photos sortUsingComparator:^(EMTLPhoto *photo1, EMTLPhoto *photo2){
-        return [photo2.datePosted compare:photo1.datePosted];
-    }];
-    
-    
-    photoList = photos;
-
-}
-
-
-
-- (int)numberOfPhotosToCacheOnDisk
-{
-    return 50;
-}
-
-
-
 
 - (NSString *)serviceName
 {
@@ -158,8 +69,16 @@ NSString *const kFavoriteIconURL = @"icon_url";
                                  userInfo:nil];
 }
 
+- (NSSet *)queries
+{
+    NSSet *queries = [self _allQueries];
+    return queries;
+}
 
-#pragma mark - Service Authorization methods
+#pragma mark -
+#pragma mark Authorization
+
+@synthesize authorizationDelegate = _authorizationDelegate;
 
 - (void)authorize
 {
@@ -173,28 +92,242 @@ NSString *const kFavoriteIconURL = @"icon_url";
 {
     @throw [NSException exceptionWithName:NSInternalInconsistencyException
                                    reason:[NSString stringWithFormat:@"You must override EMTLPhotoSource's %@ method in a subclass", NSStringFromSelector(_cmd)]
-                                 userInfo:nil];}
-
-
-
-
-# pragma mark - Photo Retrieval methods
-
-- (void)updateNewestPhotos
-{
-    @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                   reason:[NSString stringWithFormat:@"You must override EMTLPhotoSource's %@ method in a subclass", NSStringFromSelector(_cmd)]
-                                 userInfo:nil];}
-
-
-- (void)retrieveOlderPhotos
-{
-    @throw [NSException exceptionWithName:NSInternalInconsistencyException
-                                   reason:[NSString stringWithFormat:@"You must override EMTLPhotoSource's %@ method in a subclass", NSStringFromSelector(_cmd)]
                                  userInfo:nil];
 }
 
 
+#pragma mark -
+#pragma Photo Query
 
+- (NSString *)addPhotoQueryType:(EMTLPhotoQueryType)queryType withArguments:(NSDictionary *)queryArguments queryDelegate:(id<EMTLPhotoQueryDelegate>)queryDelegate
+{
+    // Generate the query ID
+    NSString *queryID = [self _photoQueryIDFromQueryType:queryType andArguments:queryArguments];
+    
+    // See if we already have a query for this guy
+    EMTLPhotoQuery *query = [self _photoQueryForQueryID:queryID];
+    
+    // Sanity Check - since we can only handle a single delegate per query, this method should really never get called with this query
+    // already exists.
+    // NOTE: If we decide to comment out this assert, then we have to fire the one below
+    NSAssert(query == nil, @"We already have this query");
+    
+    // Sanity Check - we can only have a single delegate per query right now. If this assert fires, then we are either doing something
+    // wrong or we need to update our structures to handle multiple delegates per query.
+    // NOTE: If we are not going to fire the above assert, then we at least have to fire this.
+//    if (query != nil)
+//    {
+//        NSAssert(query.delegate == queryDelegate, @"We can't add a second delegate to an existing query");
+//    }
+    
+    // Create the query
+    if (query == nil)
+    {
+        // Create it
+        EMTLPhotoQuery *query = [[[self _queryClass] alloc] initWithQueryID:queryID queryType:queryType arguments:queryArguments delegate:queryDelegate];
+        
+        // Add it to our list
+        [self _addPhotoQuery:query forQueryID:queryID];
+
+        // Let subclasses do any setup they need to do
+        [self _setupQuery:query];
+        
+        // Let subclasses actually run the query
+        [self _runQuery:query];
+    }
+    else
+    {
+        // We already have this query so just update it?
+        // NOTE: If we're asserting on non-nil queries above, we will never hit this.
+        [self _updateQuery:query];
+    }
+    
+    return queryID;
+}
+
+- (NSArray *)photoListForQuery:(NSString *)queryID
+{
+    // Sanity Check
+    EMTLPhotoQuery *query = [self _photoQueryForQueryID:queryID];
+    NSAssert(query != nil, @"We don't have a query for this query ID");
+    
+    NSArray *photoList = [query photoList];
+    return photoList;
+}
+
+- (void)removeQuery:(NSString *)queryID
+{
+    // Sanity Check
+    EMTLPhotoQuery *query = [self _photoQueryForQueryID:queryID];
+    NSAssert(query != nil, @"We don't have a query for this query ID");
+    
+    // Let subclasses handle stopping this query
+    [self _stopQuery:query];
+    [self _removeQuery:query];
+    
+    // Stop tracking this query
+    [self _removePhotoQueryForQueryID:query.photoQueryID];
+}
+
+- (void)reloadQuery:(NSString *)queryID
+{
+    // Sanity Check
+    EMTLPhotoQuery *query = [self _photoQueryForQueryID:queryID];
+    NSAssert(query != nil, @"We don't have a query for this query ID");
+    
+    // Notify the delegate
+    [self _willChangeQuery:query];
+    
+    // Let the subclass do the work and call _didChangeQuery
+    [self _reloadQuery:query];
+}
+
+- (void)updateQuery:(NSString *)queryID
+{
+    // Sanity Check
+    EMTLPhotoQuery *query = [self _photoQueryForQueryID:queryID];
+    NSAssert(query != nil, @"We don't have a query for this query ID");
+    
+    // Notify the delegate
+    [self _willChangeQuery:query];
+    
+    // Let the subclass do the work and also call _didChangeQuery
+    [self _updateQuery:query];
+}
+
+#pragma mark -
+#pragma mark Image Loading
+
+- (UIImage *)loadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size imageDelegate:(id<EMTLImageDelegate>)imageDelegate
+{
+    return nil;
+}
+
+- (void)cancelAllImagesForPhoto:(EMTLPhoto *)photo
+{
+    
+}
+
+- (void)cancelLoadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size
+{
+    
+}
+
+#pragma mark -
+#pragma mark Private Subclass Overrides
+
+- (Class)_queryClass
+{
+    return [EMTLPhotoQuery class];
+}
+
+- (void)_setupQuery:(EMTLPhotoQuery *)query
+{
+    // Subclasses override
+}
+
+- (void)_runQuery:(EMTLPhotoQuery *)query
+{
+    // Subclasses override
+}
+
+- (void)_updateQuery:(EMTLPhotoQuery *)query
+{
+    // Subclasses override
+}
+
+- (void)_reloadQuery:(EMTLPhotoQuery *)query
+{
+    // Subclasses override
+}
+
+- (void)_stopQuery:(EMTLPhotoQuery *)query
+{
+    // Subclasses override
+}
+
+- (void)_removeQuery:(EMTLPhotoQuery *)query
+{
+    // Subclassess override
+}
+
+#pragma mark -
+#pragma mark Private
+
+- (NSString *)_photoQueryIDFromQueryType:(EMTLPhotoQueryType)queryType andArguments:(NSDictionary *)arguments
+{
+    // Sanity Check
+    NSAssert((queryType >= EMTLPhotoQueryTimeline) && (queryType < EMTLPhotoQueryTypeUndefined), @"Cannot create a query ID from an invalid query type");
+    
+    // Turn the query type into a string
+    NSString *queryTypeString = [[NSNumber numberWithInt:queryType] stringValue];
+    
+    // Turn the arguments into a string
+    NSMutableString *wholeString = [NSMutableString stringWithString:@""];
+    [arguments enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+        NSString *keyValueString = [NSString stringWithFormat:@"%@_%@", (NSString *)key, (NSString *)obj];
+        [wholeString appendString:keyValueString];
+    }];
+    
+    // Add the query type string and the argument string
+    [wholeString appendString:queryTypeString];
+    
+    // Hashish
+    NSUInteger hash = [wholeString hash];
+    
+    // Get the query ID by converting the hash into a string
+    NSNumber *hashNumber = [NSNumber numberWithUnsignedInteger:hash];
+    NSString *queryID = [hashNumber stringValue];
+    
+    return queryID;
+}
+
+- (NSSet *)_allQueries
+{
+    NSSet *allQueries = nil;
+    
+    NSArray *queriesArray = [_photoQueries allValues];
+    allQueries = [NSSet setWithArray:queriesArray];
+    
+    return allQueries;
+}
+
+- (EMTLPhotoQuery *)_photoQueryForQueryID:(NSString *)photoQueryID
+{
+    // Sanity Check
+    NSAssert(photoQueryID != nil, @"Cannot find a query for a nil query ID");
+    
+    // See if we've got this guy already
+    EMTLPhotoQuery *query = [_photoQueries objectForKey:photoQueryID];
+    return query;
+}
+
+- (void)_addPhotoQuery:(EMTLPhotoQuery *)query forQueryID:(NSString *)photoQueryID
+{
+    // Sanity Check
+    NSAssert(photoQueryID != nil, @"Cannot add a query for a nil query ID");
+    NSAssert(query != nil, @"Cannot add a nil query");
+    
+    [_photoQueries setObject:query forKey:photoQueryID];
+}
+
+- (void)_removePhotoQueryForQueryID:(NSString *)photoQueryID
+{
+    // Sanity Check
+    NSAssert(photoQueryID != nil, @"Cannot remove a query for a nil query ID");
+    
+    // Kill it.
+    [_photoQueries removeObjectForKey:photoQueryID];
+}
+
+- (void)_willChangeQuery:(EMTLPhotoQuery *)query
+{
+    [query.delegate photoSource:self willUpdateQuery:query.photoQueryID];
+}
+
+- (void)_didChangeQuery:(EMTLPhotoQuery *)query
+{
+    [query.delegate photosource:self didUpdateQuery:query.photoQueryID];
+}
 
 @end
