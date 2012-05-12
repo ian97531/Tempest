@@ -177,7 +177,7 @@
 		EB69B1F1153CD26D003D8422 /* EMTLPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoCell.m; sourceTree = "<group>"; };
 		EB69B1F2153CD26D003D8422 /* EMTLPhotoListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoListViewController.h; sourceTree = "<group>"; };
 		EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoListViewController.m; sourceTree = "<group>"; };
-		EB69B1F4153CD26D003D8422 /* EMTLPhotoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoSource.h; sourceTree = "<group>"; };
+		EB69B1F4153CD26D003D8422 /* EMTLPhotoSource.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; path = EMTLPhotoSource.h; sourceTree = "<group>"; };
 		EB69B203153CD46B003D8422 /* NSMutableURLRequest+Parameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableURLRequest+Parameters.h"; sourceTree = "<group>"; };
 		EB69B204153CD46B003D8422 /* NSMutableURLRequest+Parameters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableURLRequest+Parameters.m"; sourceTree = "<group>"; };
 		EB69B205153CD46B003D8422 /* NSString+URLEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncoding.h"; sourceTree = "<group>"; };
@@ -416,7 +416,7 @@
 				EB850DAE153E0A710073BBAE /* APISecrets.h */,
 				EB277F61154B174100C17FE2 /* Old Sources */,
 				EB69B201153CD46B003D8422 /* OAuthConsumer */,
-				EB69B200153CD46B003D8422 /* Assets */,
+				EB69B200153CD46B003D8422 /* Resources */,
 				EB5221F915377A3A00785F97 /* Supporting Files */,
 			);
 			path = Tempest;
@@ -452,7 +452,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		EB69B200153CD46B003D8422 /* Assets */ = {
+		EB69B200153CD46B003D8422 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				EB88B5B91545FF4600E6A6EE /* Polaroid */,
@@ -473,6 +473,7 @@
 				EB8CC2C6153F5C1900DD01F1 /* TableBackground.png */,
 				EB8CC2C7153F5C1900DD01F1 /* TableBackground@2x.png */,
 			);
+			name = Resources;
 			path = Assets;
 			sourceTree = "<group>";
 		};
@@ -923,6 +924,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
