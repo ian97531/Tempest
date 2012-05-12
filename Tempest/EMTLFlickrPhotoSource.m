@@ -142,6 +142,11 @@ static double const kSecondsInThreeMonths = 7776500;
 #pragma mark -
 #pragma mark EMTLPhotoSource Private
 
+- (Class)_queryClass
+{
+    return [EMTLFlickrPhotoQuery class];
+}
+
 - (void)_setupQuery:(EMTLPhotoQuery *)query
 {
     // Sanity Check
@@ -160,7 +165,6 @@ static double const kSecondsInThreeMonths = 7776500;
     flickrQuery.minYear = [minComponents year];
     flickrQuery.minMonth = [minComponents month];
     flickrQuery.minDay = [minComponents day] + 2;
-
 }
 
 - (void)_runQuery:(EMTLPhotoQuery *)query

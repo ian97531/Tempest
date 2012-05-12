@@ -9,23 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "EMTLPhotoSource.h"
 
-@class EMTLPhotoListViewController;
-
-@interface EMTLAppDelegate : UIResponder <UIApplicationDelegate, EMTLAuthorizationDelegate>
-
+@interface EMTLAppDelegate : UIResponder <UIApplicationDelegate, EMTLPhotoSourceAuthorizationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-@property (nonatomic, strong) NSMutableDictionary *photoSources;
-@property (strong) NSLock *queueLock;
-@property (nonatomic, strong) NSMutableArray *authorizationQueue;
-@property (nonatomic, strong) NSMutableArray *authorizedSources;
-@property (nonatomic, strong) NSMutableArray *disabledSources;
-
-@property (nonatomic, strong) UINavigationController *navController;
-@property (nonatomic, strong) EMTLPhotoListViewController *feed;
-
-- (NSURL *)applicationDocumentsDirectory;
-
-- (void)initializePhotoSources;
 
 @end

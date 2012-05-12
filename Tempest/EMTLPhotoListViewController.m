@@ -15,6 +15,7 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface EMTLPhotoListViewController ()
+@property (nonatomic, strong) EMTLPhotoSource *photoSource;
 @property (nonatomic, strong) NSString *photoQueryID;
 @property (nonatomic, strong) UITableView *tableView;
 @property (nonatomic, strong) EMTLProgressIndicatorViewController *spinner;
@@ -22,6 +23,7 @@
 
 @implementation EMTLPhotoListViewController
 
+@synthesize photoSource = _photoSource;
 @synthesize photoQueryID = _photoQueryID;
 @synthesize tableView = _tableView;
 @synthesize spinner;
@@ -33,12 +35,13 @@
     return nil;
 }
              
-- (id)initWithPhotoQueryID:(NSString *)queryID
+- (id)initWithPhotoSource:(EMTLPhotoSource *)photoSource queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments;
 {
     self = [super initWithNibName:nil bundle:nil];
     if (self != nil)
     {
-        self.photoQueryID = queryID;
+        self.photoSource = photoSource;
+        self.photoQueryID = [self.photoSource addPhotoQueryType:queryType withArguments:arguments queryDelegate:self];
     }
     
     return self;

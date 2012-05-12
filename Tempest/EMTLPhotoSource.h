@@ -41,7 +41,7 @@ extern NSString *const kFavoriteUserID;
 extern NSString *const kFavoriteIconURL;
 
 
-@protocol EMTLAuthorizationDelegate
+@protocol EMTLPhotoSourceAuthorizationDelegate
 - (void)photoSource:(EMTLPhotoSource *)photoSource requiresAuthorizationAtURL:(NSURL *)url;
 - (void)authorizationCompleteForPhotoSource:(EMTLPhotoSource *)photoSource;
 - (void)authorizationFailedForPhotoSource:(EMTLPhotoSource *)photoSource authorizationError:(NSError *)error;
@@ -64,7 +64,7 @@ extern NSString *const kFavoriteIconURL;
 @interface EMTLPhotoSource : NSObject
 {
     @private
-    __weak id<EMTLAuthorizationDelegate> _authorizationDelegate;
+    __weak id<EMTLPhotoSourceAuthorizationDelegate> _authorizationDelegate;
     NSMutableDictionary *_photoQueries;
 }
 
@@ -76,7 +76,7 @@ extern NSString *const kFavoriteIconURL;
 
 
 // Authorization
-@property (nonatomic, weak) id <EMTLAuthorizationDelegate> authorizationDelegate;
+@property (nonatomic, weak) id <EMTLPhotoSourceAuthorizationDelegate> authorizationDelegate;
 - (void)authorize;
 - (void)authorizedWithVerifier:(NSString *)verfier;
 

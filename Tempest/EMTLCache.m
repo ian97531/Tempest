@@ -280,6 +280,11 @@ static EMTLCache *cache;
     
 }
 
+- (void)fetchedObject:(id)object fromAnotherRequest:(EMTLCache *)request
+{
+    
+}
+
 - (BOOL)downloadObject
 {
     @synchronized(cache.runningRequests) {

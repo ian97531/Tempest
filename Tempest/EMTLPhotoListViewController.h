@@ -12,10 +12,11 @@
 @interface EMTLPhotoListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, EMTLPhotoQueryDelegate, EMTLImageDelegate>
 {
     @protected
+    EMTLPhotoSource *_photoSource;
     NSString *_photoQueryID;
     UITableView *_tableView;
 }
 
-- (id)initWithPhotoQueryID:(NSString *)photoQueryID;
+- (id)initWithPhotoSource:(EMTLPhotoSource *)photoSource queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments;
 
 @end

@@ -124,7 +124,7 @@ NSString *const kFavoriteIconURL = @"icon_url";
     if (query == nil)
     {
         // Create it
-        EMTLPhotoQuery *query = [[EMTLPhotoQuery alloc] initWithQueryID:queryID queryType:queryType arguments:queryArguments delegate:queryDelegate];
+        EMTLPhotoQuery *query = [[[self _queryClass] alloc] initWithQueryID:queryID queryType:queryType arguments:queryArguments delegate:queryDelegate];
         
         // Add it to our list
         [self _addPhotoQuery:query forQueryID:queryID];
@@ -215,6 +215,11 @@ NSString *const kFavoriteIconURL = @"icon_url";
 
 #pragma mark -
 #pragma mark Private Subclass Overrides
+
+- (Class)_queryClass
+{
+    return [EMTLPhotoQuery class];
+}
 
 - (void)_setupQuery:(EMTLPhotoQuery *)query
 {

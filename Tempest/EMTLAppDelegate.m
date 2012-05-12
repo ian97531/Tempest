@@ -10,10 +10,22 @@
 #import "EMTLPhotoListViewController.h"
 #import "EMTLFlickrPhotoSource.h"
 
+@interface EMTLAppDelegate ()
+@property (nonatomic, strong) NSMutableDictionary *photoSources;
+@property (strong) NSLock *queueLock;
+@property (nonatomic, strong) NSMutableArray *authorizationQueue;
+@property (nonatomic, strong) NSMutableArray *authorizedSources;
+@property (nonatomic, strong) NSMutableArray *disabledSources;
+@property (nonatomic, strong) UINavigationController *navController;
+@property (nonatomic, strong) EMTLPhotoListViewController *timelineViewController;
+
+- (NSDictionary *)_convertQueryToDict:(NSString *)query;
+@end
+
 @implementation EMTLAppDelegate
 
 @synthesize navController;
-@synthesize feed;
+@synthesize timelineViewController;
 
 @synthesize photoSources;
 @synthesize authorizedSources;
@@ -26,18 +38,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:NO];
     
-    feed = [[EMTLPhotoListViewController alloc] init];
-    navController = [[UINavigationController alloc] initWithRootViewController:feed];
-    navController.navigationBar.hidden = YES;
-    
-    
-    self.window.rootViewController = navController;    
+    self.navController = [[UINavigationController alloc] initWithRootViewController:[[UIViewController alloc] init]];
+    self.navController.navigationBar.hidden = YES;
+
+    self.window.rootViewController = self.navController;    
     [self.window makeKeyAndVisible];
     
     self.photoSources = [[NSMutableDictionary alloc] initWithCapacity:4];
@@ -46,36 +54,32 @@
     self.authorizedSources = [[NSMutableArray alloc] initWithCapacity:4];
     self.disabledSources = [[NSMutableArray alloc] initWithCapacity:1];
     
-    [self initializePhotoSources];
-    
-//    for (NSString *name in [UIFont familyNames]) {
-//        NSLog(@"Family name : %@", name);
-//        for (NSString *font in [UIFont fontNamesForFamilyName:name]) {
-//            NSLog(@"Font name : %@", font);             
-//        }
-//    }
-    
+    [self _initializePhotoSources];
     
     return YES;
 }
 
-- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url
+{
     NSLog(@"the app caught the URL");
     
-	if ([[url scheme] isEqualToString:@"flickrgram"]) {
+	if ([[url scheme] isEqualToString:@"flickrgram"])
+    {
         NSLog(@"we got the callback");
-        if ([[url path] isEqualToString:@"/verify-auth"]) {
+        if ([[url path] isEqualToString:@"/verify-auth"])
+        {
             NSLog(@"It's a verify auth URL");
             
-            NSDictionary *queryParts = [self convertQueryToDict:[url query]];
+            NSDictionary *queryParts = [self _convertQueryToDict:[url query]];
             EMTLPhotoSource *source = [self.photoSources objectForKey:[url host]];
             
             [source authorizedWithVerifier:[queryParts objectForKey:@"oauth_verifier"]];
             
-            [navController dismissModalViewControllerAnimated:YES];
+            [self.navController dismissModalViewControllerAnimated:YES];
             
-            if (authorizationQueue.count) {
-                [self showAuthorizationPanelForURL:[authorizationQueue objectAtIndex:0]];
+            if (authorizationQueue.count)
+            {
+                [self _showAuthorizationPanelForURL:[authorizationQueue objectAtIndex:0]];
                 [authorizationQueue removeObjectAtIndex:0];
             }
             else {
@@ -91,68 +95,6 @@
 		// e.g decode JSON string from base64 to plain text & parse JSON string
 	}
     return YES; //if everything went well
-}
-
-- (NSDictionary *)convertQueryToDict:(NSString *)query {
-    
-    NSArray *parts = [query componentsSeparatedByString:@"&"];
-    NSMutableDictionary *returnValue = [[NSMutableDictionary alloc] initWithCapacity:parts.count];
-    
-    for (NSString *part in parts) {
-        NSArray *keyValue = [part componentsSeparatedByString:@"="];
-        [returnValue setObject:[keyValue lastObject] forKey:[keyValue objectAtIndex:0]];
-    }
-    
-    return [NSDictionary dictionaryWithDictionary:returnValue];
-}
-
-- (void)initializePhotoSources
-{
-    
-    // Grab the enabled sources from defaults, and ask each to authorize.
-    
-    EMTLFlickrPhotoSource *flickr = [[EMTLFlickrPhotoSource alloc] init];
-    [self.photoSources setObject:flickr forKey:flickr.serviceName];
-    
-    flickr.authorizationDelegate = self;
-    //[flickr authorize];
-    
-}
-
-- (void)authorizationErrorForPhotoSource:(EMTLPhotoSource *)photoSource;
-{
-    NSLog(@"authorization error for %@", photoSource.serviceName);
-}
-
-- (void)photoSource:(EMTLPhotoSource *)photoSource requiresAuthorizationAtURL:(NSURL *)url
-{
-    if ([queueLock tryLock]) {
-        NSLog(@"authorization requred for %@", photoSource.serviceName);
-        [self showAuthorizationPanelForURL:url];
-        
-    }
-    else {
-        [authorizationQueue addObject:url];
-    }
-   
-}
-
-- (void)showAuthorizationPanelForURL:(NSURL *)url
-{
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
-    UIWebView *authorizationPanel = [[UIWebView alloc] init];
-    [authorizationPanel loadRequest:request];
-    
-    UIViewController *webController = [[UIViewController alloc] init];
-    webController.view = authorizationPanel;
-    
-    [navController presentModalViewController:webController animated:YES];
-}
-
-- (void)authorizationCompleteForPhotoSource:(EMTLPhotoSource *)photoSource;
-{
-    NSLog(@"authorization complete for %@. user:%@, id: %@", photoSource.serviceName, photoSource.username, photoSource.userID);
-    //[feed addSource:photoSource];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -182,14 +124,79 @@
 
 }
 
+#pragma mark -
+#pragma mark EMTLPhotoSourceAuthorizationDelegate
 
-
-#pragma mark - Application's Documents directory
-
-// Returns the URL to the application's Documents directory.
-- (NSURL *)applicationDocumentsDirectory
+- (void)_showAuthorizationPanelForURL:(NSURL *)url
 {
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    UIWebView *authorizationPanel = [[UIWebView alloc] init];
+    [authorizationPanel loadRequest:request];
+    
+    UIViewController *webController = [[UIViewController alloc] init];
+    webController.view = authorizationPanel;
+    
+    [self.navController presentModalViewController:webController animated:YES];
 }
+
+- (void)photoSource:(EMTLPhotoSource *)photoSource requiresAuthorizationAtURL:(NSURL *)url
+{
+    if ([queueLock tryLock])
+    {
+        NSLog(@"authorization requred for %@", photoSource.serviceName);
+        [self _showAuthorizationPanelForURL:url];
+        
+    }
+    else
+    {
+        [authorizationQueue addObject:url];
+    }
+}
+
+- (void)authorizationCompleteForPhotoSource:(EMTLPhotoSource *)photoSource
+{
+    NSLog(@"authorization complete for %@. user:%@, id: %@", photoSource.serviceName, photoSource.username, photoSource.userID);
+
+    self.timelineViewController = [[EMTLPhotoListViewController alloc] initWithPhotoSource:photoSource queryType:EMTLPhotoQueryTimeline arguments:nil];
+    [self.navController pushViewController:self.timelineViewController animated:NO];
+}
+
+- (void)authorizationFailedForPhotoSource:(EMTLPhotoSource *)photoSource authorizationError:(NSError *)error
+{
+    // TODO (BSEELY): We need to decide what's the sensible thing to do here. What are the possible failure cases and how to handle each one.
+    NSLog(@"authorization error for %@", photoSource.serviceName);
+}
+
+
+#pragma mark -
+#pragma mark Private
+
+- (NSDictionary *)_convertQueryToDict:(NSString *)query
+{
+    NSArray *parts = [query componentsSeparatedByString:@"&"];
+    NSMutableDictionary *returnValue = [[NSMutableDictionary alloc] initWithCapacity:parts.count];
+    
+    for (NSString *part in parts)
+    {
+        NSArray *keyValue = [part componentsSeparatedByString:@"="];
+        [returnValue setObject:[keyValue lastObject] forKey:[keyValue objectAtIndex:0]];
+    }
+    
+    return [NSDictionary dictionaryWithDictionary:returnValue];
+}
+
+
+- (void)_initializePhotoSources
+{
+    // Grab the enabled sources from defaults, and ask each to authorize.    
+    EMTLFlickrPhotoSource *flickr = [[EMTLFlickrPhotoSource alloc] init];
+    [self.photoSources setObject:flickr forKey:flickr.serviceName];
+    
+    flickr.authorizationDelegate = self;
+    
+    // TODO (BSEELY): Ideally this goes somewhere else - since we only use Flickr at this point, it's fine here for now.
+    [flickr authorize];
+}
+
 
 @end
