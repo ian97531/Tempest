@@ -9,27 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "EMTLPhotoSource.h"
 
-@class EMTLPhoto;
-
 @interface EMTLFlickrPhotoSource : EMTLPhotoSource
-
 {
-    int currentPage;
-    int totalPages;
-    
-    int maxYear;
-    int maxMonth;
-    int maxDay;
-    
-    int minYear;
-    int minMonth;
-    int minDay;
-    
     OAConsumer *consumer;
     OAToken *requestToken;
     OAToken *accessToken;
-    
-    BOOL loading;
 }
 
 @end

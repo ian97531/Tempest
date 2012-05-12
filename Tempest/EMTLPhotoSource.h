@@ -69,8 +69,11 @@ extern NSString *const kFavoriteIconURL;
 }
 
 @property (nonatomic, readonly) NSString *serviceName;
+@property (nonatomic, readonly) NSSet *queries;
+
 @property (nonatomic, strong) NSString *userID;
 @property (nonatomic, strong) NSString *username;
+
 
 // Authorization
 @property (nonatomic, weak) id <EMTLAuthorizationDelegate> authorizationDelegate;

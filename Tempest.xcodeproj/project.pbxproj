@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		28CD7CE5155EDE9000892383 /* EMTLPhotoQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CD7CE4155EDE9000892383 /* EMTLPhotoQuery.m */; };
 		28CD7CE9155EE88C00892383 /* EMTLConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CD7CE8155EE88C00892383 /* EMTLConstants.m */; };
+		28CD7CEC155EF14800892383 /* EMTLFlickrPhotoQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CD7CEB155EF14800892383 /* EMTLFlickrPhotoQuery.m */; };
 		EB277F64154B1CD300C17FE2 /* EMTLPhotoSource.m in Sources */ = {isa = PBXBuildFile; fileRef = EB277F63154B1CD300C17FE2 /* EMTLPhotoSource.m */; };
 		EB5221F115377A3A00785F97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F015377A3A00785F97 /* UIKit.framework */; };
 		EB5221F315377A3A00785F97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F215377A3A00785F97 /* Foundation.framework */; };
@@ -162,6 +163,8 @@
 		28CD7CE6155EE04900892383 /* EMTLPhotoSource_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoSource_Private.h; sourceTree = "<group>"; };
 		28CD7CE7155EE88C00892383 /* EMTLConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLConstants.h; sourceTree = "<group>"; };
 		28CD7CE8155EE88C00892383 /* EMTLConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLConstants.m; sourceTree = "<group>"; };
+		28CD7CEA155EF14800892383 /* EMTLFlickrPhotoQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFlickrPhotoQuery.h; sourceTree = "<group>"; };
+		28CD7CEB155EF14800892383 /* EMTLFlickrPhotoQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickrPhotoQuery.m; sourceTree = "<group>"; };
 		EB277F63154B1CD300C17FE2 /* EMTLPhotoSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoSource.m; sourceTree = "<group>"; };
 		EB5221EC15377A3A00785F97 /* Tempest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tempest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB5221F015377A3A00785F97 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -410,6 +413,7 @@
 		EB5221F815377A3A00785F97 /* Tempest */ = {
 			isa = PBXGroup;
 			children = (
+				EB850DAE153E0A710073BBAE /* APISecrets.h */,
 				28CD7CE7155EE88C00892383 /* EMTLConstants.h */,
 				28CD7CE8155EE88C00892383 /* EMTLConstants.m */,
 				EB52220115377A3A00785F97 /* EMTLAppDelegate.h */,
@@ -421,11 +425,12 @@
 				28CD7CE6155EE04900892383 /* EMTLPhotoSource_Private.h */,
 				EB69B1F4153CD26D003D8422 /* EMTLPhotoSource.h */,
 				EB277F63154B1CD300C17FE2 /* EMTLPhotoSource.m */,
+				28CD7CEA155EF14800892383 /* EMTLFlickrPhotoQuery.h */,
+				28CD7CEB155EF14800892383 /* EMTLFlickrPhotoQuery.m */,
 				EB850DAA153DF3D30073BBAE /* EMTLFlickrPhotoSource.h */,
 				EB850DAB153DF3D30073BBAE /* EMTLFlickrPhotoSource.m */,
 				EB850DAF153E3CD30073BBAE /* EMTLPhoto.h */,
 				EB850DB0153E3CD40073BBAE /* EMTLPhoto.m */,
-				EB850DAE153E0A710073BBAE /* APISecrets.h */,
 				EB277F61154B174100C17FE2 /* Old Sources */,
 				EB69B201153CD46B003D8422 /* OAuthConsumer */,
 				EB69B200153CD46B003D8422 /* Resources */,
@@ -874,6 +879,7 @@
 				EB277F64154B1CD300C17FE2 /* EMTLPhotoSource.m in Sources */,
 				28CD7CE5155EDE9000892383 /* EMTLPhotoQuery.m in Sources */,
 				28CD7CE9155EE88C00892383 /* EMTLConstants.m in Sources */,
+				28CD7CEC155EF14800892383 /* EMTLFlickrPhotoQuery.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

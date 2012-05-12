@@ -11,11 +11,15 @@
 
 @interface EMTLPhotoSource ()
 
+// Subclasses should override
 - (void)_setupQuery:(EMTLPhotoQuery *)query;
 - (void)_runQuery:(EMTLPhotoQuery *)query;
 - (void)_updateQuery:(EMTLPhotoQuery *)query;
 - (void)_reloadQuery:(EMTLPhotoQuery *)query;
 - (void)_stopQuery:(EMTLPhotoQuery *)query;
 - (void)_removeQuery:(EMTLPhotoQuery *)query;
+
+// Subclasses should NOT override, but call when necessary
+- (void)_didChangeQuery:(EMTLPhotoQuery *)query;
 
 @end

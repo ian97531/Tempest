@@ -37,12 +37,12 @@ NSString *const kFavoriteIconURL = @"icon_url";
 @interface EMTLPhotoSource ()
 - (NSString *)_photoQueryIDFromQueryType:(EMTLPhotoQueryType)queryType andArguments:(NSDictionary *)arguments; // Assumes that argument keys and values are strings
 
+- (NSSet *)_allQueries;
 - (EMTLPhotoQuery *)_photoQueryForQueryID:(NSString *)photoQueryID;
 - (void)_addPhotoQuery:(EMTLPhotoQuery *)query forQueryID:(NSString *)photoQueryID;
 - (void)_removePhotoQueryForQueryID:(NSString *)photoQueryID;
 
 - (void)_willChangeQuery:(EMTLPhotoQuery *)query;
-- (void)_didChangQuery:(EMTLPhotoQuery *)query;
 @end
 
 
@@ -67,6 +67,12 @@ NSString *const kFavoriteIconURL = @"icon_url";
     @throw [NSException exceptionWithName:NSInternalInconsistencyException
                                    reason:[NSString stringWithFormat:@"You must override EMTLPhotoSource's %@ method in a subclass", NSStringFromSelector(_cmd)]
                                  userInfo:nil];
+}
+
+- (NSSet *)queries
+{
+    NSSet *queries = [self _allQueries];
+    return queries;
 }
 
 #pragma mark -
@@ -271,6 +277,16 @@ NSString *const kFavoriteIconURL = @"icon_url";
     return queryID;
 }
 
+- (NSSet *)_allQueries
+{
+    NSSet *allQueries = nil;
+    
+    NSArray *queriesArray = [_photoQueries allValues];
+    allQueries = [NSSet setWithArray:queriesArray];
+    
+    return allQueries;
+}
+
 - (EMTLPhotoQuery *)_photoQueryForQueryID:(NSString *)photoQueryID
 {
     // Sanity Check
@@ -304,7 +320,7 @@ NSString *const kFavoriteIconURL = @"icon_url";
     [query.delegate photoSource:self willUpdateQuery:query.photoQueryID];
 }
 
-- (void)_didChangQuery:(EMTLPhotoQuery *)query
+- (void)_didChangeQuery:(EMTLPhotoQuery *)query
 {
     [query.delegate photosource:self didUpdateQuery:query.photoQueryID];
 }
