@@ -32,13 +32,4 @@
     BOOL loading;
 }
 
-
-- (void)authorize;
-- (void)authorizedWithVerifier:(NSString *)verfier;
-
-- (void)updateNewestPhotos;
-- (void)retrieveOlderPhotos;
-
-- (NSString *)serviceName;
-
 @end
