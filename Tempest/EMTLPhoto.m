@@ -7,7 +7,7 @@
 //
 
 #import "EMTLPhoto.h"
-#import "EMTLPhotoCell.h"
+#import "EMTLOldPhotoCell.h"
 #import "EMTLProgressIndicatorViewController.h"
 
 @implementation EMTLPhoto
@@ -163,8 +163,8 @@
         favoritesShortString = nil;
         if (favorites.count) {
             
-            int availableWidth = [EMTLPhotoCell favoritesStringWidth] - 5;
-            UIFont *theFont = [EMTLPhotoCell favoritesFont];
+            int availableWidth = [EMTLOldPhotoCell favoritesStringWidth] - 5;
+            UIFont *theFont = [EMTLOldPhotoCell favoritesFont];
             int totalLikes = favorites.count;
                     
             NSString *prefix = @"Liked by ";

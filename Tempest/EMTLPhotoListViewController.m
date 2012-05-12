@@ -8,7 +8,7 @@
 
 #import "EMTLPhotoListViewController.h"
 #import "EMTLProgressIndicatorViewController.h"
-#import "EMTLPhotoCell.h"
+#import "EMTLOldPhotoCell.h"
 #import "EMTLPhoto.h"
 
 #import <Foundation/Foundation.h>
@@ -101,10 +101,10 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Grab a cell from the queue or create a new one.
-    EMTLPhotoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
+    EMTLOldPhotoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
     
     if (cell == nil) {
-        cell = [[EMTLPhotoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PhotoCell"];
+        cell = [[EMTLOldPhotoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PhotoCell"];
     }
     
    
