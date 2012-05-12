@@ -8,7 +8,7 @@
 
 #import "EMTLAppDelegate.h"
 #import "EMTLPhotoListViewController.h"
-#import "EMTLFlickr.h"
+#import "EMTLFlickrPhotoSource.h"
 
 @implementation EMTLAppDelegate
 
@@ -111,10 +111,10 @@
     
     // Grab the enabled sources from defaults, and ask each to authorize.
     
-    EMTLFlickr *flickr = [[EMTLFlickr alloc] init];
+    EMTLFlickrPhotoSource *flickr = [[EMTLFlickrPhotoSource alloc] init];
     [self.photoSources setObject:flickr forKey:flickr.serviceName];
     
-    flickr.accountManager = self;
+    flickr.authorizationDelegate = self;
     //[flickr authorize];
     
 }

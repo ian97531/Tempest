@@ -11,58 +11,39 @@
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
 
+#import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
+@interface EMTLPhotoListViewController ()
+@property (nonatomic, strong) NSString *photoQueryID;
+@property (nonatomic, strong) UITableView *tableView;
+@property (nonatomic, strong) EMTLProgressIndicatorViewController *spinner;
+@end
 
 @implementation EMTLPhotoListViewController
 
-@synthesize table;
+@synthesize photoQueryID = _photoQueryID;
+@synthesize tableView = _tableView;
 @synthesize spinner;
-@synthesize source;
 
-- (id)init
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super init];
-    if (self) {
-        
-
-        
+    // We shouldn't be using the UIViewController init methods since we have a custom one that's required
+    NSAssert(NO, @"EMTLPhotoListViewController: use initWithPhotoQueryID:");
+    return nil;
+}
+             
+- (id)initWithPhotoQueryID:(NSString *)queryID
+{
+    self = [super initWithNibName:nil bundle:nil];
+    if (self != nil)
+    {
+        self.photoQueryID = queryID;
     }
+    
     return self;
 }
 
-
-
-
-#pragma mark - PhotoConsumer methods
-
-- (void)photoSourceMayChangePhotoList:(EMTLPhotoSource *)photoSource
-{
-    
-}
-
-- (void)photoSourceMayAddPhotosToPhotoList:(EMTLPhotoSource *)photoSource
-{
-    
-}
-
-- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhotoList:(NSDictionary *)changes
-{
-    
-}
-
-- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhotosAtIndexPaths:(NSArray *)indexPaths
-{
-    
-}
-
-- (void)photoSourceDoneChangingPhotoList:(EMTLPhotoSource *)photoSource
-{
-    
-}
-
-
-#pragma mark - View Lifecycle
 - (void)loadView
 {
     
@@ -73,24 +54,23 @@
     
     // Get a table ready that fills the screen and is transparent. Give it a header so that the first cell
     // is not occluded by the iOS status bar.
-    table = [[UITableView alloc] initWithFrame:backgroundImage.frame style:UITableViewStylePlain];
-    table.separatorColor = [UIColor clearColor];
-    table.delegate = self;
-    table.dataSource = self;
-    table.backgroundColor = [UIColor clearColor];
-    table.layer.masksToBounds = YES;
-    table.showsVerticalScrollIndicator = NO;
-    table.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 20)];
+    self.tableView = [[UITableView alloc] initWithFrame:backgroundImage.frame style:UITableViewStylePlain];
+    self.tableView.separatorColor = [UIColor clearColor];
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    self.tableView.backgroundColor = [UIColor clearColor];
+    self.tableView.layer.masksToBounds = YES; // TODO BSEELY: does it matter? This can be expensive so if it's not already the default or not needed, we should remove it
+    self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 20)];
     
     // Put a large progress spinner into the view to appease the user while the first set of
     // EMTLPhotos is loaded.
     spinner = [EMTLProgressIndicatorViewController indicatorWithSize:kLargeProgressIndicator];
-    spinner.view.center = table.center;
+    spinner.view.center = self.tableView.center;
     spinner.view.layer.opacity = 0.2;
     
     // Throw everything into the view, and make it fullscreen.
     [parent addSubview:backgroundImage];
-    [parent addSubview:table];
+    [parent addSubview:self.tableView];
     [parent addSubview:spinner.view];
     self.view = parent;
     self.wantsFullScreenLayout = YES;
@@ -101,7 +81,9 @@
 }
 
 
-#pragma mark - UITableViewDelegate
+#pragma mark -
+#pragma mark UITableViewDelegate
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
@@ -110,7 +92,9 @@
     return 10;
 }
 
-#pragma mark - UITableViewDataSource
+#pragma mark -
+#pragma mark UITableViewDataSource
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Grab a cell from the queue or create a new one.
@@ -124,28 +108,6 @@
     return cell;
 }
 
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
-{
-    
-}
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-}
-
-
-- (void) preload
-{
-
-}
-
-- (void) preloadImages:(int)num
-{
-
-    
-}
-
-
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     return 0;
@@ -158,10 +120,65 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
+    
     
 }
 
+#pragma mark -
+#pragma mark UIScrollViewDelegate
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    
+}
+
+#pragma mark -
+#pragma mark EMTLPhotoQueryDelegate
+
+- (void)photoSource:(EMTLPhotoSource *)photoSource willUpdateQuery:(NSString *)queryID
+{
+    // Sanity Check
+    NSAssert([self.photoQueryID isEqualToString:queryID], @"EMTLPhotoListViewController: got photo query delegate callback with the wrong query ID");
+}
+
+- (void)photosource:(EMTLPhotoSource *)photoSource didUpdateQuery:(NSString *)queryID
+{
+    // Sanity Check
+    NSAssert([self.photoQueryID isEqualToString:queryID], @"EMTLPhotoListViewController: got photo query delegate callback with the wrong query ID");
+}
+
+- (void)photoSource:(EMTLPhotoSource *)photoSource willChangePhoto:(EMTLPhoto *)photo
+{
+    // Sanity Check
+}
+
+- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhoto:(EMTLPhoto *)photo
+{
+    // Sanity Check
+}
+
+#pragma mark -
+#pragma mark EMTLImageDelegate
+
+- (void)photoSource:(EMTLPhotoSource *)photoSource willRequestImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size
+{
+    
+}
+
+- (void)photosource:(EMTLPhotoSource *)photoSource didRequestImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size progress:(float)progress
+{
+    
+}
+
+- (void)photoSource:(EMTLPhotoSource *)photoSource didLoadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size image:(UIImage *)image
+{
+    
+}
 
 
 @end

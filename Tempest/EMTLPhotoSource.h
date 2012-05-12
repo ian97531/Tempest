@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#import "EMTLConstants.h"
 #import "OAConsumer.h"
 #import "OAToken.h"
 #import "OAServiceTicket.h"
@@ -39,20 +41,11 @@ extern NSString *const kFavoriteUserID;
 extern NSString *const kFavoriteIconURL;
 
 
-// Authorization Callbacks
 @protocol EMTLAuthorizationDelegate
 - (void)photoSource:(EMTLPhotoSource *)photoSource requiresAuthorizationAtURL:(NSURL *)url;
 - (void)authorizationCompleteForPhotoSource:(EMTLPhotoSource *)photoSource;
 - (void)authorizationFailedForPhotoSource:(EMTLPhotoSource *)photoSource authorizationError:(NSError *)error;
 @end
-
-// Photo queries
-typedef enum EMTLPhotoQueryType {
-    EMTLPhotoQueryTimeline,
-    EMTLPhotoQueryFavorites,
-    EMTLPhotoQueryUserPhotos,
-    EMTLPhotoQueryPopularPhotos,
-} EMTLPhotoQueryType;
 
 @protocol EMTLPhotoQueryDelegate
 - (void)photoSource:(EMTLPhotoSource *)photoSource willUpdateQuery:(NSString *)queryID;
@@ -61,16 +54,6 @@ typedef enum EMTLPhotoQueryType {
 - (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhoto:(EMTLPhoto *)photo;
 @end
 
-// Image loading
-typedef enum EMTLImageSize {
-    EMTLImageSizeSmallSquare = 10,
-    EMTLImageSizeMediumSquare = 20,
-    EMTLImageSizeSmallAspect = 30,
-    EMTLImageSizeMediumAspect = 40,
-    EMTLImageSizeLargeAspect = 50,
-    EMTLImageSizeLargestAvailable = 60,
-} EMTLImageSize;
-
 @protocol EMTLImageDelegate
 - (void)photoSource:(EMTLPhotoSource *)photoSource willRequestImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;
 - (void)photosource:(EMTLPhotoSource *)photoSource didRequestImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size progress:(float)progress;
@@ -78,17 +61,21 @@ typedef enum EMTLImageSize {
 
 @end
 
-
 @interface EMTLPhotoSource : NSObject
 {
-    NSOperationQueue *operationQueue;
-    NSCache *imageCache;
-    NSString *diskCachePath;
-    NSArray *diskCachePhotos;
+    @private
+    __weak id<EMTLAuthorizationDelegate> _authorizationDelegate;
+    NSMutableDictionary *_photoQueries;
 }
 
+@property (nonatomic, readonly) NSString *serviceName;
 @property (nonatomic, strong) NSString *userID;
 @property (nonatomic, strong) NSString *username;
+
+// Authorization
+@property (nonatomic, weak) id <EMTLAuthorizationDelegate> authorizationDelegate;
+- (void)authorize;
+- (void)authorizedWithVerifier:(NSString *)verfier;
 
 // Photo Query
 - (NSString *)addPhotoQueryType:(EMTLPhotoQueryType)queryType withArguments:(NSDictionary *)queryArguments queryDelegate:(id<EMTLPhotoQueryDelegate>)queryDelegate;
@@ -96,11 +83,6 @@ typedef enum EMTLImageSize {
 - (void)removeQuery:(NSString *)queryID;
 - (void)reloadQuery:(NSString *)queryID;
 - (void)updateQuery:(NSString *)queryID;
-
-// Authorization
-@property (nonatomic, assign) id <EMTLAuthorizationDelegate> accountManager;
-- (void)authorize;
-- (void)authorizedWithVerifier:(NSString *)verfier;
 
 // Image Loading
 - (UIImage *)loadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size imageDelegate:(id<EMTLImageDelegate>)imageDelegate;

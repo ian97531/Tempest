@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		28CD7CE5155EDE9000892383 /* EMTLPhotoQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CD7CE4155EDE9000892383 /* EMTLPhotoQuery.m */; };
+		28CD7CE9155EE88C00892383 /* EMTLConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CD7CE8155EE88C00892383 /* EMTLConstants.m */; };
 		EB277F64154B1CD300C17FE2 /* EMTLPhotoSource.m in Sources */ = {isa = PBXBuildFile; fileRef = EB277F63154B1CD300C17FE2 /* EMTLPhotoSource.m */; };
 		EB5221F115377A3A00785F97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F015377A3A00785F97 /* UIKit.framework */; };
 		EB5221F315377A3A00785F97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F215377A3A00785F97 /* Foundation.framework */; };
@@ -49,7 +51,7 @@
 		EB69B288153CDE3A003D8422 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B287153CDE3A003D8422 /* CFNetwork.framework */; };
 		EB69B28A153CDE40003D8422 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B289153CDE40003D8422 /* libxml2.dylib */; };
 		EB69B28C153CDE59003D8422 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */; };
-		EB850DAC153DF3D30073BBAE /* EMTLFlickr.m in Sources */ = {isa = PBXBuildFile; fileRef = EB850DAB153DF3D30073BBAE /* EMTLFlickr.m */; };
+		EB850DAC153DF3D30073BBAE /* EMTLFlickrPhotoSource.m in Sources */ = {isa = PBXBuildFile; fileRef = EB850DAB153DF3D30073BBAE /* EMTLFlickrPhotoSource.m */; };
 		EB850DB1153E3CD40073BBAE /* EMTLPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = EB850DB0153E3CD40073BBAE /* EMTLPhoto.m */; };
 		EB88B5BF1545FF4600E6A6EE /* Polaroid@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5BA1545FF4600E6A6EE /* Polaroid@2x.png */; };
 		EB88B5C01545FF4600E6A6EE /* PolaroidBlank@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5BB1545FF4600E6A6EE /* PolaroidBlank@2x.png */; };
@@ -155,6 +157,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		28CD7CE3155EDE9000892383 /* EMTLPhotoQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoQuery.h; sourceTree = "<group>"; };
+		28CD7CE4155EDE9000892383 /* EMTLPhotoQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoQuery.m; sourceTree = "<group>"; };
+		28CD7CE6155EE04900892383 /* EMTLPhotoSource_Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoSource_Private.h; sourceTree = "<group>"; };
+		28CD7CE7155EE88C00892383 /* EMTLConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLConstants.h; sourceTree = "<group>"; };
+		28CD7CE8155EE88C00892383 /* EMTLConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLConstants.m; sourceTree = "<group>"; };
 		EB277F63154B1CD300C17FE2 /* EMTLPhotoSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoSource.m; sourceTree = "<group>"; };
 		EB5221EC15377A3A00785F97 /* Tempest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tempest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB5221F015377A3A00785F97 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -222,8 +229,8 @@
 		EB69B287153CDE3A003D8422 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		EB69B289153CDE40003D8422 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		EB850DAA153DF3D30073BBAE /* EMTLFlickr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFlickr.h; sourceTree = "<group>"; };
-		EB850DAB153DF3D30073BBAE /* EMTLFlickr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickr.m; sourceTree = "<group>"; };
+		EB850DAA153DF3D30073BBAE /* EMTLFlickrPhotoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFlickrPhotoSource.h; sourceTree = "<group>"; };
+		EB850DAB153DF3D30073BBAE /* EMTLFlickrPhotoSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickrPhotoSource.m; sourceTree = "<group>"; };
 		EB850DAE153E0A710073BBAE /* APISecrets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APISecrets.h; sourceTree = "<group>"; };
 		EB850DAF153E3CD30073BBAE /* EMTLPhoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhoto.h; sourceTree = "<group>"; };
 		EB850DB0153E3CD40073BBAE /* EMTLPhoto.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhoto.m; sourceTree = "<group>"; };
@@ -403,14 +410,19 @@
 		EB5221F815377A3A00785F97 /* Tempest */ = {
 			isa = PBXGroup;
 			children = (
+				28CD7CE7155EE88C00892383 /* EMTLConstants.h */,
+				28CD7CE8155EE88C00892383 /* EMTLConstants.m */,
 				EB52220115377A3A00785F97 /* EMTLAppDelegate.h */,
 				EB52220215377A3A00785F97 /* EMTLAppDelegate.m */,
 				EB69B1F2153CD26D003D8422 /* EMTLPhotoListViewController.h */,
 				EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */,
+				28CD7CE3155EDE9000892383 /* EMTLPhotoQuery.h */,
+				28CD7CE4155EDE9000892383 /* EMTLPhotoQuery.m */,
+				28CD7CE6155EE04900892383 /* EMTLPhotoSource_Private.h */,
 				EB69B1F4153CD26D003D8422 /* EMTLPhotoSource.h */,
 				EB277F63154B1CD300C17FE2 /* EMTLPhotoSource.m */,
-				EB850DAA153DF3D30073BBAE /* EMTLFlickr.h */,
-				EB850DAB153DF3D30073BBAE /* EMTLFlickr.m */,
+				EB850DAA153DF3D30073BBAE /* EMTLFlickrPhotoSource.h */,
+				EB850DAB153DF3D30073BBAE /* EMTLFlickrPhotoSource.m */,
 				EB850DAF153E3CD30073BBAE /* EMTLPhoto.h */,
 				EB850DB0153E3CD40073BBAE /* EMTLPhoto.m */,
 				EB850DAE153E0A710073BBAE /* APISecrets.h */,
@@ -855,11 +867,13 @@
 				EB69B250153CD46B003D8422 /* OAServiceTicket.m in Sources */,
 				EB69B252153CD46B003D8422 /* OAToken.m in Sources */,
 				EB69B253153CD46B003D8422 /* OATokenManager.m in Sources */,
-				EB850DAC153DF3D30073BBAE /* EMTLFlickr.m in Sources */,
+				EB850DAC153DF3D30073BBAE /* EMTLFlickrPhotoSource.m in Sources */,
 				EB850DB1153E3CD40073BBAE /* EMTLPhoto.m in Sources */,
 				EB8AA1511540BCE2004C6DF8 /* EMTLProgressIndicatorViewController.m in Sources */,
 				EB88B5F21547357C00E6A6EE /* EMTLCache.m in Sources */,
 				EB277F64154B1CD300C17FE2 /* EMTLPhotoSource.m in Sources */,
+				28CD7CE5155EDE9000892383 /* EMTLPhotoQuery.m in Sources */,
+				28CD7CE9155EE88C00892383 /* EMTLConstants.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
