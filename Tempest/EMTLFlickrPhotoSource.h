@@ -1,19 +1,13 @@
 //
-//  EMTLFlickr.h
-//  Flickrgram
+//  EMTLFlickrPhotoSource.h
+//  Tempest
 //
-//  Created by Ian White on 4/17/12.
+//  Created by Ian White on 5/17/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
 #import "EMTLPhotoSource.h"
 
 @interface EMTLFlickrPhotoSource : EMTLPhotoSource
-{
-    OAConsumer *consumer;
-    OAToken *requestToken;
-    OAToken *accessToken;
-}
 
 @end

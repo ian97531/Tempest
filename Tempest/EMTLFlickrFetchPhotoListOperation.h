@@ -1,5 +1,5 @@
 //
-//  EMTLPhoto.h
+//  EMTLFlickrFetchPhotoListOperation.h
 //  Tempest
 //
 //  Created by Ian White on 5/17/12.
@@ -8,6 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface EMTLPhoto : NSObject
+@interface EMTLFlickrFetchPhotoListOperation : NSOperation
 
 @end

@@ -1,13 +1,13 @@
 //
-//  EMTLPhoto.m
+//  EMTLFetchPhotoAssetsOperation.h
 //  Tempest
 //
 //  Created by Ian White on 5/17/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "EMTLPhoto.h"
+#import <Foundation/Foundation.h>
 
-@implementation EMTLPhoto
+@interface EMTLFetchPhotoAssetsOperation : NSOperation
 
 @end
