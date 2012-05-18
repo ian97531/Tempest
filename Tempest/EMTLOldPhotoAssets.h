@@ -10,4 +10,9 @@
 
 @interface EMTLPhotoAssets : NSObject
 
+@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) NSArray *comments;
+@property (nonatomic, strong) NSArray *favorites;
+@property (nonatomic) float percentComplete;
+
 @end

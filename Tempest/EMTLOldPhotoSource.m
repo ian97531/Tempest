@@ -34,6 +34,10 @@ NSString *const kFavoriteUsername = @"user_name";
 NSString *const kFavoriteUserID = @"user_id";
 NSString *const kFavoriteIconURL = @"icon_url";
 
+NSString *const kEMTLPhotoImage = @"photo_image";
+NSString *const kEMTLPhotoComments = @"photo_comments";
+NSString *const kEMTLPhotoFavorites = @"photo_favorites";
+
 @interface EMTLPhotoSource ()
 - (NSString *)_photoQueryIDFromQueryType:(EMTLPhotoQueryType)queryType andArguments:(NSDictionary *)arguments; // Assumes that argument keys and values are strings
 

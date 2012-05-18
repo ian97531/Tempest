@@ -10,4 +10,6 @@
 
 @interface EMTLOperationQueue : NSOperationQueue
 
++ (id)photoQueue;
+
 @end

@@ -10,4 +10,9 @@
 
 @implementation EMTLPhotoAssets
 
+@synthesize image;
+@synthesize comments;
+@synthesize favorites;
+@synthesize percentComplete;
+
 @end

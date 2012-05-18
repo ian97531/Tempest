@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "EMTLFetchPhotoAssetsOperation.h"
+#import "EMTLFlickrFetchPhotoAssetsOperation.h"
 
-@implementation EMTLFetchPhotoAssetsOperation
+@implementation EMTLFlickrFetchPhotoAssetsOperation
 
 @end

@@ -8,18 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import "EMTLPhotoSource.h"
-#import "EMTLCache.h"
 
+@class EMTLPhotoAssets;
+@class EMTLOperation;
 @protocol EMTLPhotoDelegate <NSObject>
 
-+ (float)favoritesStringWidth;
-+ (UIFont *)favoritesFont;
-+ (float)commentsStringWidth;
-+ (UIFont *)commentsFont;
-
-- (void)setFavoritesString:(NSString *)favoritesString;
-- (void)setCommentsString:(NSString *)commentsString;
-
+- (void)photo:(EMTLPhoto *)photo willRequestAssets:(EMTLPhotoAssets *)assets withImageSize:(EMTLImageSize)size;
+- (void)photo:(EMTLPhoto *)photo didRequestAssets:(EMTLPhotoAssets *)assets withImageSize:(EMTLImageSize)size progress:(float)progress;
+- (void)photo:(EMTLPhoto *)photo didLoadAssets:(EMTLPhotoAssets *)assets withImageSize:(EMTLImageSize)size;
 
 @end
 
@@ -27,11 +23,10 @@
 @interface EMTLPhoto : NSObject <NSURLConnectionDataDelegate, EMTLCacheClient>
 
 {
-    EMTLCacheRequest *favoritesRequest;
-    EMTLCacheRequest *commentsRequest;
-    NSString *favoritesDomain;
-    NSString *commentsDomain;
-
+    @private
+    NSMutableArray *_assetOperations;
+    EMTLPhotoAssets *_assets;
+    __weak id<EMTLPhotoDelegate> _delegate;
 }
 
 @property (nonatomic, strong, readonly) NSURL *imageURL;
@@ -43,33 +38,21 @@
 @property (nonatomic, strong, readonly) NSString *photoID;
 @property (nonatomic, strong, readonly) NSNumber *aspectRatio;
 @property (nonatomic, strong, readonly) NSString *imageDomain;
-@property (nonatomic, strong, readonly) NSArray *favorites;
-@property (nonatomic, strong, readonly) NSArray *comments;
 @property (nonatomic, strong, readonly) NSString *favoritesShortString;
 @property (nonatomic, strong, readonly) NSString *datePostedString;
 @property (nonatomic, readonly) BOOL isFavorite;
 
-@property (nonatomic, assign) id <EMTLPhotoDelegate> container;
 @property (nonatomic, assign) EMTLPhotoSource *source;
 
 
 + (id)photoWithDict:(NSDictionary *)dict;
 - (id)initWithDict:(NSDictionary *)dict;
 
-- (void)preloadData;
-- (void)loadData;
-- (void)cancel;
-- (BOOL)isReady;
+- (EMTLPhotoAssets *)loadAssetsForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size assetDelegate:(id<EMTLPhotoDelegate>)assetDelegate;
+- (void)cancelAllAssetsForPhoto:(EMTLPhoto *)photo;
+- (void)cancelLoadAssetsForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size;
 
 - (NSString *)datePostedString;
-- (NSString *)favoritesShortString;
-- (NSString *)commentsShortString;
-
-// EMTLCacheClient methods
-- (void)retrievedObject:(id)object ForRequest:(EMTLCacheRequest *)request;
-- (void)fetchedBytes:(int)bytes ofTotal:(int)total forRequest:(EMTLCacheRequest *)request;
-- (void)unableToRetrieveObjectForRequest:(EMTLCacheRequest *)request;
-
 
 
 @end

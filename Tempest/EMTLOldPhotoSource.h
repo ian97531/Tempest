@@ -16,6 +16,7 @@
 #import "OAMutableURLRequest.h"
 
 @class EMTLPhoto;
+@class EMTLPhotoList;
 @class EMTLPhotoSource;
 
 extern NSString *const kPhotoUsername;
@@ -40,6 +41,10 @@ extern NSString *const kFavoriteUsername;
 extern NSString *const kFavoriteUserID;
 extern NSString *const kFavoriteIconURL;
 
+extern NSString *const kEMTLPhotoImage;
+extern NSString *const kEMTLPhotoComments;
+extern NSString *const kEMTLPhotoFavorites;
+
 
 @protocol EMTLPhotoSourceAuthorizationDelegate
 - (void)photoSource:(EMTLPhotoSource *)photoSource requiresAuthorizationAtURL:(NSURL *)url;
@@ -47,29 +52,16 @@ extern NSString *const kFavoriteIconURL;
 - (void)authorizationFailedForPhotoSource:(EMTLPhotoSource *)photoSource authorizationError:(NSError *)error;
 @end
 
-@protocol EMTLPhotoQueryDelegate
-- (void)photoSource:(EMTLPhotoSource *)photoSource willUpdateQuery:(NSString *)queryID;
-- (void)photosource:(EMTLPhotoSource *)photoSource didUpdateQuery:(NSString *)queryID;
-- (void)photoSource:(EMTLPhotoSource *)photoSource willChangePhoto:(EMTLPhoto *)photo;
-- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhoto:(EMTLPhoto *)photo;
-@end
-
-@protocol EMTLImageDelegate
-- (void)photoSource:(EMTLPhotoSource *)photoSource willRequestImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;
-- (void)photosource:(EMTLPhotoSource *)photoSource didRequestImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size progress:(float)progress;
-- (void)photoSource:(EMTLPhotoSource *)photoSource didLoadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size image:(UIImage *)image;
-
-@end
 
 @interface EMTLPhotoSource : NSObject
 {
     @private
     __weak id<EMTLPhotoSourceAuthorizationDelegate> _authorizationDelegate;
-    NSMutableDictionary *_photoQueries;
+    NSMutableDictionary *_photoLists;
 }
 
 @property (nonatomic, readonly) NSString *serviceName;
-@property (nonatomic, readonly) NSSet *queries;
+@property (nonatomic, readonly) NSSet *photoLists;
 
 @property (nonatomic, strong) NSString *userID;
 @property (nonatomic, strong) NSString *username;
@@ -80,16 +72,10 @@ extern NSString *const kFavoriteIconURL;
 - (void)authorize;
 - (void)authorizedWithVerifier:(NSString *)verfier;
 
-// Photo Query
-- (NSString *)addPhotoQueryType:(EMTLPhotoQueryType)queryType withArguments:(NSDictionary *)queryArguments queryDelegate:(id<EMTLPhotoQueryDelegate>)queryDelegate;
-- (NSArray *)photoListForQuery:(NSString *)queryID;
-- (void)removeQuery:(NSString *)queryID;
-- (void)reloadQuery:(NSString *)queryID;
-- (void)updateQuery:(NSString *)queryID;
-
-// Image Loading
-- (UIImage *)loadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size imageDelegate:(id<EMTLImageDelegate>)imageDelegate;
-- (void)cancelAllImagesForPhoto:(EMTLPhoto *)photo;
-- (void)cancelLoadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;
+// Photo List Loading
+- (EMTLPhotoList *)currentPhotos;
+- (EMTLPhotoList *)popularPhotos;
+- (EMTLPhotoList *)favoritePhotosForUser:(NSString *)user_id;
+- (EMTLPhotoList *)photosForUser:(NSString *)user_id;
 
 @end

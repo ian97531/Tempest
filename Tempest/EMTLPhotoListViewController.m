@@ -7,7 +7,6 @@
 //
 
 #import "EMTLPhotoListViewController.h"
-#import "EMTLProgressIndicatorViewController.h"
 #import "EMTLOldPhotoCell.h"
 #import "EMTLPhoto.h"
 
