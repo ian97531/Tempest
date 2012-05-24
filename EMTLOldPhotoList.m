@@ -6,8 +6,8 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "EMTLPhotoList.h"
+#import "EMTLPhotoQuery.h"
 
-@implementation EMTLPhotoList
+@implementation EMTLPhotoQuery
 
 @end

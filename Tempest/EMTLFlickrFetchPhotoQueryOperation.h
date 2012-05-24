@@ -9,27 +9,27 @@
 #import <Foundation/Foundation.h>
 
 @class EMTLFlickrPhotoSource;
-@class EMTLPhotoList;
+@class EMTLPhotoQuery;
 
-@interface EMTLFlickrFetchPhotoListOperation : NSOperation <NSURLConnectionDataDelegate>
+@interface EMTLFlickrFetchPhotoQueryOperation : NSOperation <NSURLConnectionDataDelegate>
 {
-    EMTLPhotoList *_photoList;
+    EMTLPhotoQuery *_photoQuery;
     EMTLFlickrPhotoSource *_photoSource;
-    NSString *_identifier;
     NSURLConnection *_connection;
-    NSURLRequest *_request;
     NSMutableData *_incomingData;
-    uint _totalSize;
     NSDictionary *_query;
+    uint _totalSize;
     BOOL _executing;
     BOOL _finished;
+    
+    NSOperationQueue *_commentsAndFavorites;
 }
 
-@property (nonatomic, strong, readonly) EMTLPhotoList *photoList;
+@property (nonatomic, strong, readonly) EMTLPhotoQuery *photoQuery;
 @property (nonatomic, strong, readonly) EMTLFlickrPhotoSource *photoSource;
 @property (nonatomic, strong, readonly) NSString *identifier;
 
-- (id)initWithPhotoList:(EMTLPhotoList *)photoList photoSource:(EMTLFlickrPhotoSource *)photoSource request:(NSURLRequest *)request query:(NSDictionary *)query;
+- (id)initWithPhotoQuery:(EMTLPhotoQuery *)photoQuery photoSource:(EMTLFlickrPhotoSource *)photoSource;
 
 - (void)connection:(NSURLConnection *)aConnection didReceiveResponse:(NSURLResponse *)aResponse;
 - (void)connection:(NSURLConnection *)aConnection didFailWithError:(NSError *)error;

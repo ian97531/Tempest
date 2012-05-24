@@ -12,24 +12,59 @@
 #import "OAServiceTicket.h"
 #import "OADataFetcher.h"
 #import "OAMutableURLRequest.h"
-#import "EMTLPhoto.h"
+#import "APISecrets.h"
+#import "EMTLConstants.h"
 
-@protocol EMTLPhotoSource;
-@class EMTLPhotoList;
+
+extern NSString *const kPhotoUsername;
+extern NSString *const kPhotoUserID;
+extern NSString *const kPhotoTitle;
+extern NSString *const kPhotoID;
+extern NSString *const kPhotoImageURL;
+extern NSString *const kPhotoImageAspectRatio;
+extern NSString *const kPhotoDatePosted;
+extern NSString *const kPhotoDateUpdated;
+
+extern NSString *const kCommentText;
+extern NSString *const kCommentDate;
+extern NSString *const kCommentUsername;
+extern NSString *const kCommentUserID;
+extern NSString *const kCommentIconURL;
+
+extern NSString *const kFavoriteDate;
+extern NSString *const kFavoriteUsername;
+extern NSString *const kFavoriteUserID;
+extern NSString *const kFavoriteIconURL;
+
+@protocol EMTLImageDelegate;
+@class EMTLPhotoSource;
+@class EMTLPhotoQuery;
 @class EMTLPhoto;
 @class EMTLPhotoAssets;
 
 @protocol EMTLPhotoSourceAuthorizationDelegate
-- (void)photoSource:(id<EMTLPhotoSource>)photoSource requiresAuthorizationAtURL:(NSURL *)url;
-- (void)authorizationCompleteForPhotoSource:(id<EMTLPhotoSource>)photoSource;
-- (void)authorizationFailedForPhotoSource:(id<EMTLPhotoSource>)photoSource authorizationError:(NSError *)error;
+- (void)photoSource:(EMTLPhotoSource *)photoSource requiresAuthorizationAtURL:(NSURL *)url;
+- (void)authorizationCompleteForPhotoSource:(EMTLPhotoSource *)photoSource;
+- (void)authorizationFailedForPhotoSource:(EMTLPhotoSource *)photoSource authorizationError:(NSError *)error;
 @end
 
-@protocol EMTLPhotoSource <NSObject>
+@interface EMTLPhotoSource : NSObject
+{
+    @private
+    __weak id<EMTLPhotoSourceAuthorizationDelegate> _authorizationDelegate;
+    NSMutableDictionary *_photoQueries;
+    
+    @protected
+    NSCache *_imageCache;
+    NSString *_serviceName;
+    NSString *_username;
+    NSString *_userID;
+    
+}
 
 @property (nonatomic, readonly) NSString *serviceName;
-@property (nonatomic, strong) NSString *userID;
-@property (nonatomic, strong) NSString *username;
+@property (nonatomic, readonly) NSString *userID;
+@property (nonatomic, readonly) NSString *username;
 
 
 // Authorization
@@ -37,15 +72,19 @@
 - (void)authorize;
 - (void)authorizedWithVerifier:(NSString *)verfier;
 
-// Photo List Loading
-- (EMTLPhotoList *)currentPhotos;
-- (EMTLPhotoList *)popularPhotos;
-- (EMTLPhotoList *)favoritePhotosForUser:(NSString *)user_id;
-- (EMTLPhotoList *)photosForUser:(NSString *)user_id;
-- (void)fetchPhotosForPhotoList:(EMTLPhotoList *)photoList;
+// Photo Queries 
+- (EMTLPhotoQuery *)currentPhotos;
+- (EMTLPhotoQuery *)popularPhotos;
+- (EMTLPhotoQuery *)favoritePhotosForUser:(NSString *)user_id;
+- (EMTLPhotoQuery *)photosForUser:(NSString *)user_id;
+- (EMTLPhotoQuery *)addPhotoQueryType:(EMTLPhotoQueryType)queryType withArguments:(NSDictionary *)queryArguments;
+- (void)updateQuery:(EMTLPhotoQuery *)query;
 
-// Photo Asset Loading
-- (EMTLPhotoAssets *)assetsForPhoto:(EMTLPhoto *)photo;
+// Photo Image Loading
+- (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
+
+// Caching
+- (void)cacheImage:(UIImage *)image size:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo;
 
 @end
 

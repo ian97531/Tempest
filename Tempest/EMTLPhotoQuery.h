@@ -9,36 +9,42 @@
 #import <Foundation/Foundation.h>
 #import "EMTLPhotoSource.h"
 
-@class EMTLPhotoList;
+@class EMTLPhotoQuery;
 
-@protocol EMTLPhotoListDelegate <NSObject>
+@protocol EMTLPhotoQueryDelegate <NSObject>
 
-- (void)photoListWillUpdate:(EMTLPhotoList *)photoList;
-- (void)photoListDidUpdate:(EMTLPhotoList *)photoList;
-- (void)photoList:(EMTLPhotoList *)photoList isUpdatingWithProgress:(float)progress;
+- (void)photoSource:(EMTLPhotoSource *)source willUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery;
+- (void)photoSource:(EMTLPhotoSource *)source didUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery;
+- (void)photoSource:(EMTLPhotoSource *)source isUpdatingPhotoQuery:(EMTLPhotoQuery *)photoQuery progress:(float)progress;
 
 @end
 
-@interface EMTLPhotoList : NSObject
+@interface EMTLPhotoQuery : NSObject
 {
+    
     @private
-    NSDictionary *_query;
-    NSDictionary *_blankQuery;
-    NSArray *_photos;
-    id<EMTLPhotoSource> _source;
-    __weak id<EMTLPhotoListDelegate> _delegate;
+    NSString *_photoQueryID;
+    EMTLPhotoQueryType _queryType;
+    NSDictionary *_queryArguments;
+    __weak id<EMTLPhotoQueryDelegate> _delegate;
+    EMTLPhotoSource * _source;
+    
+    @protected
+    NSMutableArray *_photoList; // BSEELY: Not actually sure this has to be mutable. 
 }
 
-@property (nonatomic, strong, readonly) NSArray *photos;
-@property (nonatomic, strong, readonly) NSDictionary *query;
-@property (nonatomic, strong, readonly) id<EMTLPhotoSource> source;
-@property (nonatomic, weak) id<EMTLPhotoListDelegate> delegate;
+@property (nonatomic, readonly, copy) NSArray *photoList;
+@property (nonatomic, strong, readonly) EMTLPhotoSource * source;
 
+@property (nonatomic, readonly) NSString *photoQueryID;
+@property (nonatomic, readonly) EMTLPhotoQueryType queryType;
+@property (nonatomic, strong) NSDictionary *queryArguments;
+@property (nonatomic, weak) id<EMTLPhotoQueryDelegate> delegate;
 
-- (id)initWithPhotoSource:(id<EMTLPhotoSource>)source query:(NSDictionary *)query cachedPhotos:(NSArray *)photos;
-- (void)photoSource:(id<EMTLPhotoSource>)source fetchedPhotos:(NSArray *)photos updatedQuery:(NSDictionary *)query;
-- (void)photoSourceWillFetchPhotos:(id<EMTLPhotoSource>)source;
-- (void)photoSource:(id<EMTLPhotoSource>)source isFetchingPhotosWithProgress:(float)progress;
+- (id)initWithQueryID:(NSString *)queryID queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments source:(EMTLPhotoSource *)source;
+- (void)photoSource:(EMTLPhotoSource *)source fetchedPhotos:(NSArray *)photos updatedQuery:(NSDictionary *)query;
+- (void)photoSourceWillFetchPhotos:(EMTLPhotoSource *)source;
+- (void)photoSource:(EMTLPhotoSource *)source isFetchingPhotosWithProgress:(float)progress;
 - (void)morePhotos;
 - (void)reloadPhotos;
 

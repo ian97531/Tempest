@@ -7,16 +7,26 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "EMTLPhotoSource.h"
+#import "EMTLPhoto.h"
+#import "EMTLPhotoQuery.h"
 
 @interface EMTLPhotoListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, EMTLPhotoQueryDelegate, EMTLImageDelegate>
 {
     @protected
-    EMTLPhotoSource *_photoSource;
-    NSString *_photoQueryID;
+    EMTLPhotoQuery *_photoQuery;
     UITableView *_tableView;
 }
 
-- (id)initWithPhotoSource:(EMTLPhotoSource *)photoSource queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments;
+- (id)initWithPhotoQuery:(EMTLPhotoQuery *)query;
+
+// EMTLPhotoQueryDelegate
+- (void)photoSource:(EMTLPhotoSource *)source willUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery;
+- (void)photoSource:(EMTLPhotoSource *)source didUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery;
+- (void)photoSource:(EMTLPhotoSource *)source isUpdatingPhotoQuery:(EMTLPhotoQuery *)photoQuery progress:(float)progress;
+
+//EMTLImageDelegate
+- (void)photo:(EMTLPhoto *)photo willRequestImageWithSize:(EMTLImageSize)size;
+- (void)photo:(EMTLPhoto *)photo didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress;
+- (void)photo:(EMTLPhoto *)photo didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size;
 
 @end

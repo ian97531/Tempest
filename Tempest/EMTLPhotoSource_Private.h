@@ -10,4 +10,7 @@
 
 @interface EMTLPhotoSource ()
 
+- (void)_setupQuery:(EMTLPhotoQuery *)query;
+
+
 @end

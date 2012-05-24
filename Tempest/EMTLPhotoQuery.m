@@ -6,68 +6,69 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-#import "EMTLPhotoList.h"
+#import "EMTLPhotoQuery.h"
 
-@implementation EMTLPhotoList
+@implementation EMTLPhotoQuery
 
-@synthesize photos = _photos;
-@synthesize source = _source;
-@synthesize query = _query;
+@synthesize photoQueryID = _photoQueryID;
+@synthesize queryType = _queryType;
 @synthesize delegate = _delegate;
+@synthesize queryArguments = _queryArguments;
+@synthesize photoList = _photos;
+@synthesize source = _source;
 
-- (id)initWithPhotoSource:(id<EMTLPhotoSource>)source query:(NSDictionary *)query cachedPhotos:(NSArray *)photos
+- (id)initWithQueryID:(NSString *)queryID queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments source:(EMTLPhotoSource *)source;
 {
-    NSAssert(source, @"You must provide a photo source when instantiating an EMTLPhotoSource");
-    NSAssert(query, @"You must provide a query dictionary when instantiating an EMTLPhotoList");
-    
     self = [super init];
-    if (self) 
+    if (self != nil)
     {
+        NSLog(@"query type: %i", queryType);
+        _photoQueryID = [queryID copy];
+        _queryType = queryType;
+        _queryArguments = [arguments copy];
         _source = source;
-        _blankQuery = query;
-        _query = [_blankQuery copy];
-        _photos = photos;
-        
-        if (!photos) {
-            _photos = [NSArray array];
-        }
-        
     }
     
     return self;
 }
 
-- (void)photoSource:(id<EMTLPhotoSource>)source fetchedPhotos:(NSArray *)photos updatedQuery:(NSDictionary *)query;
+- (void)photoSource:(EMTLPhotoSource *)source fetchedPhotos:(NSArray *)photos updatedQuery:(NSDictionary *)query;
 {
-    _query = query;
+    _queryArguments = query;
     
     // We should be gracefully merging the new photos in here.
     _photos = photos;
     
-    [_delegate photoListDidUpdate:self];
+    [_delegate photoSource:source didUpdatePhotoQuery:self];
     
 }
 
-- (void)photoSourceWillFetchPhotos:(id<EMTLPhotoSource>)source
+- (void)photoSourceWillFetchPhotos:(EMTLPhotoSource *)source
 {
-    [_delegate photoListDidUpdate:self];
+    [_delegate photoSource:source willUpdatePhotoQuery:self];
 }
 
-- (void)photoSource:(id<EMTLPhotoSource>)source isFetchingPhotosWithProgress:(float)progress
+- (void)photoSource:(EMTLPhotoSource *)source isFetchingPhotosWithProgress:(float)progress
 {
-    [_delegate photoList:self isUpdatingWithProgress:progress];
+    [_delegate photoSource:source isUpdatingPhotoQuery:self progress:progress];
 }
 
 - (void)morePhotos
 {
-    [_source fetchPhotosForPhotoList:self];
+    [_source updateQuery:self];
 }
 
 - (void)reloadPhotos
 {
     _photos = [NSArray array];
-    _query = [_blankQuery copy];
-    [_source fetchPhotosForPhotoList:self];
+    _queryArguments = [NSDictionary dictionary];
+    [_source updateQuery:self];
+}
+
+- (NSArray *)photoList
+{
+    NSArray *photoList = [_photoList copy];
+    return photoList;
 }
 
 @end

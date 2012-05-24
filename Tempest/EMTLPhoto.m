@@ -9,27 +9,6 @@
 #import "EMTLPhoto.h"
 #import "EMTLPhotoSource.h"
 
-NSString *const kPhotoUsername = @"user_name";
-NSString *const kPhotoUserID = @"user_id";
-NSString *const kPhotoTitle = @"photo_title";
-NSString *const kPhotoID = @"photo_id";
-NSString *const kPhotoImageURL = @"image_url";
-NSString *const kPhotoImageAspectRatio = @"aspect_ratio";
-NSString *const kPhotoDatePosted = @"date_posted";
-NSString *const kPhotoDateUpdated = @"date_updated";
-
-NSString *const kCommentText = @"comment_text";
-NSString *const kCommentDate = @"comment_date";
-NSString *const kCommentUsername = @"user_name";
-NSString *const kCommentUserID = @"user_id";
-NSString *const kCommentIconURL = @"icon_url";
-
-NSString *const kFavoriteDate = @"favorite_date";
-NSString *const kFavoriteUsername = @"user_name";
-NSString *const kFavoriteUserID = @"user_id";
-NSString *const kFavoriteIconURL = @"icon_url";
-
-
 @implementation EMTLPhoto
 
 @synthesize imageURL;
@@ -41,9 +20,11 @@ NSString *const kFavoriteIconURL = @"icon_url";
 @synthesize photoID;
 @synthesize aspectRatio;
 @synthesize isFavorite;
-@synthesize favoritesShortString;
 @synthesize datePostedString;
 @synthesize source;
+@synthesize comments;
+@synthesize favorites;
+@synthesize imageProgress = _imageProgress;
 
 + (id)photoWithDict:(NSDictionary *)dict
 {
@@ -83,6 +64,9 @@ NSString *const kFavoriteIconURL = @"icon_url";
 
         }
         
+        comments = [NSArray array];
+        favorites = [NSArray array];
+        
     }
     
     return self;
@@ -90,17 +74,18 @@ NSString *const kFavoriteIconURL = @"icon_url";
 }
 
 
-- (EMTLPhotoAssets *)loadAssetsForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size assetDelegate:(id<EMTLPhotoDelegate>)assetDelegate
+- (UIImage *)loadImageWithSize:(EMTLImageSize)size assetDelegate:(id<EMTLImageDelegate>)assetDelegate
 {
+    return nil;
+}
+
+- (void)cancelAllImages
+{
+    
     
 }
 
-- (void)cancelAllAssetsForPhoto:(EMTLPhoto *)photo
-{
-    
-}
-
-- (void)cancelLoadAssetsForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size
+- (void)cancelImageWithSize:(EMTLImageSize)size
 {
     
 }
@@ -115,145 +100,6 @@ NSString *const kFavoriteIconURL = @"icon_url";
         return [NSNumber numberWithInt:1];
     }
 }
-
-
-
-
-- (NSString *)favoritesShortString
-{
-    if (favoritesShortString) {
-        return favoritesShortString;
-    }
-    else {
-        favoritesShortString = nil;
-        if (favorites.count) {
-            
-            int availableWidth = [EMTLOldPhotoCell favoritesStringWidth] - 5;
-            UIFont *theFont = [EMTLOldPhotoCell favoritesFont];
-            int totalLikes = favorites.count;
-            
-            NSString *prefix = @"Liked by ";
-            NSString *suffix = [NSString stringWithFormat:@" and %i others", totalLikes];
-            
-            int sizeUsedWithoutSuffix = [prefix sizeWithFont:theFont].width;
-            int sizeUsedWithSuffix = sizeUsedWithoutSuffix + [suffix sizeWithFont:theFont].width;
-            
-            int i = 0;
-            NSMutableArray *namesWithSuffix = [NSMutableArray arrayWithCapacity:4];
-            NSMutableArray *namesWithoutSuffix = [NSMutableArray arrayWithCapacity:5];
-            
-            if([photoID isEqualToString:@"6899018088"] ) {
-                NSLog(@"found it");
-            }
-            
-            // First we need to see what we can fit on the line.
-            while (i < favorites.count) {
-                NSString *nameString;
-                
-                // Construct the string that would be added.
-                if (i == 0) {
-                    nameString = [[favorites objectAtIndex:0] objectForKey:kFavoriteUsername];
-                }
-                else {
-                    nameString = [NSString stringWithFormat:@", %@", [[favorites objectAtIndex:i] objectForKey:kFavoriteUsername]];
-                }
-                
-                // Size the string that would be added.
-                int nameSize = [nameString sizeWithFont:theFont].width;
-                
-                // Add this size to both versions of the final string
-                sizeUsedWithoutSuffix += nameSize;
-                sizeUsedWithSuffix += nameSize;
-                
-                // If the name fits for either of the versions, record it.
-                if (sizeUsedWithSuffix < availableWidth) {
-                    [namesWithSuffix addObject:nameString];
-                }
-                
-                if (sizeUsedWithoutSuffix < availableWidth) {
-                    [namesWithoutSuffix addObject:nameString];
-                }
-                
-                // If both are too big, break out. Otherwise, keep going.
-                if (sizeUsedWithoutSuffix >= availableWidth && sizeUsedWithSuffix >= availableWidth) {
-                    break;
-                }
-                else {
-                    i++;
-                }
-                
-            }
-            
-            // If we used all of the names we don't need the suffix.
-            if (i == favorites.count) {
-                NSString *nameString = [namesWithoutSuffix objectAtIndex:0];
-                
-                for (int j = 1; i < namesWithoutSuffix.count; i++) {
-                    nameString = [NSString stringWithFormat:@"%@%@", nameString, [namesWithoutSuffix objectAtIndex:j]];
-                }
-                
-                favoritesShortString = [NSString stringWithFormat:@"%@%@", prefix, nameString];
-            }
-            
-            // If we weren't able to use all of the names, we need to add the suffix " and x others"
-            else if (i > 0) {
-                
-                NSString *nameString = [namesWithSuffix objectAtIndex:0];
-                int j;
-                for (j = 1; j < namesWithSuffix.count; j++) {
-                    nameString = [NSString stringWithFormat:@"%@%@", nameString, [namesWithSuffix objectAtIndex:j]];
-                }
-                
-                // If more than one name made it in, we want a comma at the end.
-                if (j > 1) {
-                    nameString = [NSString stringWithFormat:@"%@,", nameString];
-                }
-                
-                // How many were left unnamed?
-                int remainder = favorites.count - namesWithSuffix.count;
-                
-                // If it was one, we need "other" to be singular, otherwise plural.
-                if (remainder == 1) {
-                    favoritesShortString = [NSString stringWithFormat:@"%@%@ and %i other", prefix, nameString, remainder];
-                }
-                else {
-                    favoritesShortString = [NSString stringWithFormat:@"%@%@ and %i others", prefix, nameString, remainder];
-                }
-                
-            }
-            else {
-                if (favorites.count == 1) {
-                    favoritesShortString = @"1 like";
-                }
-                else {
-                    favoritesShortString = [NSString stringWithFormat:@"%i likes", favorites.count];
-                }
-                
-            }
-            
-            
-        }
-        else {
-            favoritesShortString = @"0 likes";
-        }
-        
-        return favoritesShortString;
-    }
-}
-
-
-
-- (NSString *)commentsShortString
-{
-    if (comments.count == 1) {
-        return @"1 comment";
-    }
-    else {
-        return [NSString stringWithFormat:@"%i comments", comments.count];
-    }
-    
-}
-
 
 
 - (NSString *)datePostedString 
@@ -310,3 +156,5 @@ NSString *const kFavoriteIconURL = @"icon_url";
     return datePostedString;
     
 }
+
+@end

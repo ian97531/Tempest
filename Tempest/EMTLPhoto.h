@@ -9,47 +9,25 @@
 #import <Foundation/Foundation.h>
 #import "EMTLConstants.h"
 
-extern NSString *const kPhotoUsername;
-extern NSString *const kPhotoUserID;
-extern NSString *const kPhotoTitle;
-extern NSString *const kPhotoID;
-extern NSString *const kPhotoImageURL;
-extern NSString *const kPhotoImageAspectRatio;
-extern NSString *const kPhotoDatePosted;
-extern NSString *const kPhotoDateUpdated;
-
-extern NSString *const kCommentText;
-extern NSString *const kCommentDate;
-extern NSString *const kCommentUsername;
-extern NSString *const kCommentUserID;
-extern NSString *const kCommentIconURL;
-
-extern NSString *const kFavoriteDate;
-extern NSString *const kFavoriteUsername;
-extern NSString *const kFavoriteUserID;
-extern NSString *const kFavoriteIconURL;
-
-@class EMTLPhotoAssets;
-@class EMTLOperation;
+@class EMTLPhotoSource;
 @class EMTLPhoto;
 
 
-@protocol EMTLPhotoDelegate <NSObject>
+@protocol EMTLImageDelegate <NSObject>
 
-- (void)photo:(EMTLPhoto *)photo willRequestAssets:(EMTLPhotoAssets *)assets withImageSize:(EMTLImageSize)size;
-- (void)photo:(EMTLPhoto *)photo didRequestAssets:(EMTLPhotoAssets *)assets withImageSize:(EMTLImageSize)size progress:(float)progress;
-- (void)photo:(EMTLPhoto *)photo didLoadAssets:(EMTLPhotoAssets *)assets withImageSize:(EMTLImageSize)size;
+- (void)photo:(EMTLPhoto *)photo willRequestImageWithSize:(EMTLImageSize)size;
+- (void)photo:(EMTLPhoto *)photo didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress;
+- (void)photo:(EMTLPhoto *)photo didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size;
 
 @end
 
 
-@interface EMTLPhoto : NSObject <NSDiscardableContent>
+@interface EMTLPhoto : NSObject
 
 {
 @private
-    NSMutableArray *_assetOperations;
-    EMTLPhotoAssets *_assets;
-    __weak id<EMTLPhotoDelegate> _delegate;
+    __weak id<EMTLImageDelegate> _delegate;
+    float _imageProgress;
 }
 
 @property (nonatomic, strong, readonly) NSURL *imageURL;
@@ -60,25 +38,25 @@ extern NSString *const kFavoriteIconURL;
 @property (nonatomic, strong, readonly) NSDate *dateUpdated;
 @property (nonatomic, strong, readonly) NSString *photoID;
 @property (nonatomic, strong, readonly) NSNumber *aspectRatio;
-@property (nonatomic, strong, readonly) NSString *imageDomain;
-@property (nonatomic, strong, readonly) NSString *favoritesShortString;
 @property (nonatomic, strong, readonly) NSString *datePostedString;
+@property (nonatomic, strong) NSArray *favorites;
+@property (nonatomic, strong) NSArray *comments;
 @property (nonatomic, readonly) BOOL isFavorite;
+@property (nonatomic) float imageProgress;
 
-@property (nonatomic, assign) id<EMTLPhotoSource> source;
+
+@property (nonatomic, assign) EMTLPhotoSource *source;
 
 
 + (id)photoWithDict:(NSDictionary *)dict;
 - (id)initWithDict:(NSDictionary *)dict;
 
-- (EMTLPhotoAssets *)loadAssetsForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size assetDelegate:(id<EMTLPhotoDelegate>)assetDelegate;
-- (void)cancelAllAssetsForPhoto:(EMTLPhoto *)photo;
-- (void)cancelLoadAssetsForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size;
+- (UIImage *)loadImageWithSize:(EMTLImageSize)size assetDelegate:(id<EMTLImageDelegate>)assetDelegate;
+- (void)cancelAllImages;
+- (void)cancelImageWithSize:(EMTLImageSize)size;
 
 - (NSString *)datePostedString;
 
 
 @end
 
-
-@end

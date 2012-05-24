@@ -7,16 +7,15 @@
 //
 
 #import "EMTLFlickrPhotoSource.h"
-#import "EMTLPhotoList.h"
-#import "EMTLFlickrFetchPhotoListOperation.h"
-#import "EMTLFlickrFetchPhotoAssetsOperation.h"
+#import "EMTLPhotoQuery.h"
+#import "EMTLFlickrFetchPhotoQueryOperation.h"
+#import "EMTLFlickrFetchImageOperation.h"
 #import "EMTLOperationQueue.h"
+#import "EMTLPhoto.h"
 #import "OAMutableURLRequest.h"
-#import "APISecrets.h"
 
 
-NSString *const kFlickrTimelinePhotoListID = @"flickr-timeline";
-NSString *const kFlickrPopularPhotoListID = @"flickr-popular";
+
 
 NSString *const kFlickrQueryTotalPages = @"flickr-total-pages";
 NSString *const kFlickrQueryCurrentPage = @"flickr-current-page";
@@ -31,6 +30,18 @@ NSString *const kFlickrQueryIdentifier = @"flickr-identifier";
 NSString *const kFlickrQueryAPIKey = @"flickr-api-key";
 
 NSString *const kFlickrAPIMethodSearch = @"flickr.photos.search";
+NSString *const kFlickrAPIMethodPopularPhotos = @"flickr.interestingness.getList";
+NSString *const kFlickrAPIMethodFavoritePhotos = @"flickr.favorites.getList";
+NSString *const kFlickrAPIMethodUserPhotos = @"flickr.people.getPhotos";
+NSString *const kFlickrAPIMethodPhotoFavorites = @"flickr.photos.getFavorites";
+NSString *const kFlickrAPIMethodPhotoComments = @"flickr.photos.comments.getList";
+
+NSString *const kFlickrAPIArgumentUserID = @"user_id";
+NSString *const kFlickrAPIArgumentPhotoID = @"photo_id";
+NSString *const kFlickrAPIArgumentItemsPerPage = @"per_page";
+NSString *const kFlickrAPIArgumentPageNumber = @"page";
+NSString *const kFlickrAPIArgumentAPIKey = @"api_key";
+
 
 NSString *const kFlickrRequestTokenURL = @"http://www.flickr.com/services/oauth/request_token";
 NSString *const kFlickrAuthorizationURL = @"http://www.flickr.com/services/oauth/authorize";
@@ -40,37 +51,16 @@ NSString *const kFlickrDefaultsServiceProviderName = @"flickr-access-token";
 NSString *const kFlickrDefaultsPrefix = @"com.Elemental.Flickrgram";
 NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/buddyicon.gif";
 
-static double const kSecondsInThreeMonths = 7776500;
 
-
-@interface EMTLFlickrPhotoSource ()
-- (OAMutableURLRequest *)_oaurlRequestForMethod:(NSString *)method arguments:(NSDictionary *)args;
-- (NSDictionary *)_dictionaryFromResponseData:(NSData *)data;
-- (BOOL)_isResponseOK:(NSDictionary *)responseDictionary;
-- (NSMutableDictionary *)_blankQuery;
-
-@end
 
 
 @implementation EMTLFlickrPhotoSource
 
-@synthesize serviceName = _serviceName;
-@synthesize userID = _userID;
-@synthesize username = _username;
-@synthesize authorizationDelegate = _authorizationDelegate;
 
-
-- (id)init
+- (NSString *)serviceName
 {
-    self = [super init];
-    if (self) {
-        _photoLists = [[NSMutableDictionary alloc] initWithCapacity:6];
-        _serviceName = @"flickr";
-    }
-    
-    return self;
+    return @"flickr";
 }
-
 
 #pragma mark -
 #pragma mark Authorization
@@ -91,7 +81,7 @@ static double const kSecondsInThreeMonths = 7776500;
     accessToken = [[OAToken alloc] initWithUserDefaultsUsingServiceProviderName:kFlickrDefaultsServiceProviderName prefix:kFlickrDefaultsPrefix];
     if (accessToken)
     {
-        OAMutableURLRequest *loginRequest = [self _oaurlRequestForMethod:@"flickr.test.login" arguments:nil];
+        OAMutableURLRequest *loginRequest = [self oaurlRequestForMethod:@"flickr.test.login" arguments:nil];
         OADataFetcher *fetcher = [[OADataFetcher alloc] init];
         [fetcher fetchDataWithRequest:loginRequest 
                              delegate:self 
@@ -162,230 +152,82 @@ static double const kSecondsInThreeMonths = 7776500;
 #pragma mark -
 #pragma mark Photo List Loading
 
-- (EMTLPhotoList *)currentPhotos
+
+- (void)_setupQuery:(EMTLPhotoQuery *)query
 {
-    EMTLPhotoList *list = [_photoLists objectForKey:kFlickrTimelinePhotoListID];
-    if (list) {
-        return list;
-    }
-    else {
-        
-                
-        NSMutableDictionary *query = [NSMutableDictionary dictionaryWithCapacity:20];
-        
-        [query setValue:kFlickrTimelinePhotoListID forKey:kFlickrQueryIdentifier];
-        [query setValue:kFlickrAPIMethodSearch forKey:kFlickrQueryMethod];
-        
-        list = [[EMTLPhotoList alloc] initWithPhotoSource:self query:query cachedPhotos:nil];
-        [_photoLists setValue:list forKey:kFlickrTimelinePhotoListID];
-        return list;
-    }
-    
-                
+    NSLog(@"in _setup query");
+    NSMutableDictionary *newQuery = [NSMutableDictionary dictionaryWithDictionary:query.queryArguments];
 
-}
-
-- (EMTLPhotoList *)popularPhotos
-{
-    return nil;
-}
-
-- (EMTLPhotoList *)favoritePhotosForUser:(NSString *)user_id
-{
-    return nil;
-}
-
-- (EMTLPhotoList *)photosForUser:(NSString *)user_id
-{
-    return nil;
-}
-
-- (void)fetchPhotosForPhotoList:(EMTLPhotoList *)photoList
-{
-
-    // Make the request for more photos here.
-    
-    NSMutableDictionary *newQuery = [NSMutableDictionary dictionaryWithDictionary:photoList.query];
-    int minYear = 0;
-    int minMonth = 0;
-    int minDay = 0;
-    
-    int maxYear = 0;
-    int maxMonth = 0;
-    int maxDay = 0;
-    
-    int totalPages = 0;
-    int currentPage = 0;
-
-    // If the query is blank, setup the default date range of today to three months ago.
-    if (![newQuery objectForKey:kFlickrQueryTotalPages]) 
-    {
-        
-        NSDate *minDate = [NSDate dateWithTimeIntervalSinceNow:-kSecondsInThreeMonths];;
-        NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-        NSDateComponents *minComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:minDate];
-        
-        totalPages = 1;
-        currentPage = 0;
-        
-        minYear = [minComponents year];
-        minMonth = [minComponents month];
-        minDay = [minComponents day];
-        
-    }
-    
-    // If it's not blank, then we need to either get the next page of results, or
-    // adjust the date range.
-    else {
-        
-        totalPages = [[newQuery objectForKey:kFlickrQueryTotalPages] intValue];
-        currentPage = [[newQuery objectForKey:kFlickrQueryCurrentPage] intValue];
-        
-        minYear = [[newQuery objectForKey:kFlickrQueryMinYear] intValue];
-        minMonth = [[newQuery objectForKey:kFlickrQueryMinMonth] intValue];
-        minDay = [[newQuery objectForKey:kFlickrQueryMinDay] intValue];
-        maxYear = maxYear;
-        maxMonth = maxMonth;
-        maxDay = maxDay;
-        
-        
-        // If we've run out of pages, we need to set a new date range to search and reset the page numbering.
-        if (currentPage >= totalPages) {
-            NSLog(@"Next search will change the date range.");            
-            if ((minMonth - 3) < 1)
-            {
-                minMonth = 12 + (minMonth - 3);
-                minYear = minYear - 1;
-            }
-            else
-            {
-                minMonth = minMonth - 3;
-            }
+    switch (query.queryType) {
+        case EMTLPhotoQueryTimeline:
+            NSLog(@"asking for the timeline");
+            [newQuery setValue:kFlickrAPIMethodSearch forKey:kFlickrQueryMethod];
+            break;
             
-            totalPages = 0;
-            currentPage = 0;
+        case EMTLPhotoQueryPopularPhotos:
+            [newQuery setValue:kFlickrAPIMethodPopularPhotos forKey:kFlickrQueryMethod];
+            break;
             
-        }
-        
-        // Otherwise, we should grab the next page of results.
-        else {
-            currentPage = [[newQuery objectForKey:kFlickrQueryCurrentPage] intValue] + 1;
-        }
-        
+        case EMTLPhotoQueryFavorites:
+            [newQuery setValue:kFlickrAPIMethodFavoritePhotos forKey:kFlickrQueryMethod];
+            [newQuery setValue:[query valueForKey:kPhotoUserID] forKey:kFlickrAPIArgumentUserID];
+            [newQuery removeObjectForKey:kPhotoUserID];
+            break;
+            
+        case EMTLPhotoQueryUserPhotos:
+            [newQuery setValue:kFlickrAPIMethodUserPhotos forKey:kFlickrQueryMethod];
+            [newQuery setValue:[query valueForKey:kPhotoUserID] forKey:kFlickrAPIArgumentUserID];
+            [newQuery removeObjectForKey:kPhotoUserID];
+            break;
+            
+        default:
+            break;
     }
     
-    // Save the new values, so that we can refer to them them the next time we're asked for more photos.
-    [newQuery setValue:[NSNumber numberWithInt:totalPages] forKey:kFlickrQueryTotalPages];
-    [newQuery setValue:[NSNumber numberWithInt:currentPage] forKey:kFlickrQueryCurrentPage];
-    [newQuery setValue:[NSNumber numberWithInt:maxYear] forKey:kFlickrQueryMaxYear];
-    [newQuery setValue:[NSNumber numberWithInt:maxMonth] forKey:kFlickrQueryMaxMonth];
-    [newQuery setValue:[NSNumber numberWithInt:maxDay] forKey:kFlickrQueryMaxDay];
-    [newQuery setValue:[NSNumber numberWithInt:minYear] forKey:kFlickrQueryMinYear];
-    [newQuery setValue:[NSNumber numberWithInt:minMonth] forKey:kFlickrQueryMinMonth];
-    [newQuery setValue:[NSNumber numberWithInt:minDay] forKey:kFlickrQueryMinDay];
+    query.queryArguments = newQuery;
     
-    // Build the request paramets and the OAMutableURLRequest.
-    NSMutableDictionary *requestParameters = [NSMutableDictionary dictionaryWithCapacity:8];
-    
-    [requestParameters setObject:kFlickrAPIKey forKey:@"api_key"];
-    [requestParameters setObject:@"100" forKey:@"per_page"];
-    [requestParameters setObject:@"all" forKey:@"contacts"];
-    [requestParameters setObject:@"date_upload,owner_name,o_dims,last_update" forKey:@"extras"];
-    [requestParameters setObject:@"date-posted-desc" forKey:@"sort"];
-    [requestParameters setObject:[NSString stringWithFormat:@"%04d-%02d-%02d", minYear, minMonth, minDay] forKey:@"min_upload_date"];
-    
-    // If a max year, month and day are set, pass them in as a parameter as well.
-    if (maxYear && maxMonth && maxDay) {
-        [requestParameters setObject:[NSString stringWithFormat:@"%04d-%02d-%02d", maxYear, maxMonth, maxDay] forKey:@"max_upload_date"];
-    }
-    
-    // If we have a page we care about, pass that as well.
-    if (currentPage) {
-        [requestParameters setObject:[[NSNumber numberWithInt:currentPage + 1] stringValue] forKey:@"page"];
-    }
-     
-    OAMutableURLRequest *request = [self _oaurlRequestForMethod:[newQuery objectForKey:kFlickrQueryMethod] arguments:requestParameters];
+    NSLog(@"new query args:");
+    NSLog([query.queryArguments description]);
 
-    [photoList photoSourceWillFetchPhotos:self];
-    EMTLFlickrFetchPhotoListOperation *operation = [[EMTLFlickrFetchPhotoListOperation alloc] initWithPhotoList:photoList photoSource:self request:request query:newQuery];
+}
+
+
+
+
+- (void) updateQuery:(EMTLPhotoQuery *)query    
+{
+    
+    EMTLFlickrFetchPhotoQueryOperation *operation = [[EMTLFlickrFetchPhotoQueryOperation alloc] initWithPhotoQuery:query photoSource:self];
     [[EMTLOperationQueue photoQueue] addOperation:operation];
-    
 }
 
-- (void)operation:(NSOperation *)operation fetchedData:(NSData *)data forPhotoList:(EMTLPhotoList *)photoList withQuery:(NSDictionary *)query
+
+
+- (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
 {
-    NSDictionary *newPhotos = [self _dictionaryFromResponseData:data];
-        
-    if (!newPhotos) {
-        NSLog(@"There was an error interpreting the json response from the request for more photos from %@", self.serviceName);
-        return;
-    }
     
-    NSMutableArray *photos = [[NSMutableArray alloc] initWithCapacity:[[[newPhotos objectForKey:@"photos"] objectForKey:@"total"] intValue]];
+    NSString *cacheKey = [NSString stringWithFormat:@"%@-%@-%i", self.serviceName, photo.photoID, size];
+    UIImage *cachedPhoto = [_imageCache objectForKey:cacheKey];
     
-    // Clean up the photo information...
-    for (NSMutableDictionary *photoDict in [[newPhotos objectForKey:@"photos"] objectForKey:@"photo"]) {
-        
-        // Construct the image URL
-        NSString *farm = [photoDict objectForKey:@"farm"];
-        NSString *server = [photoDict objectForKey:@"server"];
-        NSString *secret = [photoDict objectForKey:@"secret"];
-        NSString *photo_id = [photoDict objectForKey:@"id"];
-        
-        NSURL *image_URL = [NSURL URLWithString:[NSString stringWithFormat:@"http://farm%@.staticflickr.com/%@/%@_%@_%@.jpg", farm, server, photo_id, secret, @"z"]];
-        
-        [photoDict setObject:image_URL forKey:kPhotoImageURL];
-        
-        // Get the dates
-        NSDate* lastupdate = [NSDate dateWithTimeIntervalSince1970:[[photoDict objectForKey:@"lastupdate"] doubleValue]];
-        NSDate* datePosted = [NSDate dateWithTimeIntervalSince1970:[[photoDict objectForKey:@"dateupload"] doubleValue]];
-        
-        [photoDict setObject:lastupdate forKey:kPhotoDateUpdated];
-        [photoDict setObject:datePosted forKey:kPhotoDatePosted];
-        
-        // Set the aspect ratio
-        if([photoDict objectForKey:@"o_width"] && [photoDict objectForKey:@"o_height"]) {
-            float o_width = [[photoDict objectForKey:@"o_width"] floatValue];
-            float o_height = [[photoDict objectForKey:@"o_height"] floatValue];
-            
-            [photoDict setObject:[NSNumber numberWithFloat:(o_width/o_height)] forKey:kPhotoImageAspectRatio];
-        }
-        
-        
-        [photoDict setObject:[photoDict objectForKey:@"id"] forKey:kPhotoID];
-        [photoDict setObject:[photoDict objectForKey:@"owner"] forKey:kPhotoUserID];
-        [photoDict setObject:[photoDict objectForKey:@"ownername"] forKey:kPhotoUsername];
-        [photoDict setObject:[photoDict objectForKey:@"title"] forKey:kPhotoTitle];
-        
-        EMTLPhoto *photo = [[EMTLPhoto alloc] initWithDict:photoDict];
-        photo.source = self;
-        [photos addObject:photo];
+    if (cachedPhoto) 
+    {
+        return cachedPhoto;
     }
-
-    [photoList photoSource:self fetchedPhotos:nil updatedQuery:query];
+    else 
+    {
+        EMTLFlickrFetchImageOperation *imageOp = [[EMTLFlickrFetchImageOperation alloc] initWithPhoto:photo size:size photoSource:self delegate:delegate];
+        [[EMTLOperationQueue photoQueue] addOperation:imageOp];
+        return nil;
+    }
 }
-
-- (void)operation:(NSOperation *)operation isFetchingDataWithProgress:(float)progress forPhotoList:(EMTLPhotoList *)photoList
-{
-    [photoList photoSource:self isFetchingPhotosWithProgress:progress];
-}
-
-
+    
 
 
 #pragma mark -
-#pragma mark Photo Asset Loading
-
-- (EMTLPhotoAssets *)assetsForPhoto:(EMTLPhoto *)photo
-{
-    
-}
-
-#pragma mark -
-#pragma mark Private methods for Communicating with Flickr 
+#pragma mark Methods for Communicating with Flickr 
 
 
-- (OAMutableURLRequest *)_oaurlRequestForMethod:(NSString *)method arguments:(NSDictionary *)args
+- (OAMutableURLRequest *)oaurlRequestForMethod:(NSString *)method arguments:(NSDictionary *)args
 {
     // Get the Flickr API URL
     NSURL *url = [NSURL URLWithString:kFlickrAPICallURL];
@@ -433,7 +275,7 @@ static double const kSecondsInThreeMonths = 7776500;
     
 }
 
-- (NSDictionary *)_dictionaryFromResponseData:(NSData *)data
+- (NSDictionary *)dictionaryFromResponseData:(NSData *)data
 {
     NSError *error = nil;
     NSDictionary *jsonResults = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
@@ -448,7 +290,7 @@ static double const kSecondsInThreeMonths = 7776500;
     
 }
 
-- (BOOL)_isResponseOK:(NSDictionary *)responseDictionary;
+- (BOOL)isResponseOK:(NSDictionary *)responseDictionary;
 {
     BOOL isOK = YES;
     
@@ -506,7 +348,7 @@ static double const kSecondsInThreeMonths = 7776500;
         accessToken = [[OAToken alloc] initWithHTTPResponseBody:responseBody];
         [accessToken storeInUserDefaultsWithServiceProviderName:kFlickrDefaultsServiceProviderName prefix:kFlickrDefaultsPrefix];
         
-        OAMutableURLRequest *loginRequest = [self _oaurlRequestForMethod:@"flickr.test.login" arguments:nil];
+        OAMutableURLRequest *loginRequest = [self oaurlRequestForMethod:@"flickr.test.login" arguments:nil];
         OADataFetcher *fetcher = [[OADataFetcher alloc] init];
         [fetcher fetchDataWithRequest:loginRequest 
                              delegate:self 
@@ -533,7 +375,7 @@ static double const kSecondsInThreeMonths = 7776500;
 - (void)testLoginFinished:(OAServiceTicket *)ticket withData:(NSData *)data
 {
     if (ticket.didSucceed) {
-        NSDictionary *loginInfo = [self _dictionaryFromResponseData:data];
+        NSDictionary *loginInfo = [self dictionaryFromResponseData:data];
         
         if (loginInfo)
         {

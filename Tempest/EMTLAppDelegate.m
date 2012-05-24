@@ -157,7 +157,7 @@
 {
     NSLog(@"authorization complete for %@. user:%@, id: %@", photoSource.serviceName, photoSource.username, photoSource.userID);
 
-    self.timelineViewController = [[EMTLPhotoListViewController alloc] initWithPhotoSource:photoSource queryType:EMTLPhotoQueryTimeline arguments:nil];
+    self.timelineViewController = [[EMTLPhotoListViewController alloc] initWithPhotoQuery:[photoSource currentPhotos]];
     [self.navController pushViewController:self.timelineViewController animated:NO];
 }
 

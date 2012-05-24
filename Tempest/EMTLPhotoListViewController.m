@@ -7,25 +7,21 @@
 //
 
 #import "EMTLPhotoListViewController.h"
-#import "EMTLOldPhotoCell.h"
+#import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
 
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
 @interface EMTLPhotoListViewController ()
-@property (nonatomic, strong) EMTLPhotoSource *photoSource;
-@property (nonatomic, strong) NSString *photoQueryID;
+@property (nonatomic, strong) EMTLPhotoQuery *photoQuery;
 @property (nonatomic, strong) UITableView *tableView;
-@property (nonatomic, strong) EMTLProgressIndicatorViewController *spinner;
 @end
 
 @implementation EMTLPhotoListViewController
 
-@synthesize photoSource = _photoSource;
-@synthesize photoQueryID = _photoQueryID;
+@synthesize photoQuery = _photoQuery;
 @synthesize tableView = _tableView;
-@synthesize spinner;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -34,13 +30,16 @@
     return nil;
 }
              
-- (id)initWithPhotoSource:(EMTLPhotoSource *)photoSource queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments;
+- (id)initWithPhotoQuery:(EMTLPhotoQuery *)query;
 {
     self = [super initWithNibName:nil bundle:nil];
     if (self != nil)
     {
-        self.photoSource = photoSource;
-        self.photoQueryID = [self.photoSource addPhotoQueryType:queryType withArguments:arguments queryDelegate:self];
+        NSLog(@"in view controller");
+        NSLog([query.queryArguments description]);
+        _photoQuery = query;
+        _photoQuery.delegate = self;
+        [_photoQuery morePhotos];
     }
     
     return self;
@@ -66,19 +65,19 @@
     
     // Put a large progress spinner into the view to appease the user while the first set of
     // EMTLPhotos is loaded.
-    spinner = [EMTLProgressIndicatorViewController indicatorWithSize:kLargeProgressIndicator];
-    spinner.view.center = self.tableView.center;
-    spinner.view.layer.opacity = 0.2;
+//    spinner = [EMTLProgressIndicatorViewController indicatorWithSize:kLargeProgressIndicator];
+//    spinner.view.center = self.tableView.center;
+//    spinner.view.layer.opacity = 0.2;
     
     // Throw everything into the view, and make it fullscreen.
     [parent addSubview:backgroundImage];
     [parent addSubview:self.tableView];
-    [parent addSubview:spinner.view];
+    //[parent addSubview:spinner.view];
     self.view = parent;
     self.wantsFullScreenLayout = YES;
     
     // Start the progress indicator spinning.
-    [spinner spin];
+    //[spinner spin];
             
 }
 
@@ -100,10 +99,10 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Grab a cell from the queue or create a new one.
-    EMTLOldPhotoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
+    EMTLPhotoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
     
     if (cell == nil) {
-        cell = [[EMTLOldPhotoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PhotoCell"];
+        cell = [[EMTLPhotoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PhotoCell"];
     }
     
    
@@ -142,45 +141,41 @@
 #pragma mark -
 #pragma mark EMTLPhotoQueryDelegate
 
-- (void)photoSource:(EMTLPhotoSource *)photoSource willUpdateQuery:(NSString *)queryID
+- (void)photoSource:(EMTLPhotoSource *)source willUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery
 {
-    // Sanity Check
-    NSAssert([self.photoQueryID isEqualToString:queryID], @"EMTLPhotoListViewController: got photo query delegate callback with the wrong query ID");
+    NSLog(@"will get new photos");
 }
 
-- (void)photosource:(EMTLPhotoSource *)photoSource didUpdateQuery:(NSString *)queryID
+- (void)photoSource:(EMTLPhotoSource *)source didUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery
 {
-    // Sanity Check
-    NSAssert([self.photoQueryID isEqualToString:queryID], @"EMTLPhotoListViewController: got photo query delegate callback with the wrong query ID");
+    NSLog(@"got new photos, %i", photoQuery.photoList.count);
+    [_tableView reloadData];
 }
 
-- (void)photoSource:(EMTLPhotoSource *)photoSource willChangePhoto:(EMTLPhoto *)photo
+- (void)photoSource:(EMTLPhotoSource *)source isUpdatingPhotoQuery:(EMTLPhotoQuery *)photoQuery progress:(float)progress
 {
-    // Sanity Check
+    NSLog(@"New photos are loading");
 }
 
-- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhoto:(EMTLPhoto *)photo
-{
-    // Sanity Check
-}
 
 #pragma mark -
 #pragma mark EMTLImageDelegate
 
-- (void)photoSource:(EMTLPhotoSource *)photoSource willRequestImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size
+- (void)photo:(EMTLPhoto *)photo willRequestImageWithSize:(EMTLImageSize)size
 {
     
 }
 
-- (void)photosource:(EMTLPhotoSource *)photoSource didRequestImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size progress:(float)progress
+- (void)photo:(EMTLPhoto *)photo didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress
 {
     
 }
 
-- (void)photoSource:(EMTLPhotoSource *)photoSource didLoadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size image:(UIImage *)image
+- (void)photo:(EMTLPhoto *)photo didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size
 {
     
 }
+
 
 
 @end
