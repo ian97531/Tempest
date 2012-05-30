@@ -41,6 +41,9 @@ NSString *const kFlickrAPIArgumentPhotoID = @"photo_id";
 NSString *const kFlickrAPIArgumentItemsPerPage = @"per_page";
 NSString *const kFlickrAPIArgumentPageNumber = @"page";
 NSString *const kFlickrAPIArgumentAPIKey = @"api_key";
+NSString *const kFlickrAPIArgumentContacts = @"contacts";
+NSString *const kFlickrAPIArgumentSort = @"sort";
+NSString *const kFlickrAPIArgumentExtras = @"extras";
 
 
 NSString *const kFlickrRequestTokenURL = @"http://www.flickr.com/services/oauth/request_token";
@@ -56,6 +59,17 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 
 @implementation EMTLFlickrPhotoSource
 
+
+- (id)init
+{
+    self = [super init];
+    if (self) 
+    {
+        _photoOperations = [NSMutableDictionary dictionary];
+    }
+    
+    return self;
+}
 
 - (NSString *)serviceName
 {
@@ -202,24 +216,50 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 }
 
 
+- (void) cacheImage:(UIImage *)image size:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo
+{
+    [super cacheImage:image size:size forPhoto:photo];
+    NSString *cacheKey = [NSString stringWithFormat:@"%@-%@-%i", self.serviceName, photo.photoID, size];
+    [_photoOperations removeObjectForKey:cacheKey];
+}
+
 
 - (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
 {
     
     NSString *cacheKey = [NSString stringWithFormat:@"%@-%@-%i", self.serviceName, photo.photoID, size];
+    NSLog(@"Looking for image with key: %@", cacheKey);
     UIImage *cachedPhoto = [_imageCache objectForKey:cacheKey];
     
     if (cachedPhoto) 
     {
+        NSLog(@"found cached photo for key: %@", cacheKey);
         return cachedPhoto;
     }
     else 
     {
-        EMTLFlickrFetchImageOperation *imageOp = [[EMTLFlickrFetchImageOperation alloc] initWithPhoto:photo size:size photoSource:self delegate:delegate];
-        [[EMTLOperationQueue photoQueue] addOperation:imageOp];
+        if(![_photoOperations objectForKey:cacheKey]) {
+            EMTLFlickrFetchImageOperation *imageOp = [[EMTLFlickrFetchImageOperation alloc] initWithPhoto:photo size:size photoSource:self delegate:delegate];
+            [_photoOperations setObject:imageOp forKey:cacheKey];
+            [[EMTLOperationQueue photoQueue] addOperation:imageOp];
+        }
         return nil;
     }
 }
+
+
+
+
+- (void)cancelAllImagesForPhoto:(EMTLPhoto *)photo
+{
+    // Subclasses Override
+}
+
+- (void)cancelLoadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size
+{
+    
+}
+
     
 
 
@@ -271,6 +311,8 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
     // Add the parameters to the request, make sure it's a GET call
     [request setParameters:requestParameters];
     [request setHTTPMethod:@"GET"];
+    
+    [request prepare];
     return request;
     
 }

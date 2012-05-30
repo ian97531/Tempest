@@ -90,7 +90,8 @@
     
     // When the EMTLPhotos are returned to us using the photoSource:retreivedMorePhotos:
     // method, we stored the heights needed for each cell in the heights array.
-    return 10;
+    EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:indexPath.row];
+    return (294 / photo.aspectRatio.floatValue) + 150;
 }
 
 #pragma mark -
@@ -98,6 +99,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    //NSLog(@"Getting cell at index path: %i", indexPath.row);
     // Grab a cell from the queue or create a new one.
     EMTLPhotoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
     
@@ -105,13 +108,36 @@
         cell = [[EMTLPhotoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PhotoCell"];
     }
     
-   
+    EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:indexPath.row];
+    
+    cell.ownerLabel.text = photo.username;
+    cell.dateLabel.text = [photo datePostedString];
+    [cell setFavoritesString:[NSString stringWithFormat:@"%i Favorites", photo.favorites.count]];
+    [cell setCommentsString:[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
+    
+    
+    //NSLog(@"getting image for index path %i", indexPath.row);
+    UIImage *image = [photo loadImageWithSize:EMTLImageSizeMediumAspect delegate:self];
+    
+    if(image) {
+        NSLog(@"setting image for index path %i", indexPath.row);
+        [cell setImage:image animated:(photo.imageProgress != 0)];
+        photo.imageProgress = 0;
+    }
+    else {
+        NSLog(@"setting progress for index path %i to %f", indexPath.row, photo.imageProgress);
+        cell.imageView.layer.opacity = 0;
+        cell.progressBar.layer.opacity = 1;
+        cell.progressBar.progress = photo.imageProgress;
+    }
+    
     return cell;
+    
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 0;
+    return _photoQuery.photoList.count;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -168,12 +194,26 @@
 
 - (void)photo:(EMTLPhoto *)photo didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress
 {
+    if ([_photoQuery.photoList indexOfObject:photo] != NSNotFound) {
+        int photoIndex = [_photoQuery.photoList indexOfObject:photo];
+        NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:photoIndex inSection:0]];
+        
+        NSLog(@"progress for image with index path: %i", photoIndex);
+        [_tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationNone];
+    }
     
 }
+
 
 - (void)photo:(EMTLPhoto *)photo didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size
 {
     
+    if ([_photoQuery.photoList indexOfObject:photo] != NSNotFound) {
+        int photoIndex = [_photoQuery.photoList indexOfObject:photo];
+        NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:photoIndex inSection:0]];
+        
+        [_tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationNone];
+    }
 }
 
 

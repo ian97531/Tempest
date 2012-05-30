@@ -55,7 +55,7 @@ NSString *const kFavoriteIconURL = @"icon_url";
     if (self)
     {
         _photoQueries = [NSMutableDictionary dictionary];
-        _imageCache = [[NSCache alloc] init];
+        _imageCache = [[NSMutableDictionary alloc] init];
     }
     
     return self;
@@ -196,6 +196,7 @@ NSString *const kFavoriteIconURL = @"icon_url";
 - (void)cacheImage:(UIImage *)image size:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo
 {
     NSString *cacheKey = [NSString stringWithFormat:@"%@-%@-%i", self.serviceName, photo.photoID, size];
+    NSLog(@"caching image with key: %@", cacheKey);
     [_imageCache setValue:image forKey:cacheKey];
 }
 

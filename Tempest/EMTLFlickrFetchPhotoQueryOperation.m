@@ -38,83 +38,21 @@ static double const kSecondsInThreeMonths = 7776500;
         _photoSource = photoSource;
         _executing = NO;
         _finished = NO;
-        _incomingData = [NSMutableData data];
-        _totalSize = 0;
+
         _commentsAndFavorites = [[NSOperationQueue alloc] init];
         [_commentsAndFavorites setMaxConcurrentOperationCount:5];
+        [_commentsAndFavorites setSuspended:NO];
     }
     
     return self;
     
 }
 
-- (void)connection:(NSURLConnection *)aConnection didReceiveResponse:(NSURLResponse *)aResponse
-{
-    NSLog(@"got response");
-    _totalSize = (uint)aResponse.expectedContentLength;
-}
-
-- (void)connection:(NSURLConnection *)aConnection didFailWithError:(NSError *)error
-{
-    // Figure out something good to do here.
-    
-    [self willChangeValueForKey:@"isExecuting"];
-    _executing = NO;
-    [self didChangeValueForKey:@"isExecuting"];
-    _executing = NO;
-    
-    [self willChangeValueForKey:@"isFinished"];
-    _finished = YES;
-    [self didChangeValueForKey:@"isFinished"];
-
-}
-
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
-{
-    NSLog(@"Got data");
-    [_incomingData appendData:data];
-    //float percent = (float)data.length/(float)_totalSize;
-    //[_photoQuery photoSource:_photoSource isFetchingPhotosWithProgress:percent];
-    
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection
-{
-    NSLog(@"Finished loading");
-    NSArray *photos = [self _processPhotos];
-    
-    for (EMTLPhoto *photo in photos) {
-        EMTLFlickrFetchFavoritesAndCommentsOperation *favOp = [[EMTLFlickrFetchFavoritesAndCommentsOperation alloc] initWithPhoto:photo photoSource:_photoSource];
-        [_commentsAndFavorites addOperation:favOp];
-    }
-    
-    [_commentsAndFavorites waitUntilAllOperationsAreFinished];
-    
-    [_photoQuery photoSource:_photoSource fetchedPhotos:photos updatedQuery:_query];
-    
-    [self willChangeValueForKey:@"isExecuting"];
-    _executing = NO;
-    [self didChangeValueForKey:@"isExecuting"];
-    _executing = NO;
-    
-    [self willChangeValueForKey:@"isFinished"];
-    _finished = YES;
-    [self didChangeValueForKey:@"isFinished"];
-    
-}
 
 - (void)start
 {
     
     if (_finished) {
-        return;
-    }
-    
-    // Ensure that this operation starts on the main thread
-    if (![NSThread isMainThread])
-    {
-        [self performSelectorOnMainThread:@selector(start)
-                               withObject:nil waitUntilDone:NO];
         return;
     }
     
@@ -131,11 +69,11 @@ static double const kSecondsInThreeMonths = 7776500;
     
     [requestParameters setObject:kFlickrAPIKey forKey:kFlickrAPIArgumentAPIKey];
     [requestParameters setObject:@"100" forKey:kFlickrAPIArgumentItemsPerPage];
-    [requestParameters setObject:@"all" forKey:@"contacts"];
-    [requestParameters setObject:@"date_upload,owner_name,o_dims,last_update" forKey:@"extras"];
-    [requestParameters setObject:@"date-posted-desc" forKey:@"sort"];
+    [requestParameters setObject:@"all" forKey:kFlickrAPIArgumentContacts];
+    [requestParameters setObject:@"date_upload,owner_name,o_dims,last_update" forKey:kFlickrAPIArgumentExtras];
+    [requestParameters setObject:@"date-posted-desc" forKey:kFlickrAPIArgumentSort];
     
-    [requestParameters setObject:[NSString stringWithFormat:@"%04d-%02d-%02d", 
+    [requestParameters setObject:[NSString stringWithFormat:@"%04i-%02i-%02i", 
                                   [[queryArguments valueForKey:kFlickrQueryMinYear] intValue], 
                                   [[queryArguments valueForKey:kFlickrQueryMinMonth] intValue], 
                                   [[queryArguments valueForKey:kFlickrQueryMinDay] intValue]] 
@@ -156,23 +94,67 @@ static double const kSecondsInThreeMonths = 7776500;
         [requestParameters setObject:[[NSNumber numberWithInt:currentPage + 1] stringValue] forKey:@"page"];
     }
     
+    if (!_executing) return;
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [_photoQuery photoSourceWillFetchPhotos:_photoSource];
+    });
+    
+    
     OAMutableURLRequest *request = [_photoSource oaurlRequestForMethod:[queryArguments objectForKey:kFlickrQueryMethod] arguments:requestParameters];
+    request.timeoutInterval = 10;
     
     NSLog(@"%@", [[request URL] absoluteString]);
     
-    [_photoQuery photoSourceWillFetchPhotos:_photoSource];
     
-    _connection = [NSURLConnection connectionWithRequest:request delegate:self];
-    [_connection start];
-    NSLog(@"Started the connection");
-    NSLog([requestParameters description]);
-    NSLog([queryArguments description]);
+    NSError *error = nil;
+    NSURLResponse *response = nil;
+    NSData *reply = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    
+    if (response) {
+        NSLog(@"we got a response");
+    }
+    
+    if (error) {
+        NSLog(@"we got an error");
+    }
+    
+    if (!_executing) return;
+    NSArray *photos = [self _processPhotos:reply];
+    
+    
+    for (int i=0; i < photos.count; i = i + 5) {
+        for (int j=0; j < 5; j++) {
+            
+            if (!_executing) return;
+            
+            EMTLPhoto *photo = [photos objectAtIndex:(i + j)];
+            EMTLFlickrFetchFavoritesAndCommentsOperation *favOp = [[EMTLFlickrFetchFavoritesAndCommentsOperation alloc] initWithPhoto:photo photoSource:_photoSource];
+            [_commentsAndFavorites addOperation:favOp];
+        }
+        
+        [_commentsAndFavorites waitUntilAllOperationsAreFinished];
+        
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [_photoQuery photoSource:_photoSource fetchedPhotos:[photos subarrayWithRange:NSMakeRange(i, 5)] updatedQuery:_query];
+        });
+        
+
+    }
+        
+    [self willChangeValueForKey:@"isExecuting"];
+    _executing = NO;
+    [self didChangeValueForKey:@"isExecuting"];
+    _executing = NO;
+    
+    [self willChangeValueForKey:@"isFinished"];
+    _finished = YES;
+    [self didChangeValueForKey:@"isFinished"];
+
     
 }
 
 - (void)cancel
 {
-    [_connection cancel];
     
     [self willChangeValueForKey:@"isExecuting"];
     _executing = NO;
@@ -200,10 +182,10 @@ static double const kSecondsInThreeMonths = 7776500;
 }
 
 
-- (NSArray *)_processPhotos
+- (NSArray *)_processPhotos:(NSData *)incomingData
 {
-    NSDictionary *newPhotos = [_photoSource dictionaryFromResponseData:_incomingData];
-    NSLog([newPhotos description]);
+    NSDictionary *newPhotos = [_photoSource dictionaryFromResponseData:incomingData];
+    //NSLog([newPhotos description]);
     
     if (!newPhotos) {
         NSLog(@"There was an error interpreting the json response from the request for more photos from %@", _photoSource.serviceName);

@@ -11,14 +11,11 @@
 @class EMTLFlickrPhotoSource;
 @class EMTLPhotoQuery;
 
-@interface EMTLFlickrFetchPhotoQueryOperation : NSOperation <NSURLConnectionDataDelegate>
+@interface EMTLFlickrFetchPhotoQueryOperation : NSOperation 
 {
     EMTLPhotoQuery *_photoQuery;
     EMTLFlickrPhotoSource *_photoSource;
-    NSURLConnection *_connection;
-    NSMutableData *_incomingData;
     NSDictionary *_query;
-    uint _totalSize;
     BOOL _executing;
     BOOL _finished;
     

@@ -55,7 +55,7 @@ extern NSString *const kFavoriteIconURL;
     NSMutableDictionary *_photoQueries;
     
     @protected
-    NSCache *_imageCache;
+    NSMutableDictionary *_imageCache;
     NSString *_serviceName;
     NSString *_username;
     NSString *_userID;

@@ -66,6 +66,7 @@
         
         comments = [NSArray array];
         favorites = [NSArray array];
+        _imageProgress = 0;
         
     }
     
@@ -74,9 +75,9 @@
 }
 
 
-- (UIImage *)loadImageWithSize:(EMTLImageSize)size assetDelegate:(id<EMTLImageDelegate>)assetDelegate
+- (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate
 {
-    return nil;
+    return [source imageForPhoto:self size:size delegate:delegate];
 }
 
 - (void)cancelAllImages

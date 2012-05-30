@@ -51,7 +51,7 @@
 + (id)photoWithDict:(NSDictionary *)dict;
 - (id)initWithDict:(NSDictionary *)dict;
 
-- (UIImage *)loadImageWithSize:(EMTLImageSize)size assetDelegate:(id<EMTLImageDelegate>)assetDelegate;
+- (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
 - (void)cancelAllImages;
 - (void)cancelImageWithSize:(EMTLImageSize)size;
 

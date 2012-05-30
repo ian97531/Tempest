@@ -48,7 +48,7 @@
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
     [_incomingData appendData:data];
-    float percent = (float)data.length/(float)_totalSize;
+    float percent = (float)_incomingData.length/(float)_totalSize;
     _photo.imageProgress = percent;
     [_delegate photo:_photo didRequestImageWithSize:_size progress:percent];
 
@@ -63,8 +63,8 @@
     UIGraphicsEndImageContext();
 
     [_photoSource cacheImage:image size:_size forPhoto:_photo];
+    
     [_delegate photo:_photo didLoadImage:image withSize:_size];
-
     
     [self willChangeValueForKey:@"isExecuting"];
     _executing = NO;

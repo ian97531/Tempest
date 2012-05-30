@@ -14,7 +14,7 @@
 @synthesize queryType = _queryType;
 @synthesize delegate = _delegate;
 @synthesize queryArguments = _queryArguments;
-@synthesize photoList = _photos;
+@synthesize photoList = _photoList;
 @synthesize source = _source;
 
 - (id)initWithQueryID:(NSString *)queryID queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments source:(EMTLPhotoSource *)source;
@@ -27,6 +27,7 @@
         _queryType = queryType;
         _queryArguments = [arguments copy];
         _source = source;
+        _photoList = [NSMutableArray array];
     }
     
     return self;
@@ -37,7 +38,7 @@
     _queryArguments = query;
     
     // We should be gracefully merging the new photos in here.
-    _photos = photos;
+    [_photoList addObjectsFromArray:photos];
     
     [_delegate photoSource:source didUpdatePhotoQuery:self];
     
@@ -60,8 +61,7 @@
 
 - (void)reloadPhotos
 {
-    _photos = [NSArray array];
-    _queryArguments = [NSDictionary dictionary];
+    _photoList = [NSArray array];
     [_source updateQuery:self];
 }
 

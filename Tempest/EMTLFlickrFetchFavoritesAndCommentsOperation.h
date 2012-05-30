@@ -11,21 +11,14 @@
 @class EMTLPhoto;
 @class EMTLFlickrPhotoSource;
 
-@interface EMTLFlickrFetchFavoritesAndCommentsOperation : NSOperation <NSURLConnectionDataDelegate>
+@interface EMTLFlickrFetchFavoritesAndCommentsOperation : NSOperation
 {
     @private
-    NSURLConnection *_favoriteConnection;
-    NSMutableData *_favoriteData;
-    uint _favoriteSize;
-    BOOL _favoritesComplete;
     int _favoritesPages;
     int _favoritesCurrentPage;
-    
-    NSURLConnection *_commentConnection;
-    NSMutableData *_commentData;
-    uint _commentSize;
-    BOOL _commentsComplete;
-    
+    NSMutableArray *_favorites;
+    NSMutableArray *_comments;
+
     BOOL _executing;
     BOOL _finished;
     EMTLPhoto *_photo;
@@ -33,11 +26,6 @@
 }
 
 - (id)initWithPhoto:(EMTLPhoto *)photo photoSource:(EMTLFlickrPhotoSource *)source;
-
-- (void)connection:(NSURLConnection *)aConnection didReceiveResponse:(NSURLResponse *)aResponse;
-- (void)connection:(NSURLConnection *)aConnection didFailWithError:(NSError *)error;
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 
 - (void)start;
 - (BOOL)isConcurrent;

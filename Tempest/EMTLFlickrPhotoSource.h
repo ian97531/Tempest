@@ -33,6 +33,9 @@ extern NSString *const kFlickrAPIArgumentPhotoID;
 extern NSString *const kFlickrAPIArgumentItemsPerPage;
 extern NSString *const kFlickrAPIArgumentPageNumber;
 extern NSString *const kFlickrAPIArgumentAPIKey;
+extern NSString *const kFlickrAPIArgumentContacts;
+extern NSString *const kFlickrAPIArgumentSort;
+extern NSString *const kFlickrAPIArgumentExtras;
 
 extern NSString *const kFlickrRequestTokenURL;
 extern NSString *const kFlickrAuthorizationURL;
@@ -50,6 +53,7 @@ extern NSString *const kFlickrDefaultIconURLString;
     OAConsumer *consumer;
     OAToken *requestToken;
     OAToken *accessToken;
+    NSMutableDictionary *_photoOperations;
 }
 
 - (OAMutableURLRequest *)oaurlRequestForMethod:(NSString *)method arguments:(NSDictionary *)args;

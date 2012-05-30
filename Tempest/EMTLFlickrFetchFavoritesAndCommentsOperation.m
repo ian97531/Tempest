@@ -22,74 +22,20 @@
         _photoSource = source;
         _finished = NO;
         _executing = NO;
-        _commentData = [NSMutableData data];
-        _favoriteData = [NSMutableData data];
+
         _favoritesCurrentPage = 0;
+        _favoritesPages = 1;
+        
+        _favorites = [NSMutableArray array];
+        _comments = [NSMutableArray array];
+        
     }
     
     return self;
 }
 
-- (void)connection:(NSURLConnection *)aConnection didReceiveResponse:(NSURLResponse *)aResponse
-{
-    if (aConnection == _favoriteConnection) 
-    {
-        _favoriteSize = (uint)aResponse.expectedContentLength;
-    }
-    else if (aConnection == _commentConnection)
-    {
-        _commentSize = (uint)aResponse.expectedContentLength;
-    }
-}
 
-- (void)connection:(NSURLConnection *)aConnection didFailWithError:(NSError *)error
-{
-    // Do something good here.
-    _executing = NO;
-    _finished = YES;
-}
 
-- (void)connection:(NSURLConnection *)aConnection didReceiveData:(NSData *)data
-{
-    if (aConnection == _favoriteConnection) 
-    {
-        [_favoriteData appendData:data];
-    }
-    else if (aConnection == _commentConnection)
-    {
-        [_commentData appendData:data];
-    }
-}
-
-- (void)connectionDidFinishLoading:(NSURLConnection *)aConnection
-{
-    if (aConnection == _favoriteConnection) 
-    {
-        _photo.favorites = [_photo.favorites arrayByAddingObjectsFromArray:[self _processFavorites]];
-        
-        if (_favoritesCurrentPage < _favoritesPages)
-        {
-            [self _startFavoritesRequest];
-        }
-        else 
-        {
-            _favoritesComplete = YES;
-        }
-        
-    }
-    else if (aConnection == _commentConnection)
-    {
-        _photo.comments = [_photo.comments arrayByAddingObjectsFromArray:[self _processComments]];
-        _commentsComplete = YES;
-    }
-    
-    if (_favoritesComplete && _commentsComplete) 
-    {
-        _executing = NO;
-        _finished = YES;
-    }
-
-}
 
 - (void)start
 {
@@ -97,13 +43,7 @@
         return;
     }
     
-    // Ensure that this operation starts on the main thread
-    if (![NSThread isMainThread])
-    {
-        [self performSelectorOnMainThread:@selector(start)
-                               withObject:nil waitUntilDone:NO];
-        return;
-    }
+    //NSLog(@"Requesting comments and favorites for photo: %@", _photo.photoID);
     
     [self willChangeValueForKey:@"isExecuting"];
     _executing = YES;
@@ -112,22 +52,33 @@
     [self _startFavoritesRequest];
     [self _startCommentsRequest];
     
+    _photo.comments = _comments;
+    _photo.favorites = _favorites;
+    
+    [self willChangeValueForKey:@"isExecuting"];
+    _executing = NO;
+    [self didChangeValueForKey:@"isExecuting"];
+    _executing = NO;
+    
+    [self willChangeValueForKey:@"isFinished"];
+    _finished = YES;
+    [self didChangeValueForKey:@"isFinished"];
+    
+    //NSLog(@"finished requesting comments and favorites for photo: %@", _photo.photoID);
+    
 }
 
 - (void)cancel
 {
-    if (_favoriteConnection) 
-    {
-        [_favoriteConnection cancel];
-    }
     
-    if (_commentConnection)
-    {
-        [_commentConnection cancel];
-    }
-    
+    [self willChangeValueForKey:@"isExecuting"];
     _executing = NO;
+    [self didChangeValueForKey:@"isExecuting"];
+    _executing = NO;
+    
+    [self willChangeValueForKey:@"isFinished"];
     _finished = YES;
+    [self didChangeValueForKey:@"isFinished"];
 }
 
 - (BOOL)isConcurrent
@@ -149,24 +100,32 @@
 
 - (void) _startFavoritesRequest
 {
-    // Fetch the favorites
-    NSMutableDictionary *favoriteArgs = [NSMutableDictionary dictionaryWithCapacity:4];
-    [favoriteArgs setObject:kFlickrAPIKey 
-                     forKey:kFlickrAPIArgumentAPIKey];
     
-    [favoriteArgs setObject:_photo.photoID
-                     forKey:kFlickrAPIArgumentPhotoID];
+    while (_favoritesCurrentPage < _favoritesPages) {
+        //NSLog(@"Getting favorites page %i of %i for %@", _favoritesCurrentPage, _favoritesPages, _photo.photoID);
+        // Fetch the favorites
+        NSMutableDictionary *favoriteArgs = [NSMutableDictionary dictionaryWithCapacity:4];
+        [favoriteArgs setObject:kFlickrAPIKey 
+                         forKey:kFlickrAPIArgumentAPIKey];
+        
+        [favoriteArgs setObject:_photo.photoID
+                         forKey:kFlickrAPIArgumentPhotoID];
+        
+        [favoriteArgs setObject:@"50"
+                         forKey:kFlickrAPIArgumentItemsPerPage];
+        
+        [favoriteArgs setObject:[[NSNumber numberWithInt:_favoritesCurrentPage + 1] stringValue]
+                         forKey:kFlickrAPIArgumentPageNumber];
+        
+        OAMutableURLRequest *favoriteRequest = [_photoSource oaurlRequestForMethod:kFlickrAPIMethodPhotoFavorites arguments:favoriteArgs];
+        
+        NSURLResponse *response = nil;
+        NSError *error = nil;
+        NSData *favoritesData = [NSURLConnection sendSynchronousRequest:favoriteRequest returningResponse:&response error:&error];
+        [_favorites addObjectsFromArray:[self _processFavorites:favoritesData]];
+    }
     
-    [favoriteArgs setObject:@"50"
-                     forKey:kFlickrAPIArgumentItemsPerPage];
     
-    [favoriteArgs setObject:[[NSNumber numberWithInt:_favoritesCurrentPage + 1] stringValue]
-                     forKey:kFlickrAPIArgumentPageNumber];
-    
-    OAMutableURLRequest *favoriteRequest = [_photoSource oaurlRequestForMethod:kFlickrAPIMethodPhotoFavorites arguments:favoriteArgs];
-    
-    _favoriteConnection = [NSURLConnection connectionWithRequest:favoriteRequest delegate:self];
-    [_favoriteConnection start];
 }
 
 
@@ -184,18 +143,21 @@
     
     OAMutableURLRequest *commentRequest = [_photoSource oaurlRequestForMethod:kFlickrAPIMethodPhotoComments arguments:commentsArgs];
     
-    _commentConnection = [NSURLConnection connectionWithRequest:commentRequest delegate:self];
-    [_commentConnection start];
+    NSURLResponse *response = nil;
+    NSError *error = nil;
+    NSData *commentsData = [NSURLConnection sendSynchronousRequest:commentRequest returningResponse:&response error:&error];
+    [_comments addObjectsFromArray:[self _processComments:commentsData]];
     
 }
 
-- (NSArray *)_processFavorites
+
+- (NSArray *)_processFavorites:(NSData *)favoritesData
 {
-    NSDictionary *favoritesDict = [_photoSource dictionaryFromResponseData:_favoriteData];
+    NSDictionary *favoritesDict = [_photoSource dictionaryFromResponseData:favoritesData];
 
     if (!favoritesDict) {
         NSLog(@"There was an error interpreting the json response from the request for more photos from %@", _photoSource.serviceName);
-        return nil;
+        return [NSArray array];
     }
     else {
         
@@ -240,13 +202,13 @@
 
 }
 
-- (NSArray *)_processComments
+- (NSArray *)_processComments:(NSData *)commentsData
 {
-    NSDictionary *commentsDict = [_photoSource dictionaryFromResponseData:_commentData];
+    NSDictionary *commentsDict = [_photoSource dictionaryFromResponseData:commentsData];
 
     if(!commentsDict) {
         NSLog(@"There was an error interpreting the json response for comments from %@", _photoSource.serviceName);
-        return nil;
+        return [NSArray array];
     }
 
     else {
