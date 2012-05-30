@@ -26,6 +26,7 @@
     NSString *_photoQueryID;
     EMTLPhotoQueryType _queryType;
     NSDictionary *_queryArguments;
+    NSDictionary *_blankQueryArguments;
     __weak id<EMTLPhotoQueryDelegate> _delegate;
     EMTLPhotoSource * _source;
     

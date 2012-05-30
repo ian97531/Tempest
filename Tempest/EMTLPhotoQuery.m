@@ -26,6 +26,7 @@
         _photoQueryID = [queryID copy];
         _queryType = queryType;
         _queryArguments = [arguments copy];
+        _blankQueryArguments = [arguments copy];
         _source = source;
         _photoList = [NSMutableArray array];
     }
@@ -61,6 +62,7 @@
 
 - (void)reloadPhotos
 {
+    _queryArguments = [_blankQueryArguments copy];
     _photoList = [NSArray array];
     [_source updateQuery:self];
 }

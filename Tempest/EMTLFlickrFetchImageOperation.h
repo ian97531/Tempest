@@ -11,13 +11,12 @@
 
 @protocol EMTLImageDelegate;
 @class EMTLPhoto;
-@class EMTLPhotoSource;
+@class EMTLFlickrPhotoSource;
 
 @interface EMTLFlickrFetchImageOperation : NSOperation
 {
     EMTLPhoto *_photo;
-    EMTLPhotoSource *_photoSource;
-    id<EMTLImageDelegate> _delegate;
+    EMTLFlickrPhotoSource *_photoSource;
     EMTLImageSize _size;
     NSURLConnection *_connection;
     NSMutableData *_incomingData;
@@ -26,7 +25,7 @@
     BOOL _finished;
 }
 
-- (id)initWithPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size photoSource:(EMTLPhotoSource *)photoSource delegate:(id<EMTLImageDelegate>)delegate;
+- (id)initWithPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size photoSource:(EMTLFlickrPhotoSource *)photoSource;
 
 - (void)connection:(NSURLConnection *)aConnection didReceiveResponse:(NSURLResponse *)aResponse;
 - (void)connection:(NSURLConnection *)aConnection didFailWithError:(NSError *)error;

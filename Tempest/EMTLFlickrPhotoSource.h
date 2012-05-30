@@ -45,7 +45,8 @@ extern NSString *const kFlickrDefaultsServiceProviderName;
 extern NSString *const kFlickrDefaultsPrefix;
 extern NSString *const kFlickrDefaultIconURLString;
 
-
+@class EMTLFlickrFetchPhotoQueryOperation;
+@class EMTLFlickrFetchImageOperation;
 
 @interface EMTLFlickrPhotoSource : EMTLPhotoSource
 {
@@ -59,5 +60,15 @@ extern NSString *const kFlickrDefaultIconURLString;
 - (OAMutableURLRequest *)oaurlRequestForMethod:(NSString *)method arguments:(NSDictionary *)args;
 - (NSDictionary *)dictionaryFromResponseData:(NSData *)data;
 - (BOOL)isResponseOK:(NSDictionary *)responseDictionary;
+
+// Callbacks for EMTLFlickrFetchPhotoQueryOperation
+- (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation fetchedPhotos:(NSArray *)photos forQuery:(EMTLPhotoQuery *)query updatedArguments:(NSDictionary *)arguments;
+- (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation willFetchPhotosForQuery:(EMTLPhotoQuery *)query;
+- (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation isFetchingPhotosForQuery:(EMTLPhotoQuery *)query WithProgress:(float)progress;
+
+// Callbacks for EMTLFlickrFetchImageOperation
+- (void)operation:(EMTLFlickrFetchImageOperation *)operation willRequestImageForPhoto:(EMTLPhoto *)photo withSize:(EMTLImageSize)size;
+- (void)operation:(EMTLFlickrFetchImageOperation *)operation didRequestImageForPhoto:(EMTLPhoto *)photo withSize:(EMTLImageSize)size progress:(float)progress;
+- (void)operation:(EMTLFlickrFetchImageOperation *)operation didLoadImage:(UIImage *)image forPhoto:(EMTLPhoto *)photo withSize:(EMTLImageSize)size;
 
 @end

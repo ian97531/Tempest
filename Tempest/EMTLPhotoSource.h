@@ -81,10 +81,8 @@ extern NSString *const kFavoriteIconURL;
 - (void)updateQuery:(EMTLPhotoQuery *)query;
 
 // Photo Image Loading
-- (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
-
-// Caching
-- (void)cacheImage:(UIImage *)image size:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo;
+- (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;
+- (void)cancelImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;
 
 @end
 

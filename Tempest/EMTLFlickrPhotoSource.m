@@ -207,27 +207,38 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 
 
 
-
 - (void) updateQuery:(EMTLPhotoQuery *)query    
 {
-    
     EMTLFlickrFetchPhotoQueryOperation *operation = [[EMTLFlickrFetchPhotoQueryOperation alloc] initWithPhotoQuery:query photoSource:self];
     [[EMTLOperationQueue photoQueue] addOperation:operation];
 }
 
 
-- (void) cacheImage:(UIImage *)image size:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo
+- (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation fetchedPhotos:(NSArray *)photos forQuery:(EMTLPhotoQuery *)query updatedArguments:(NSDictionary *)arguments
 {
-    [super cacheImage:image size:size forPhoto:photo];
-    NSString *cacheKey = [NSString stringWithFormat:@"%@-%@-%i", self.serviceName, photo.photoID, size];
-    [_photoOperations removeObjectForKey:cacheKey];
+    // Cache the results here.
+    [query photoSource:self fetchedPhotos:photos updatedQuery:arguments];
 }
 
 
-- (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
+- (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation willFetchPhotosForQuery:(EMTLPhotoQuery *)query
+{
+    [query photoSourceWillFetchPhotos:self];
+}
+
+
+- (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation isFetchingPhotosForQuery:(EMTLPhotoQuery *)query WithProgress:(float)progress
+{
+    [query photoSource:self isFetchingPhotosWithProgress:progress];
+}
+
+
+
+
+- (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;
 {
     
-    NSString *cacheKey = [NSString stringWithFormat:@"%@-%@-%i", self.serviceName, photo.photoID, size];
+    NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
     NSLog(@"Looking for image with key: %@", cacheKey);
     UIImage *cachedPhoto = [_imageCache objectForKey:cacheKey];
     
@@ -239,7 +250,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
     else 
     {
         if(![_photoOperations objectForKey:cacheKey]) {
-            EMTLFlickrFetchImageOperation *imageOp = [[EMTLFlickrFetchImageOperation alloc] initWithPhoto:photo size:size photoSource:self delegate:delegate];
+            EMTLFlickrFetchImageOperation *imageOp = [[EMTLFlickrFetchImageOperation alloc] initWithPhoto:photo size:size photoSource:self];
             [_photoOperations setObject:imageOp forKey:cacheKey];
             [[EMTLOperationQueue photoQueue] addOperation:imageOp];
         }
@@ -247,18 +258,43 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
     }
 }
 
-
-
-
-- (void)cancelAllImagesForPhoto:(EMTLPhoto *)photo
+- (void)cancelImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size
 {
-    // Subclasses Override
-}
-
-- (void)cancelLoadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size
-{
+    NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
+    EMTLFlickrFetchImageOperation *operation = [_photoOperations objectForKey:cacheKey];
+    if (operation) {
+        [operation cancel];
+        [_photoOperations removeObjectForKey:cacheKey];
+    }
     
 }
+
+
+- (void)operation:(EMTLFlickrFetchImageOperation *)operation willRequestImageForPhoto:(EMTLPhoto *)photo withSize:(EMTLImageSize)size
+{
+    [photo photoSource:self willRequestImageWithSize:size];
+}
+
+- (void)operation:(EMTLFlickrFetchImageOperation *)operation didRequestImageForPhoto:(EMTLPhoto *)photo withSize:(EMTLImageSize)size progress:(float)progress
+{
+    [photo photoSource:self didRequestImageWithSize:size progress:progress];
+}
+
+- (void)operation:(EMTLFlickrFetchImageOperation *)operation didLoadImage:(UIImage *)image forPhoto:(EMTLPhoto *)photo withSize:(EMTLImageSize)size
+{
+    NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
+    [_imageCache setObject:image forKey:cacheKey];
+    [photo photoSource:self didLoadImage:image withSize:size];
+    [_photoOperations removeObjectForKey:cacheKey];
+}
+
+- (NSString *)_cacheKeyForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size
+{
+    return [NSString stringWithFormat:@"%@-%i", photo.uniqueID, size];
+}
+
+
+
 
     
 

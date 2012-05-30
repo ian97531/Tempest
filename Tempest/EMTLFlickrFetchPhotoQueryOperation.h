@@ -28,10 +28,6 @@
 
 - (id)initWithPhotoQuery:(EMTLPhotoQuery *)photoQuery photoSource:(EMTLFlickrPhotoSource *)photoSource;
 
-- (void)connection:(NSURLConnection *)aConnection didReceiveResponse:(NSURLResponse *)aResponse;
-- (void)connection:(NSURLConnection *)aConnection didFailWithError:(NSError *)error;
-- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data;
-- (void)connectionDidFinishLoading:(NSURLConnection *)connection;
 
 - (void)start;
 - (BOOL)isConcurrent;

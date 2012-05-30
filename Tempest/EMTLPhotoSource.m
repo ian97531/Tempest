@@ -173,31 +173,16 @@ NSString *const kFavoriteIconURL = @"icon_url";
 
 
 
-- (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate
+- (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size
 {
     // Subclasses override
     return nil;
 }
 
 
-
-- (void)cancelAllImagesForPhoto:(EMTLPhoto *)photo
+- (void)cancelImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size
 {
-    // Subclasses Override
-}
-
-- (void)cancelLoadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size
-{
-    
-}
-
-#pragma mark -
-#pragma mark Caching
-- (void)cacheImage:(UIImage *)image size:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo
-{
-    NSString *cacheKey = [NSString stringWithFormat:@"%@-%@-%i", self.serviceName, photo.photoID, size];
-    NSLog(@"caching image with key: %@", cacheKey);
-    [_imageCache setValue:image forKey:cacheKey];
+    // Subclasses override
 }
 
 

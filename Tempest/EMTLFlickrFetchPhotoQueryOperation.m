@@ -17,7 +17,7 @@ static double const kSecondsInThreeMonths = 7776500;
 
 @interface EMTLFlickrFetchPhotoQueryOperation ()
 
-- (NSArray *)_processPhotos;
+- (NSArray *)_processPhotos:(NSData *)incomingData;
 - (NSDictionary *)_updateQueryArguments;
 
 @end
@@ -96,7 +96,7 @@ static double const kSecondsInThreeMonths = 7776500;
     
     if (!_executing) return;
     dispatch_sync(dispatch_get_main_queue(), ^{
-        [_photoQuery photoSourceWillFetchPhotos:_photoSource];
+        [_photoSource operation:self willFetchPhotosForQuery:_photoQuery];
     });
     
     
@@ -135,7 +135,7 @@ static double const kSecondsInThreeMonths = 7776500;
         [_commentsAndFavorites waitUntilAllOperationsAreFinished];
         
         dispatch_sync(dispatch_get_main_queue(), ^{
-            [_photoQuery photoSource:_photoSource fetchedPhotos:[photos subarrayWithRange:NSMakeRange(i, 5)] updatedQuery:_query];
+            [_photoSource operation:self fetchedPhotos:[photos subarrayWithRange:NSMakeRange(i, 5)] forQuery:_photoQuery updatedArguments:_query];
         });
         
 

@@ -30,6 +30,7 @@
     float _imageProgress;
 }
 
+@property (nonatomic, strong, readonly) NSString *uniqueID;
 @property (nonatomic, strong, readonly) NSURL *imageURL;
 @property (nonatomic, strong, readonly) NSString *title;
 @property (nonatomic, strong, readonly) NSString *userID;
@@ -52,8 +53,12 @@
 - (id)initWithDict:(NSDictionary *)dict;
 
 - (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
-- (void)cancelAllImages;
 - (void)cancelImageWithSize:(EMTLImageSize)size;
+
+// Callbacks for Image loading
+- (void)photoSource:(EMTLPhotoSource *)source willRequestImageWithSize:(EMTLImageSize)size;
+- (void)photoSource:(EMTLPhotoSource *)source didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress;
+- (void)photoSource:(EMTLPhotoSource *)source didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size;
 
 - (NSString *)datePostedString;
 

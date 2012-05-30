@@ -11,6 +11,7 @@
 
 @implementation EMTLPhoto
 
+@synthesize uniqueID;
 @synthesize imageURL;
 @synthesize title;
 @synthesize userID;
@@ -68,6 +69,7 @@
         favorites = [NSArray array];
         _imageProgress = 0;
         
+        
     }
     
     return self;
@@ -77,18 +79,30 @@
 
 - (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate
 {
-    return [source imageForPhoto:self size:size delegate:delegate];
-}
-
-- (void)cancelAllImages
-{
-    
-    
+    _delegate = delegate;
+    return [source imageForPhoto:self size:size];
 }
 
 - (void)cancelImageWithSize:(EMTLImageSize)size
 {
-    
+    [source cancelImageForPhoto:self size:size];
+}
+
+- (void)photoSource:(EMTLPhotoSource *)source willRequestImageWithSize:(EMTLImageSize)size
+{
+    [_delegate photo:self willRequestImageWithSize:size];
+}
+
+- (void)photoSource:(EMTLPhotoSource *)source didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress
+{
+    _imageProgress = progress;
+    [_delegate photo:self didRequestImageWithSize:size progress:progress];
+}
+
+- (void)photoSource:(EMTLPhotoSource *)source didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size
+{
+    [_delegate photo:self didLoadImage:image withSize:size];
+    _delegate = nil;
 }
 
 
@@ -100,6 +114,11 @@
     else {
         return [NSNumber numberWithInt:1];
     }
+}
+
+- (NSString *)uniqueID
+{
+    return [NSString stringWithFormat:@"%@-%@", source.serviceName, photoID];
 }
 
 

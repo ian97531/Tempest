@@ -7,12 +7,12 @@
 //
 
 #import "EMTLFlickrFetchImageOperation.h"
-#import "EMTLPhotoSource.h"
+#import "EMTLFlickrPhotoSource.h"
 #import "EMTLPhoto.h"
 
 @implementation EMTLFlickrFetchImageOperation
 
-- (id)initWithPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size photoSource:(EMTLPhotoSource *)photoSource delegate:(id<EMTLImageDelegate>)delegate
+- (id)initWithPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size photoSource:(EMTLFlickrPhotoSource *)photoSource
 {
     self = [super init];
     if (self) 
@@ -20,7 +20,6 @@
         _photo = photo;
         _photoSource = photoSource;
         _size = size;
-        _delegate = delegate;
         
         _incomingData = [NSMutableData data];
         
@@ -49,9 +48,7 @@
 {
     [_incomingData appendData:data];
     float percent = (float)_incomingData.length/(float)_totalSize;
-    _photo.imageProgress = percent;
-    [_delegate photo:_photo didRequestImageWithSize:_size progress:percent];
-
+    [_photoSource operation:self didRequestImageForPhoto:_photo withSize:_size progress:percent];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
@@ -62,9 +59,8 @@
     [image drawAtPoint:CGPointZero];
     UIGraphicsEndImageContext();
 
-    [_photoSource cacheImage:image size:_size forPhoto:_photo];
+    [_photoSource operation:self didLoadImage:image forPhoto:_photo withSize:_size];
     
-    [_delegate photo:_photo didLoadImage:image withSize:_size];
     
     [self willChangeValueForKey:@"isExecuting"];
     _executing = NO;
@@ -96,7 +92,7 @@
     [self didChangeValueForKey:@"isExecuting"];
     
     
-    [_delegate photo:_photo willRequestImageWithSize:_size];
+    [_photoSource operation:self willRequestImageForPhoto:_photo withSize:_size];
     NSURLRequest *request = [NSURLRequest requestWithURL:_photo.imageURL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10.0];
     _connection = [NSURLConnection connectionWithRequest:request delegate:self];
     [_connection start];
