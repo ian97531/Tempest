@@ -7,31 +7,26 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "EMTLPhotoSource.h"
+#import "EMTLPhoto.h"
+#import "EMTLPhotoQuery.h"
 
-@class EMTLProgressIndicatorViewController;
+@interface EMTLPhotoListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, EMTLPhotoQueryDelegate, EMTLImageDelegate>
+{
+    @protected
+    EMTLPhotoQuery *_photoQuery;
+    UITableView *_tableView;
+}
 
-@interface EMTLPhotoListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, EMTLPhotoConsumer>
+- (id)initWithPhotoQuery:(EMTLPhotoQuery *)query;
 
-@property (nonatomic, strong) EMTLPhotoSource *source;
-@property (nonatomic, strong) UITableView *table;
-@property (nonatomic, strong) EMTLProgressIndicatorViewController *spinner;
+// EMTLPhotoQueryDelegate
+- (void)photoSource:(EMTLPhotoSource *)source willUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery;
+- (void)photoSource:(EMTLPhotoSource *)source didUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery;
+- (void)photoSource:(EMTLPhotoSource *)source isUpdatingPhotoQuery:(EMTLPhotoQuery *)photoQuery progress:(float)progress;
 
-
-// EMTLPhotoConsumer methods
-- (void)photoSourceMayChangePhotoList:(EMTLPhotoSource *)photoSource;
-- (void)photoSourceMayAddPhotosToPhotoList:(EMTLPhotoSource *)photoSource;
-- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhotoList:(NSDictionary *)changes;
-- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhotosAtIndexPaths:(NSArray *)indexPaths;
-- (void)photoSourceDoneChangingPhotoList:(EMTLPhotoSource *)photoSource;
-
-// UITableViewDelegate methods
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath;
-
-// UITableViewDataSource methods
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section;
-
-
+//EMTLImageDelegate
+- (void)photo:(EMTLPhoto *)photo willRequestImageWithSize:(EMTLImageSize)size;
+- (void)photo:(EMTLPhoto *)photo didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress;
+- (void)photo:(EMTLPhoto *)photo didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size;
 
 @end

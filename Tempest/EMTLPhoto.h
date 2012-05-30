@@ -1,37 +1,33 @@
 //
 //  EMTLPhoto.h
-//  Flickrgram
+//  Tempest
 //
-//  Created by Ian White on 4/17/12.
+//  Created by Ian White on 5/17/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import "EMTLPhotoSource.h"
-#import "EMTLCache.h"
+#import "EMTLConstants.h"
 
-@protocol EMTLPhotoDelegate <NSObject>
+@class EMTLPhotoSource;
+@class EMTLPhoto;
 
-+ (float)favoritesStringWidth;
-+ (UIFont *)favoritesFont;
-+ (float)commentsStringWidth;
-+ (UIFont *)commentsFont;
 
-- (void)setFavoritesString:(NSString *)favoritesString;
-- (void)setCommentsString:(NSString *)commentsString;
+@protocol EMTLImageDelegate <NSObject>
 
+- (void)photo:(EMTLPhoto *)photo willRequestImageWithSize:(EMTLImageSize)size;
+- (void)photo:(EMTLPhoto *)photo didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress;
+- (void)photo:(EMTLPhoto *)photo didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size;
 
 @end
 
 
-@interface EMTLPhoto : NSObject <NSURLConnectionDataDelegate, EMTLCacheClient>
+@interface EMTLPhoto : NSObject
 
 {
-    EMTLCacheRequest *favoritesRequest;
-    EMTLCacheRequest *commentsRequest;
-    NSString *favoritesDomain;
-    NSString *commentsDomain;
-
+@private
+    __weak id<EMTLImageDelegate> _delegate;
+    float _imageProgress;
 }
 
 @property (nonatomic, strong, readonly) NSURL *imageURL;
@@ -42,34 +38,25 @@
 @property (nonatomic, strong, readonly) NSDate *dateUpdated;
 @property (nonatomic, strong, readonly) NSString *photoID;
 @property (nonatomic, strong, readonly) NSNumber *aspectRatio;
-@property (nonatomic, strong, readonly) NSString *imageDomain;
-@property (nonatomic, strong, readonly) NSArray *favorites;
-@property (nonatomic, strong, readonly) NSArray *comments;
-@property (nonatomic, strong, readonly) NSString *favoritesShortString;
 @property (nonatomic, strong, readonly) NSString *datePostedString;
+@property (nonatomic, strong) NSArray *favorites;
+@property (nonatomic, strong) NSArray *comments;
 @property (nonatomic, readonly) BOOL isFavorite;
+@property (nonatomic) float imageProgress;
 
-@property (nonatomic, assign) id <EMTLPhotoDelegate> container;
+
 @property (nonatomic, assign) EMTLPhotoSource *source;
 
 
 + (id)photoWithDict:(NSDictionary *)dict;
 - (id)initWithDict:(NSDictionary *)dict;
 
-- (void)preloadData;
-- (void)loadData;
-- (void)cancel;
-- (BOOL)isReady;
+- (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
+- (void)cancelAllImages;
+- (void)cancelImageWithSize:(EMTLImageSize)size;
 
 - (NSString *)datePostedString;
-- (NSString *)favoritesShortString;
-- (NSString *)commentsShortString;
-
-// EMTLCacheClient methods
-- (void)retrievedObject:(id)object ForRequest:(EMTLCacheRequest *)request;
-- (void)fetchedBytes:(int)bytes ofTotal:(int)total forRequest:(EMTLCacheRequest *)request;
-- (void)unableToRetrieveObjectForRequest:(EMTLCacheRequest *)request;
-
 
 
 @end
+

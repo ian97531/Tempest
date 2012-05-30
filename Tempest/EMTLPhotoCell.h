@@ -7,15 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "EMTLPhoto.h"
-#import "EMTLCache.h"
 
 @class EMTLProgressIndicatorViewController;
 
 
-@interface EMTLPhotoCell : UITableViewCell <EMTLPhotoDelegate, EMTLCacheClient>
+@interface EMTLPhotoCell : UITableViewCell
 {
-    EMTLCacheRequest *imageRequest;
     BOOL fadeContents;
 }
 
@@ -28,25 +25,13 @@
 @property (nonatomic, strong) UILabel *dateLabel;
 @property (nonatomic, strong) UIButton *favoritesButton;
 @property (nonatomic, strong) UIButton *commentsButton;
+@property (nonatomic, strong) UIProgressView *progressBar;
 
-@property (nonatomic, strong) EMTLPhoto* photo;
-@property (nonatomic, strong) EMTLProgressIndicatorViewController *indicator;
 
-- (void)loadPhoto:(EMTLPhoto *)photo;
-- (void)switchToFavoritesView;
-
-// EMTLPhotoDelegate methods
 - (void)setFavoritesString:(NSString *)favoritesString;
 - (void)setCommentsString:(NSString *)commentsString;
+- (void)setImage:(UIImage *)image animated:(BOOL)animated;
 
-+ (float)favoritesStringWidth;
-+ (UIFont *)favoritesFont;
-+ (float)commentsStringWidth;
-+ (UIFont *)commentsFont;
 
-// EMTLCacheClient methods
-- (void)retrievedObject:(id)object ForRequest:(EMTLCacheRequest *)request;
-- (void)fetchedBytes:(int)bytes ofTotal:(int)total forRequest:(EMTLCacheRequest *)request;
-- (void)unableToRetrieveObjectForRequest:(EMTLCacheRequest *)request;
 
 @end

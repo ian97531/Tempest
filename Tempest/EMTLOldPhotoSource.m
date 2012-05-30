@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import "EMTLPhotoQuery.h"
 #import "EMTLPhotoSource.h"
+#import "EMTLPhotoSource_Private.h"
 #import "EMTLPhoto.h"
 
 NSString *const kPhotoUsername = @"user_name";
@@ -20,7 +20,8 @@ NSString *const kPhotoImageURL = @"image_url";
 NSString *const kPhotoImageAspectRatio = @"aspect_ratio";
 NSString *const kPhotoDatePosted = @"date_posted";
 NSString *const kPhotoDateUpdated = @"date_updated";
-
+NSString *const kPhotoComments = @"comments_domain";
+NSString *const kPhotoFavorites = @"favorites_domain";
 
 NSString *const kCommentText = @"comment_text";
 NSString *const kCommentDate = @"comment_date";
@@ -33,21 +34,26 @@ NSString *const kFavoriteUsername = @"user_name";
 NSString *const kFavoriteUserID = @"user_id";
 NSString *const kFavoriteIconURL = @"icon_url";
 
+NSString *const kEMTLPhotoImage = @"photo_image";
+NSString *const kEMTLPhotoComments = @"photo_comments";
+NSString *const kEMTLPhotoFavorites = @"photo_favorites";
+
 @interface EMTLPhotoSource ()
 - (NSString *)_photoQueryIDFromQueryType:(EMTLPhotoQueryType)queryType andArguments:(NSDictionary *)arguments; // Assumes that argument keys and values are strings
 
 - (NSSet *)_allQueries;
 - (EMTLPhotoQuery *)_photoQueryForQueryID:(NSString *)photoQueryID;
 - (void)_addPhotoQuery:(EMTLPhotoQuery *)query forQueryID:(NSString *)photoQueryID;
+- (void)_removePhotoQueryForQueryID:(NSString *)photoQueryID;
 
+- (void)_willChangeQuery:(EMTLPhotoQuery *)query;
 @end
 
 
 @implementation EMTLPhotoSource
 
-@synthesize userID = _userID;
-@synthesize username = _username;
-@synthesize serviceName = _serviceName;
+@synthesize userID;
+@synthesize username;
 
 - (id)init
 {
@@ -55,7 +61,6 @@ NSString *const kFavoriteIconURL = @"icon_url";
     if (self)
     {
         _photoQueries = [NSMutableDictionary dictionary];
-        _imageCache = [[NSMutableDictionary alloc] init];
     }
     
     return self;
@@ -98,37 +103,7 @@ NSString *const kFavoriteIconURL = @"icon_url";
 #pragma mark -
 #pragma Photo Query
 
-- (EMTLPhotoQuery *)currentPhotos
-{
-    return [self addPhotoQueryType:EMTLPhotoQueryTimeline withArguments:nil];
-}
-
-- (EMTLPhotoQuery *)popularPhotos;
-{
-    return [self addPhotoQueryType:EMTLPhotoQueryPopularPhotos withArguments:nil];
-}
-
-- (EMTLPhotoQuery *)favoritePhotosForUser:(NSString *)user_id
-{    
-    if (!user_id) {
-        user_id = _userID;
-    }
-    NSDictionary *args = [NSDictionary dictionaryWithObject:user_id forKey:kPhotoUserID];
-    
-    return [self addPhotoQueryType:EMTLPhotoQueryFavorites withArguments:args];
-}
-
-- (EMTLPhotoQuery *)photosForUser:(NSString *)user_id
-{
-    if (!user_id) {
-        user_id = _userID;
-    }
-    NSDictionary *args = [NSDictionary dictionaryWithObject:user_id forKey:kPhotoUserID];
-    
-    return [self addPhotoQueryType:EMTLPhotoQueryUserPhotos withArguments:args];
-}
-
-- (EMTLPhotoQuery *)addPhotoQueryType:(EMTLPhotoQueryType)queryType withArguments:(NSDictionary *)queryArguments
+- (NSString *)addPhotoQueryType:(EMTLPhotoQueryType)queryType withArguments:(NSDictionary *)queryArguments queryDelegate:(id<EMTLPhotoQueryDelegate>)queryDelegate
 {
     // Generate the query ID
     NSString *queryID = [self _photoQueryIDFromQueryType:queryType andArguments:queryArguments];
@@ -144,46 +119,97 @@ NSString *const kFavoriteIconURL = @"icon_url";
     // Sanity Check - we can only have a single delegate per query right now. If this assert fires, then we are either doing something
     // wrong or we need to update our structures to handle multiple delegates per query.
     // NOTE: If we are not going to fire the above assert, then we at least have to fire this.
-    //    if (query != nil)
-    //    {
-    //        NSAssert(query.delegate == queryDelegate, @"We can't add a second delegate to an existing query");
-    //    }
+//    if (query != nil)
+//    {
+//        NSAssert(query.delegate == queryDelegate, @"We can't add a second delegate to an existing query");
+//    }
     
     // Create the query
     if (query == nil)
     {
         // Create it
-        query = [[EMTLPhotoQuery alloc] initWithQueryID:queryID queryType:queryType arguments:queryArguments source:self];
+        EMTLPhotoQuery *query = [[[self _queryClass] alloc] initWithQueryID:queryID queryType:queryType arguments:queryArguments delegate:queryDelegate];
         
         // Add it to our list
         [self _addPhotoQuery:query forQueryID:queryID];
-        
+
         // Let subclasses do any setup they need to do
         [self _setupQuery:query];
         
+        // Let subclasses actually run the query
+        [self _runQuery:query];
+    }
+    else
+    {
+        // We already have this query so just update it?
+        // NOTE: If we're asserting on non-nil queries above, we will never hit this.
+        [self _updateQuery:query];
     }
     
-    return query;
+    return queryID;
 }
 
+- (NSArray *)photoListForQuery:(NSString *)queryID
+{
+    // Sanity Check
+    EMTLPhotoQuery *query = [self _photoQueryForQueryID:queryID];
+    NSAssert(query != nil, @"We don't have a query for this query ID");
+    
+    NSArray *photoList = [query photoList];
+    return photoList;
+}
 
+- (void)removeQuery:(NSString *)queryID
+{
+    // Sanity Check
+    EMTLPhotoQuery *query = [self _photoQueryForQueryID:queryID];
+    NSAssert(query != nil, @"We don't have a query for this query ID");
+    
+    // Let subclasses handle stopping this query
+    [self _stopQuery:query];
+    [self _removeQuery:query];
+    
+    // Stop tracking this query
+    [self _removePhotoQueryForQueryID:query.photoQueryID];
+}
+
+- (void)reloadQuery:(NSString *)queryID
+{
+    // Sanity Check
+    EMTLPhotoQuery *query = [self _photoQueryForQueryID:queryID];
+    NSAssert(query != nil, @"We don't have a query for this query ID");
+    
+    // Notify the delegate
+    [self _willChangeQuery:query];
+    
+    // Let the subclass do the work and call _didChangeQuery
+    [self _reloadQuery:query];
+}
+
+- (void)updateQuery:(NSString *)queryID
+{
+    // Sanity Check
+    EMTLPhotoQuery *query = [self _photoQueryForQueryID:queryID];
+    NSAssert(query != nil, @"We don't have a query for this query ID");
+    
+    // Notify the delegate
+    [self _willChangeQuery:query];
+    
+    // Let the subclass do the work and also call _didChangeQuery
+    [self _updateQuery:query];
+}
 
 #pragma mark -
 #pragma mark Image Loading
 
-
-
-- (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate
+- (UIImage *)loadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size imageDelegate:(id<EMTLImageDelegate>)imageDelegate
 {
-    // Subclasses override
     return nil;
 }
 
-
-
 - (void)cancelAllImagesForPhoto:(EMTLPhoto *)photo
 {
-    // Subclasses Override
+    
 }
 
 - (void)cancelLoadImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size
@@ -192,35 +218,42 @@ NSString *const kFavoriteIconURL = @"icon_url";
 }
 
 #pragma mark -
-#pragma mark Caching
-- (void)cacheImage:(UIImage *)image size:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo
-{
-    NSString *cacheKey = [NSString stringWithFormat:@"%@-%@-%i", self.serviceName, photo.photoID, size];
-    NSLog(@"caching image with key: %@", cacheKey);
-    [_imageCache setValue:image forKey:cacheKey];
-}
-
-
-#pragma mark -
 #pragma mark Private Subclass Overrides
 
+- (Class)_queryClass
+{
+    return [EMTLPhotoQuery class];
+}
 
 - (void)_setupQuery:(EMTLPhotoQuery *)query
 {
     // Subclasses override
 }
 
-- (void)updateQuery:(EMTLPhotoQuery *)query
+- (void)_runQuery:(EMTLPhotoQuery *)query
 {
     // Subclasses override
 }
 
-
-- (void)stopQuery:(EMTLPhotoQuery *)query
+- (void)_updateQuery:(EMTLPhotoQuery *)query
 {
     // Subclasses override
 }
 
+- (void)_reloadQuery:(EMTLPhotoQuery *)query
+{
+    // Subclasses override
+}
+
+- (void)_stopQuery:(EMTLPhotoQuery *)query
+{
+    // Subclasses override
+}
+
+- (void)_removeQuery:(EMTLPhotoQuery *)query
+{
+    // Subclassess override
+}
 
 #pragma mark -
 #pragma mark Private
@@ -291,5 +324,14 @@ NSString *const kFavoriteIconURL = @"icon_url";
     [_photoQueries removeObjectForKey:photoQueryID];
 }
 
+- (void)_willChangeQuery:(EMTLPhotoQuery *)query
+{
+    [query.delegate photoSource:self willUpdateQuery:query.photoQueryID];
+}
+
+- (void)_didChangeQuery:(EMTLPhotoQuery *)query
+{
+    [query.delegate photosource:self didUpdateQuery:query.photoQueryID];
+}
 
 @end

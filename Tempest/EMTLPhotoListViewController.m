@@ -7,62 +7,44 @@
 //
 
 #import "EMTLPhotoListViewController.h"
-#import "EMTLProgressIndicatorViewController.h"
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
 
+#import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
+@interface EMTLPhotoListViewController ()
+@property (nonatomic, strong) EMTLPhotoQuery *photoQuery;
+@property (nonatomic, strong) UITableView *tableView;
+@end
 
 @implementation EMTLPhotoListViewController
 
-@synthesize table;
-@synthesize spinner;
-@synthesize source;
+@synthesize photoQuery = _photoQuery;
+@synthesize tableView = _tableView;
 
-- (id)init
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super init];
-    if (self) {
-        
-
-        
+    // We shouldn't be using the UIViewController init methods since we have a custom one that's required
+    NSAssert(NO, @"EMTLPhotoListViewController: use initWithPhotoQueryID:");
+    return nil;
+}
+             
+- (id)initWithPhotoQuery:(EMTLPhotoQuery *)query;
+{
+    self = [super initWithNibName:nil bundle:nil];
+    if (self != nil)
+    {
+        NSLog(@"in view controller");
+        NSLog([query.queryArguments description]);
+        _photoQuery = query;
+        _photoQuery.delegate = self;
+        [_photoQuery morePhotos];
     }
+    
     return self;
 }
 
-
-
-
-#pragma mark - PhotoConsumer methods
-
-- (void)photoSourceMayChangePhotoList:(EMTLPhotoSource *)photoSource
-{
-    
-}
-
-- (void)photoSourceMayAddPhotosToPhotoList:(EMTLPhotoSource *)photoSource
-{
-    
-}
-
-- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhotoList:(NSDictionary *)changes
-{
-    
-}
-
-- (void)photoSource:(EMTLPhotoSource *)photoSource didChangePhotosAtIndexPaths:(NSArray *)indexPaths
-{
-    
-}
-
-- (void)photoSourceDoneChangingPhotoList:(EMTLPhotoSource *)photoSource
-{
-    
-}
-
-
-#pragma mark - View Lifecycle
 - (void)loadView
 {
     
@@ -73,46 +55,52 @@
     
     // Get a table ready that fills the screen and is transparent. Give it a header so that the first cell
     // is not occluded by the iOS status bar.
-    table = [[UITableView alloc] initWithFrame:backgroundImage.frame style:UITableViewStylePlain];
-    table.separatorColor = [UIColor clearColor];
-    table.delegate = self;
-    table.dataSource = self;
-    table.backgroundColor = [UIColor clearColor];
-    table.layer.masksToBounds = YES;
-    table.showsVerticalScrollIndicator = NO;
-    table.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 20)];
+    self.tableView = [[UITableView alloc] initWithFrame:backgroundImage.frame style:UITableViewStylePlain];
+    self.tableView.separatorColor = [UIColor clearColor];
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    self.tableView.backgroundColor = [UIColor clearColor];
+    self.tableView.layer.masksToBounds = YES; // TODO BSEELY: does it matter? This can be expensive so if it's not already the default or not needed, we should remove it
+    self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 20)];
     
     // Put a large progress spinner into the view to appease the user while the first set of
     // EMTLPhotos is loaded.
-    spinner = [EMTLProgressIndicatorViewController indicatorWithSize:kLargeProgressIndicator];
-    spinner.view.center = table.center;
-    spinner.view.layer.opacity = 0.2;
+//    spinner = [EMTLProgressIndicatorViewController indicatorWithSize:kLargeProgressIndicator];
+//    spinner.view.center = self.tableView.center;
+//    spinner.view.layer.opacity = 0.2;
     
     // Throw everything into the view, and make it fullscreen.
     [parent addSubview:backgroundImage];
-    [parent addSubview:table];
-    [parent addSubview:spinner.view];
+    [parent addSubview:self.tableView];
+    //[parent addSubview:spinner.view];
     self.view = parent;
     self.wantsFullScreenLayout = YES;
     
     // Start the progress indicator spinning.
-    [spinner spin];
+    //[spinner spin];
             
 }
 
 
-#pragma mark - UITableViewDelegate
+#pragma mark -
+#pragma mark UITableViewDelegate
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
     // When the EMTLPhotos are returned to us using the photoSource:retreivedMorePhotos:
     // method, we stored the heights needed for each cell in the heights array.
-    return 10;
+    EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:indexPath.row];
+    return (294 / photo.aspectRatio.floatValue) + 150;
 }
 
-#pragma mark - UITableViewDataSource
+#pragma mark -
+#pragma mark UITableViewDataSource
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    //NSLog(@"Getting cell at index path: %i", indexPath.row);
     // Grab a cell from the queue or create a new one.
     EMTLPhotoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
     
@@ -120,35 +108,36 @@
         cell = [[EMTLPhotoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PhotoCell"];
     }
     
-   
+    EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:indexPath.row];
+    
+    cell.ownerLabel.text = photo.username;
+    cell.dateLabel.text = [photo datePostedString];
+    [cell setFavoritesString:[NSString stringWithFormat:@"%i Favorites", photo.favorites.count]];
+    [cell setCommentsString:[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
+    
+    
+    //NSLog(@"getting image for index path %i", indexPath.row);
+    UIImage *image = [photo loadImageWithSize:EMTLImageSizeMediumAspect delegate:self];
+    
+    if(image) {
+        NSLog(@"setting image for index path %i", indexPath.row);
+        [cell setImage:image animated:(photo.imageProgress != 0)];
+        photo.imageProgress = 0;
+    }
+    else {
+        NSLog(@"setting progress for index path %i to %f", indexPath.row, photo.imageProgress);
+        cell.imageView.layer.opacity = 0;
+        cell.progressBar.layer.opacity = 1;
+        cell.progressBar.progress = photo.imageProgress;
+    }
+    
     return cell;
-}
-
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
-{
     
 }
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-}
-
-
-- (void) preload
-{
-
-}
-
-- (void) preloadImages:(int)num
-{
-
-    
-}
-
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 0;
+    return _photoQuery.photoList.count;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -158,8 +147,73 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
     
+    
+}
+
+#pragma mark -
+#pragma mark UIScrollViewDelegate
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    
+}
+
+#pragma mark -
+#pragma mark EMTLPhotoQueryDelegate
+
+- (void)photoSource:(EMTLPhotoSource *)source willUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery
+{
+    NSLog(@"will get new photos");
+}
+
+- (void)photoSource:(EMTLPhotoSource *)source didUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery
+{
+    NSLog(@"got new photos, %i", photoQuery.photoList.count);
+    [_tableView reloadData];
+}
+
+- (void)photoSource:(EMTLPhotoSource *)source isUpdatingPhotoQuery:(EMTLPhotoQuery *)photoQuery progress:(float)progress
+{
+    NSLog(@"New photos are loading");
+}
+
+
+#pragma mark -
+#pragma mark EMTLImageDelegate
+
+- (void)photo:(EMTLPhoto *)photo willRequestImageWithSize:(EMTLImageSize)size
+{
+    
+}
+
+- (void)photo:(EMTLPhoto *)photo didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress
+{
+    if ([_photoQuery.photoList indexOfObject:photo] != NSNotFound) {
+        int photoIndex = [_photoQuery.photoList indexOfObject:photo];
+        NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:photoIndex inSection:0]];
+        
+        NSLog(@"progress for image with index path: %i", photoIndex);
+        [_tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationNone];
+    }
+    
+}
+
+
+- (void)photo:(EMTLPhoto *)photo didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size
+{
+    
+    if ([_photoQuery.photoList indexOfObject:photo] != NSNotFound) {
+        int photoIndex = [_photoQuery.photoList indexOfObject:photo];
+        NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:photoIndex inSection:0]];
+        
+        [_tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationNone];
+    }
 }
 
 

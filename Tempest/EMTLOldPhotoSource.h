@@ -1,20 +1,23 @@
 //
 //  EMTLPhotoSource.h
-//  Tempest
+//  Flickrgram
 //
-//  Created by Ian White on 5/17/12.
+//  Created by Ian White on 4/12/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+
+#import "EMTLConstants.h"
 #import "OAConsumer.h"
 #import "OAToken.h"
 #import "OAServiceTicket.h"
 #import "OADataFetcher.h"
 #import "OAMutableURLRequest.h"
-#import "APISecrets.h"
-#import "EMTLConstants.h"
 
+@class EMTLPhoto;
+@class EMTLPhotoList;
+@class EMTLPhotoSource;
 
 extern NSString *const kPhotoUsername;
 extern NSString *const kPhotoUserID;
@@ -24,6 +27,8 @@ extern NSString *const kPhotoImageURL;
 extern NSString *const kPhotoImageAspectRatio;
 extern NSString *const kPhotoDatePosted;
 extern NSString *const kPhotoDateUpdated;
+extern NSString *const kPhotoComments;
+extern NSString *const kPhotoFavorites;
 
 extern NSString *const kCommentText;
 extern NSString *const kCommentDate;
@@ -36,11 +41,10 @@ extern NSString *const kFavoriteUsername;
 extern NSString *const kFavoriteUserID;
 extern NSString *const kFavoriteIconURL;
 
-@protocol EMTLImageDelegate;
-@class EMTLPhotoSource;
-@class EMTLPhotoQuery;
-@class EMTLPhoto;
-@class EMTLPhotoAssets;
+extern NSString *const kEMTLPhotoImage;
+extern NSString *const kEMTLPhotoComments;
+extern NSString *const kEMTLPhotoFavorites;
+
 
 @protocol EMTLPhotoSourceAuthorizationDelegate
 - (void)photoSource:(EMTLPhotoSource *)photoSource requiresAuthorizationAtURL:(NSURL *)url;
@@ -48,23 +52,19 @@ extern NSString *const kFavoriteIconURL;
 - (void)authorizationFailedForPhotoSource:(EMTLPhotoSource *)photoSource authorizationError:(NSError *)error;
 @end
 
+
 @interface EMTLPhotoSource : NSObject
 {
     @private
     __weak id<EMTLPhotoSourceAuthorizationDelegate> _authorizationDelegate;
-    NSMutableDictionary *_photoQueries;
-    
-    @protected
-    NSMutableDictionary *_imageCache;
-    NSString *_serviceName;
-    NSString *_username;
-    NSString *_userID;
-    
+    NSMutableDictionary *_photoLists;
 }
 
 @property (nonatomic, readonly) NSString *serviceName;
-@property (nonatomic, readonly) NSString *userID;
-@property (nonatomic, readonly) NSString *username;
+@property (nonatomic, readonly) NSSet *photoLists;
+
+@property (nonatomic, strong) NSString *userID;
+@property (nonatomic, strong) NSString *username;
 
 
 // Authorization
@@ -72,19 +72,10 @@ extern NSString *const kFavoriteIconURL;
 - (void)authorize;
 - (void)authorizedWithVerifier:(NSString *)verfier;
 
-// Photo Queries 
-- (EMTLPhotoQuery *)currentPhotos;
-- (EMTLPhotoQuery *)popularPhotos;
-- (EMTLPhotoQuery *)favoritePhotosForUser:(NSString *)user_id;
-- (EMTLPhotoQuery *)photosForUser:(NSString *)user_id;
-- (EMTLPhotoQuery *)addPhotoQueryType:(EMTLPhotoQueryType)queryType withArguments:(NSDictionary *)queryArguments;
-- (void)updateQuery:(EMTLPhotoQuery *)query;
-
-// Photo Image Loading
-- (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
-
-// Caching
-- (void)cacheImage:(UIImage *)image size:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo;
+// Photo List Loading
+- (EMTLPhotoList *)currentPhotos;
+- (EMTLPhotoList *)popularPhotos;
+- (EMTLPhotoList *)favoritePhotosForUser:(NSString *)user_id;
+- (EMTLPhotoList *)photosForUser:(NSString *)user_id;
 
 @end
-
