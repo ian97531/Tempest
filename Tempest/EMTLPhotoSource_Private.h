@@ -11,6 +11,12 @@
 @interface EMTLPhotoSource ()
 
 - (NSDictionary *)_setupQueryArguments:(NSDictionary *)queryArguments forQuery:(EMTLPhotoQuery *)query;
+- (void)cachePhotoList:(NSArray *)photos forQueryID:(NSString *)queryID;
+- (NSArray *)photoListFromCacheForQueryID:(NSString *)queryID;
 
+- (void)cacheImage:(UIImage *)image withSize:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo;
+- (UIImage *)imageFromCacheWithSize:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo;
+
+- (NSString *)_cacheKeyForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size;
 
 @end

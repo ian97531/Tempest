@@ -45,7 +45,7 @@
 @property (nonatomic, strong) NSDictionary *blankQueryArguments;
 @property (nonatomic, weak) id<EMTLPhotoQueryDelegate> delegate;
 
-- (id)initWithQueryID:(NSString *)queryID queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments source:(EMTLPhotoSource *)source;
+- (id)initWithQueryID:(NSString *)queryID queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments source:(EMTLPhotoSource *)source cachedPhotos:(NSArray *)photos;
 - (void)photoSource:(EMTLPhotoSource *)source fetchedPhotos:(NSArray *)photos;
 - (void)photoSource:(EMTLPhotoSource *)source finishedFetchingPhotosWithUpdatedArguments:(NSDictionary *)arguments;
 - (void)photoSourceWillFetchPhotos:(EMTLPhotoSource *)source;

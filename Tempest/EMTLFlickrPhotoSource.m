@@ -237,11 +237,12 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 
 -(void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation finishedFetchingPhotos:(NSArray *)photos forQuery:(EMTLPhotoQuery *)query updatedArguments:(NSDictionary *)arguments
 {
-    if (![_photoListOperations objectForKey:query.photoQueryID])
+    if ([_photoListOperations objectForKey:query.photoQueryID])
     {
         [_photoListOperations removeObjectForKey:query.photoQueryID];
     }
     
+    [self cachePhotoList:photos forQueryID:query.photoQueryID];
     [query photoSource:self finishedFetchingPhotosWithUpdatedArguments:arguments];
     
     
@@ -266,8 +267,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 - (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;
 {
     
-    NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
-    UIImage *cachedPhoto = [_imageCache objectForKey:cacheKey];
+    UIImage *cachedPhoto = [self imageFromCacheWithSize:size forPhoto:photo];
     
     if (cachedPhoto) 
     {
@@ -275,6 +275,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
     }
     else 
     {
+        NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
         if(![_imageOperations objectForKey:cacheKey]) {
             EMTLFlickrFetchImageOperation *imageOp = [[EMTLFlickrFetchImageOperation alloc] initWithPhoto:photo size:size photoSource:self];
             [_imageOperations setObject:imageOp forKey:cacheKey];
@@ -309,15 +310,12 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 - (void)operation:(EMTLFlickrFetchImageOperation *)operation didLoadImage:(UIImage *)image forPhoto:(EMTLPhoto *)photo withSize:(EMTLImageSize)size
 {
     NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
-    [_imageCache setObject:image forKey:cacheKey];
+    [self cacheImage:image withSize:size forPhoto:photo];
     [photo photoSource:self didLoadImage:image withSize:size];
     [_imageOperations removeObjectForKey:cacheKey];
 }
 
-- (NSString *)_cacheKeyForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size
-{
-    return [NSString stringWithFormat:@"%@-%i", photo.uniqueID, size];
-}
+
 
 
 

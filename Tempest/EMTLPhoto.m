@@ -77,6 +77,48 @@
 }
 
 
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super init];
+    if (self) {
+        userID = [aDecoder decodeObjectForKey:kPhotoUserID];
+        username = [aDecoder decodeObjectForKey:kPhotoUsername];
+        title = [aDecoder decodeObjectForKey:kPhotoTitle];
+        photoID = [aDecoder decodeObjectForKey:kPhotoID];
+        imageURL = [aDecoder decodeObjectForKey:kPhotoImageURL];
+        datePosted = [aDecoder decodeObjectForKey:kPhotoDatePosted];
+        aspectRatio = [aDecoder decodeObjectForKey:kPhotoImageAspectRatio];
+        dateUpdated = [aDecoder decodeObjectForKey:kPhotoDateUpdated];
+        isFavorite = [aDecoder decodeBoolForKey:kPhotoIsFavorite];
+        
+        comments = [aDecoder decodeObjectForKey:kPhotoComments];
+        favorites = [aDecoder decodeObjectForKey:kPhotoFavorites];
+        
+        _imageProgress = 0;
+        
+    }
+    return self;
+
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+    
+    [aCoder encodeObject:userID forKey:kPhotoUserID];
+    [aCoder encodeObject:username forKey:kPhotoUsername];
+    [aCoder encodeObject:title forKey:kPhotoTitle];
+    [aCoder encodeObject:photoID forKey:kPhotoID];
+    [aCoder encodeObject:imageURL forKey:kPhotoImageURL];
+    [aCoder encodeObject:datePosted forKey:kPhotoDatePosted];
+    [aCoder encodeObject:aspectRatio forKey:kPhotoImageAspectRatio];
+    [aCoder encodeObject:dateUpdated forKey:kPhotoDateUpdated];
+    [aCoder encodeBool:isFavorite forKey:kPhotoIsFavorite];
+    
+    [aCoder encodeObject:comments forKey:kPhotoComments];
+    [aCoder encodeObject:favorites forKey:kPhotoFavorites];
+}
+
+
 - (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate
 {
     _delegate = delegate;

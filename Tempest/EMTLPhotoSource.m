@@ -13,6 +13,8 @@
 #import "EMTLPhoto.h"
 #import "EMTLPhotoSource_Private.h"
 
+NSString *const kPhotoObject = @"photo_object";
+
 NSString *const kPhotoUsername = @"user_name";
 NSString *const kPhotoUserID = @"user_id";
 NSString *const kPhotoTitle = @"photo_title";
@@ -21,7 +23,9 @@ NSString *const kPhotoImageURL = @"image_url";
 NSString *const kPhotoImageAspectRatio = @"aspect_ratio";
 NSString *const kPhotoDatePosted = @"date_posted";
 NSString *const kPhotoDateUpdated = @"date_updated";
-
+NSString *const kPhotoComments = @"comments";
+NSString *const kPhotoFavorites = @"favorites";
+NSString *const kPhotoIsFavorite = @"is_favorite";
 
 NSString *const kCommentText = @"comment_text";
 NSString *const kCommentDate = @"comment_date";
@@ -56,9 +60,20 @@ NSString *const kFavoriteIconURL = @"icon_url";
     if (self)
     {
         _photoQueries = [NSMutableDictionary dictionary];
-        _imageCache = [NSMutableDictionary dictionary];
+        _imageCache = [[NSCache alloc] init];
+        
+        NSArray *dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, 
+                                                                NSUserDomainMask, YES);
+        NSString *cacheDir = [dirPaths objectAtIndex:0];
+        
+        _imageCacheDir = [cacheDir stringByAppendingString:@"/images"];
+        _photoListCacheDir = [cacheDir stringByAppendingString:@"/photo_lists"];
+        
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        [fileManager createDirectoryAtPath:_imageCacheDir attributes:nil];
+        [fileManager createDirectoryAtPath:_photoListCacheDir attributes:nil];
+   
     }
-    
     return self;
 }
 
@@ -142,6 +157,10 @@ NSString *const kFavoriteIconURL = @"icon_url";
     // NOTE: If we decide to comment out this assert, then we have to fire the one below
     NSAssert(query == nil, @"We already have this query");
     
+    
+    // See if the photo list for this query has been cached.
+    NSArray *photoList = [self photoListFromCacheForQueryID:queryID];
+    
     // Sanity Check - we can only have a single delegate per query right now. If this assert fires, then we are either doing something
     // wrong or we need to update our structures to handle multiple delegates per query.
     // NOTE: If we are not going to fire the above assert, then we at least have to fire this.
@@ -154,7 +173,7 @@ NSString *const kFavoriteIconURL = @"icon_url";
     if (query == nil)
     {
         // Create it
-        query = [[EMTLPhotoQuery alloc] initWithQueryID:queryID queryType:queryType arguments:queryArguments source:self];
+        query = [[EMTLPhotoQuery alloc] initWithQueryID:queryID queryType:queryType arguments:queryArguments source:self cachedPhotos:photoList];
         
         // Add it to our list
         [self _addPhotoQuery:query forQueryID:queryID];
@@ -171,6 +190,7 @@ NSString *const kFavoriteIconURL = @"icon_url";
 - (NSDictionary *)_setupQueryArguments:(NSDictionary *)queryArguments forQuery:(EMTLPhotoQuery *)query
 {
     // Subclasses override
+    return nil;
 }
 
 - (void)updateQuery:(EMTLPhotoQuery *)query
@@ -184,6 +204,67 @@ NSString *const kFavoriteIconURL = @"icon_url";
 }
 
 
+#pragma mark -
+#pragma mark Caching Stuff
+- (void)cachePhotoList:(NSArray *)photos forQueryID:(NSString *)queryID
+{
+    
+    if (!_photoListCacheDir) return;
+    
+    NSString *cachePath = [NSString stringWithFormat:@"%@/%@", _photoListCacheDir, queryID];
+    if([NSKeyedArchiver archiveRootObject:photos toFile:cachePath])
+    {
+        NSLog(@"successfully cached queryID: %@ to disk", queryID);
+    }
+    else {
+        NSLog(@"Unable to write queryID @% to disk", queryID);
+    }
+    
+    
+}
+
+- (NSArray *)photoListFromCacheForQueryID:(NSString *)queryID
+{
+    if (!_photoListCacheDir) return nil;
+    
+    NSString *cachePath = [NSString stringWithFormat:@"%@/%@", _photoListCacheDir, queryID];
+    NSArray *photoList = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath];
+    
+    if (photoList) {
+        NSLog(@"Found photo list in cache for queryID: %@", queryID);
+        for (EMTLPhoto *photo in photoList) {
+            photo.source = self;
+        }
+    }
+    
+    return photoList;
+}
+
+- (void)cacheImage:(UIImage *)image withSize:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo
+{
+    NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
+    [_imageCache setObject:image forKey:cacheKey];
+}
+
+- (UIImage *)imageFromCacheWithSize:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo
+{
+    NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
+    UIImage *image = [_imageCache objectForKey:cacheKey];
+    if (image) {
+        NSLog(@"got image for %@ from cache", cacheKey);
+    }   
+    else {
+        NSLog(@"did not get image for %@ from cache", cacheKey);
+    }
+    
+    return image;
+}
+
+
+- (NSString *)_cacheKeyForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size
+{
+    return [NSString stringWithFormat:@"%@-%i", photo.uniqueID, size];
+}
 
 #pragma mark -
 #pragma mark Image Loading

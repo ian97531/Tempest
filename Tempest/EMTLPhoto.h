@@ -22,7 +22,7 @@
 @end
 
 
-@interface EMTLPhoto : NSObject
+@interface EMTLPhoto : NSObject <NSCoding>
 
 {
 @private
@@ -52,15 +52,20 @@
 + (id)photoWithDict:(NSDictionary *)dict;
 - (id)initWithDict:(NSDictionary *)dict;
 
+// NSCoding Methods
+- (id)initWithCoder:(NSCoder *)aDecoder;
+- (void)encodeWithCoder:(NSCoder *)aCoder;
+
 - (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
 - (void)cancelImageWithSize:(EMTLImageSize)size;
+- (NSString *)datePostedString;
 
 // Callbacks for Image loading
 - (void)photoSource:(EMTLPhotoSource *)source willRequestImageWithSize:(EMTLImageSize)size;
 - (void)photoSource:(EMTLPhotoSource *)source didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress;
 - (void)photoSource:(EMTLPhotoSource *)source didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size;
 
-- (NSString *)datePostedString;
+
 
 
 @end

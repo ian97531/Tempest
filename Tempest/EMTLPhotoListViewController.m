@@ -39,7 +39,7 @@
         NSLog([query.queryArguments description]);
         _photoQuery = query;
         _photoQuery.delegate = self;
-        [_photoQuery morePhotos];
+        [_photoQuery reloadPhotos];
     }
     
     return self;

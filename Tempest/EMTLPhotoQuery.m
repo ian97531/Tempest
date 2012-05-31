@@ -18,7 +18,7 @@
 @synthesize photoList = _photoList;
 @synthesize source = _source;
 
-- (id)initWithQueryID:(NSString *)queryID queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments source:(EMTLPhotoSource *)source;
+- (id)initWithQueryID:(NSString *)queryID queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments source:(EMTLPhotoSource *)source cachedPhotos:(NSArray *)photos
 {
     self = [super init];
     if (self != nil)
@@ -29,8 +29,17 @@
         _queryArguments = [arguments copy];
         _blankQueryArguments = [arguments copy];
         _source = source;
-        _photoList = [NSMutableArray array];
         _reloading = NO;
+        
+        if (photos) {
+            NSLog(@"Got cached photos in the photo query");
+            _photoList = [NSMutableArray arrayWithArray:photos];
+            
+        }
+        else {
+            _photoList = [NSMutableArray array];
+        }
+        
     }
     
     return self;

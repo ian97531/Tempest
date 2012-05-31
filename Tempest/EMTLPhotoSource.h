@@ -15,6 +15,7 @@
 #import "APISecrets.h"
 #import "EMTLConstants.h"
 
+extern NSString *const kPhotoObject;
 
 extern NSString *const kPhotoUsername;
 extern NSString *const kPhotoUserID;
@@ -24,6 +25,9 @@ extern NSString *const kPhotoImageURL;
 extern NSString *const kPhotoImageAspectRatio;
 extern NSString *const kPhotoDatePosted;
 extern NSString *const kPhotoDateUpdated;
+extern NSString *const kPhotoComments;
+extern NSString *const kPhotoFavorites;
+extern NSString *const kPhotoIsFavorite;
 
 extern NSString *const kCommentText;
 extern NSString *const kCommentDate;
@@ -53,10 +57,12 @@ extern NSString *const kFavoriteIconURL;
     @private
     __weak id<EMTLPhotoSourceAuthorizationDelegate> _authorizationDelegate;
     NSMutableDictionary *_photoQueries;
-    
+    NSCache *_imageCache;
+    NSString *_photoListCacheDir;
+    NSString *_imageCacheDir;
     
     @protected
-    NSMutableDictionary *_imageCache;
+    
     NSString *_serviceName;
     NSString *_username;
     NSString *_userID;
