@@ -65,7 +65,9 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
     self = [super init];
     if (self) 
     {
-        _photoOperations = [NSMutableDictionary dictionary];
+        _imageOperations = [NSMutableDictionary dictionary];
+        _photoListOperations = [NSMutableDictionary dictionary];
+        
     }
     
     return self;
@@ -167,10 +169,10 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 #pragma mark Photo List Loading
 
 
-- (void)_setupQuery:(EMTLPhotoQuery *)query
+- (NSDictionary *)_setupQueryArguments:(NSDictionary *)queryArguments forQuery:(EMTLPhotoQuery *)query
 {
     NSLog(@"in _setup query");
-    NSMutableDictionary *newQuery = [NSMutableDictionary dictionaryWithDictionary:query.queryArguments];
+    NSMutableDictionary *newQuery = [NSMutableDictionary dictionaryWithDictionary:queryArguments];
 
     switch (query.queryType) {
         case EMTLPhotoQueryTimeline:
@@ -198,10 +200,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
             break;
     }
     
-    query.queryArguments = newQuery;
-    
-    NSLog(@"new query args:");
-    NSLog([query.queryArguments description]);
+    return newQuery;
 
 }
 
@@ -209,15 +208,44 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 
 - (void) updateQuery:(EMTLPhotoQuery *)query    
 {
-    EMTLFlickrFetchPhotoQueryOperation *operation = [[EMTLFlickrFetchPhotoQueryOperation alloc] initWithPhotoQuery:query photoSource:self];
-    [[EMTLOperationQueue photoQueue] addOperation:operation];
+    if (![_photoListOperations objectForKey:query.photoQueryID])
+    {
+        NSLog(@"starting a new photo list operation");
+        EMTLFlickrFetchPhotoQueryOperation *operation = [[EMTLFlickrFetchPhotoQueryOperation alloc] initWithPhotoQuery:query photoSource:self];
+        [_photoListOperations setObject:operation forKey:query.photoQueryID];
+        [[EMTLOperationQueue photoQueue] addOperation:operation];
+    }
+}
+
+- (void)cancelQuery:(EMTLPhotoQuery *)query
+{
+    EMTLFlickrFetchPhotoQueryOperation *operation = [_photoListOperations objectForKey:query.photoQueryID];
+    if (operation)
+    {
+        [operation cancel];
+        [_photoListOperations removeObjectForKey:query.photoQueryID];
+    }
 }
 
 
-- (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation fetchedPhotos:(NSArray *)photos forQuery:(EMTLPhotoQuery *)query updatedArguments:(NSDictionary *)arguments
+
+- (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation fetchedPhotos:(NSArray *)photos forQuery:(EMTLPhotoQuery *)query
 {
     // Cache the results here.
-    [query photoSource:self fetchedPhotos:photos updatedQuery:arguments];
+    [query photoSource:self fetchedPhotos:photos];
+}
+
+-(void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation finishedFetchingPhotos:(NSArray *)photos forQuery:(EMTLPhotoQuery *)query updatedArguments:(NSDictionary *)arguments
+{
+    if (![_photoListOperations objectForKey:query.photoQueryID])
+    {
+        [_photoListOperations removeObjectForKey:query.photoQueryID];
+    }
+    
+    [query photoSource:self finishedFetchingPhotosWithUpdatedArguments:arguments];
+    
+    
+    
 }
 
 
@@ -239,19 +267,17 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 {
     
     NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
-    NSLog(@"Looking for image with key: %@", cacheKey);
     UIImage *cachedPhoto = [_imageCache objectForKey:cacheKey];
     
     if (cachedPhoto) 
     {
-        NSLog(@"found cached photo for key: %@", cacheKey);
         return cachedPhoto;
     }
     else 
     {
-        if(![_photoOperations objectForKey:cacheKey]) {
+        if(![_imageOperations objectForKey:cacheKey]) {
             EMTLFlickrFetchImageOperation *imageOp = [[EMTLFlickrFetchImageOperation alloc] initWithPhoto:photo size:size photoSource:self];
-            [_photoOperations setObject:imageOp forKey:cacheKey];
+            [_imageOperations setObject:imageOp forKey:cacheKey];
             [[EMTLOperationQueue photoQueue] addOperation:imageOp];
         }
         return nil;
@@ -261,10 +287,10 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 - (void)cancelImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size
 {
     NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
-    EMTLFlickrFetchImageOperation *operation = [_photoOperations objectForKey:cacheKey];
+    EMTLFlickrFetchImageOperation *operation = [_imageOperations objectForKey:cacheKey];
     if (operation) {
         [operation cancel];
-        [_photoOperations removeObjectForKey:cacheKey];
+        [_imageOperations removeObjectForKey:cacheKey];
     }
     
 }
@@ -285,7 +311,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
     NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
     [_imageCache setObject:image forKey:cacheKey];
     [photo photoSource:self didLoadImage:image withSize:size];
-    [_photoOperations removeObjectForKey:cacheKey];
+    [_imageOperations removeObjectForKey:cacheKey];
 }
 
 - (NSString *)_cacheKeyForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size

@@ -34,11 +34,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Tempest/EMTLPhotoListViewController.m"
-         timestampString = "360031116.869104"
+         timestampString = "360117751.915883"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "198"
-         endingLineNumber = "198"
+         startingLineNumber = "234"
+         endingLineNumber = "234"
          landmarkName = "-photo:didRequestImageWithSize:progress:"
          landmarkType = "5">
       </FileBreakpoint>
@@ -47,11 +47,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Tempest/EMTLFlickrFetchPhotoQueryOperation.m"
-         timestampString = "360030488.426353"
+         timestampString = "360114889.233156"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "118"
-         endingLineNumber = "118"
+         startingLineNumber = "123"
+         endingLineNumber = "123"
          landmarkName = "-start"
          landmarkType = "5">
       </FileBreakpoint>

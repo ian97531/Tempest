@@ -13,9 +13,10 @@
 
 @protocol EMTLPhotoQueryDelegate <NSObject>
 
-- (void)photoSource:(EMTLPhotoSource *)source willUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery;
-- (void)photoSource:(EMTLPhotoSource *)source didUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery;
-- (void)photoSource:(EMTLPhotoSource *)source isUpdatingPhotoQuery:(EMTLPhotoQuery *)photoQuery progress:(float)progress;
+- (void)photoQueryWillUpdate:(EMTLPhotoQuery *)query;
+- (void)photoQueryDidUpdate:(EMTLPhotoQuery *)query;
+- (void)photoQueryIsUpdating:(EMTLPhotoQuery *)query progress:(float)progress;
+- (void)photoQueryFinishedUpdating:(EMTLPhotoQuery *)query;
 
 @end
 
@@ -29,6 +30,7 @@
     NSDictionary *_blankQueryArguments;
     __weak id<EMTLPhotoQueryDelegate> _delegate;
     EMTLPhotoSource * _source;
+    BOOL _reloading;
     
     @protected
     NSMutableArray *_photoList; // BSEELY: Not actually sure this has to be mutable. 
@@ -40,10 +42,12 @@
 @property (nonatomic, readonly) NSString *photoQueryID;
 @property (nonatomic, readonly) EMTLPhotoQueryType queryType;
 @property (nonatomic, strong) NSDictionary *queryArguments;
+@property (nonatomic, strong) NSDictionary *blankQueryArguments;
 @property (nonatomic, weak) id<EMTLPhotoQueryDelegate> delegate;
 
 - (id)initWithQueryID:(NSString *)queryID queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments source:(EMTLPhotoSource *)source;
-- (void)photoSource:(EMTLPhotoSource *)source fetchedPhotos:(NSArray *)photos updatedQuery:(NSDictionary *)query;
+- (void)photoSource:(EMTLPhotoSource *)source fetchedPhotos:(NSArray *)photos;
+- (void)photoSource:(EMTLPhotoSource *)source finishedFetchingPhotosWithUpdatedArguments:(NSDictionary *)arguments;
 - (void)photoSourceWillFetchPhotos:(EMTLPhotoSource *)source;
 - (void)photoSource:(EMTLPhotoSource *)source isFetchingPhotosWithProgress:(float)progress;
 - (void)morePhotos;

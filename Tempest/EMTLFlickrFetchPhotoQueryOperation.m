@@ -94,8 +94,13 @@ static double const kSecondsInThreeMonths = 7776500;
         [requestParameters setObject:[[NSNumber numberWithInt:currentPage + 1] stringValue] forKey:@"page"];
     }
     
-    if (!_executing) return;
-    dispatch_sync(dispatch_get_main_queue(), ^{
+   
+    dispatch_sync(dispatch_get_main_queue(), ^{ 
+        if (!_executing)
+        {
+            NSLog(@"aborting photo query operation");
+            return;
+        }
         [_photoSource operation:self willFetchPhotosForQuery:_photoQuery];
     });
     
@@ -118,15 +123,14 @@ static double const kSecondsInThreeMonths = 7776500;
         NSLog(@"we got an error");
     }
     
-    if (!_executing) return;
+    
     NSArray *photos = [self _processPhotos:reply];
     
     
     for (int i=0; i < photos.count; i = i + 5) {
+        if (!_executing) return;
+        
         for (int j=0; j < 5; j++) {
-            
-            if (!_executing) return;
-            
             EMTLPhoto *photo = [photos objectAtIndex:(i + j)];
             EMTLFlickrFetchFavoritesAndCommentsOperation *favOp = [[EMTLFlickrFetchFavoritesAndCommentsOperation alloc] initWithPhoto:photo photoSource:_photoSource];
             [_commentsAndFavorites addOperation:favOp];
@@ -135,16 +139,23 @@ static double const kSecondsInThreeMonths = 7776500;
         [_commentsAndFavorites waitUntilAllOperationsAreFinished];
         
         dispatch_sync(dispatch_get_main_queue(), ^{
-            [_photoSource operation:self fetchedPhotos:[photos subarrayWithRange:NSMakeRange(i, 5)] forQuery:_photoQuery updatedArguments:_query];
+            if (!_executing) 
+            {
+                NSLog(@"aborting photo query operation");
+                return;
+            }
+            [_photoSource operation:self fetchedPhotos:[photos subarrayWithRange:NSMakeRange(i, 5)] forQuery:_photoQuery];
         });
         
 
     }
+    
+    
+    [_photoSource operation:self finishedFetchingPhotos:photos forQuery:_photoQuery updatedArguments:_query];
         
     [self willChangeValueForKey:@"isExecuting"];
     _executing = NO;
     [self didChangeValueForKey:@"isExecuting"];
-    _executing = NO;
     
     [self willChangeValueForKey:@"isFinished"];
     _finished = YES;
@@ -155,11 +166,10 @@ static double const kSecondsInThreeMonths = 7776500;
 
 - (void)cancel
 {
-    
+    NSLog(@"canceling the photo query operation");
     [self willChangeValueForKey:@"isExecuting"];
     _executing = NO;
     [self didChangeValueForKey:@"isExecuting"];
-    _executing = NO;
     
     [self willChangeValueForKey:@"isFinished"];
     _finished = YES;

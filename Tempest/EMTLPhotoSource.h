@@ -54,6 +54,7 @@ extern NSString *const kFavoriteIconURL;
     __weak id<EMTLPhotoSourceAuthorizationDelegate> _authorizationDelegate;
     NSMutableDictionary *_photoQueries;
     
+    
     @protected
     NSMutableDictionary *_imageCache;
     NSString *_serviceName;
@@ -79,6 +80,7 @@ extern NSString *const kFavoriteIconURL;
 - (EMTLPhotoQuery *)photosForUser:(NSString *)user_id;
 - (EMTLPhotoQuery *)addPhotoQueryType:(EMTLPhotoQueryType)queryType withArguments:(NSDictionary *)queryArguments;
 - (void)updateQuery:(EMTLPhotoQuery *)query;
+- (void)cancelQuery:(EMTLPhotoQuery *)query;
 
 // Photo Image Loading
 - (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;

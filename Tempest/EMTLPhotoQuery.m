@@ -14,6 +14,7 @@
 @synthesize queryType = _queryType;
 @synthesize delegate = _delegate;
 @synthesize queryArguments = _queryArguments;
+@synthesize blankQueryArguments = _blankQueryArguments;
 @synthesize photoList = _photoList;
 @synthesize source = _source;
 
@@ -22,37 +23,46 @@
     self = [super init];
     if (self != nil)
     {
-        NSLog(@"query type: %i", queryType);
+        NSLog(@"query type: %@", queryID);
         _photoQueryID = [queryID copy];
         _queryType = queryType;
         _queryArguments = [arguments copy];
         _blankQueryArguments = [arguments copy];
         _source = source;
         _photoList = [NSMutableArray array];
+        _reloading = NO;
     }
     
     return self;
 }
 
-- (void)photoSource:(EMTLPhotoSource *)source fetchedPhotos:(NSArray *)photos updatedQuery:(NSDictionary *)query;
+- (void)photoSource:(EMTLPhotoSource *)source fetchedPhotos:(NSArray *)photos;
 {
-    _queryArguments = query;
-    
+    if (_reloading) {
+        // If we're reloading, we want to dump the existing array of photos.
+        _photoList = [NSMutableArray array];
+        _reloading = NO;
+    }
     // We should be gracefully merging the new photos in here.
     [_photoList addObjectsFromArray:photos];
     
-    [_delegate photoSource:source didUpdatePhotoQuery:self];
-    
+    [_delegate photoQueryDidUpdate:self];
+}
+
+-(void)photoSource:(EMTLPhotoSource *)source finishedFetchingPhotosWithUpdatedArguments:(NSDictionary *)arguments
+{
+    _queryArguments = arguments;
+    [_delegate photoQueryFinishedUpdating:self];
 }
 
 - (void)photoSourceWillFetchPhotos:(EMTLPhotoSource *)source
 {
-    [_delegate photoSource:source willUpdatePhotoQuery:self];
+    [_delegate photoQueryWillUpdate:self];
 }
 
 - (void)photoSource:(EMTLPhotoSource *)source isFetchingPhotosWithProgress:(float)progress
 {
-    [_delegate photoSource:source isUpdatingPhotoQuery:self progress:progress];
+    [_delegate photoQueryIsUpdating:self progress:progress];
 }
 
 - (void)morePhotos
@@ -62,8 +72,10 @@
 
 - (void)reloadPhotos
 {
+    _reloading = YES;
+    [_source cancelQuery:self];
     _queryArguments = [_blankQueryArguments copy];
-    _photoList = [NSArray array];
+    
     [_source updateQuery:self];
 }
 

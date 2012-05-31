@@ -45,13 +45,45 @@
     return self;
 }
 
+
+- (void)reloadQuery
+{
+    [_photoQuery reloadPhotos];
+}
+
+- (void)toggleChromeVisibility
+{
+    
+    BOOL statusBarVisible = ![UIApplication sharedApplication].statusBarHidden;
+    [[UIApplication sharedApplication] setStatusBarHidden:statusBarVisible animated:YES];
+        
+}
+
+
 - (void)loadView
 {
     
     UIView *parent = [[UIView alloc] init];
+    
+    //UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleChromeVisibility)];
+    //[parent addGestureRecognizer:tap];
 
     // Set a background image.
     UIImageView *backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ClothBackground.png"]];
+    
+    
+    _tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 148)];
+
+    UIImageView *headerImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LabelTempest.png"]];
+    headerImage.frame = CGRectMake(10, 30, 300, 113);
+    [_tableHeaderView addSubview:headerImage];
+    
+    UIButton *reloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [reloadButton setImage:[UIImage imageNamed:@"Reload.png"] forState:UIControlStateNormal];
+    reloadButton.frame = CGRectMake(248, 70, 35, 35);
+    reloadButton.layer.opacity = 0.8;
+    [reloadButton addTarget:self action:@selector(reloadQuery) forControlEvents:UIControlEventTouchUpInside];
+    [_tableHeaderView addSubview:reloadButton];
     
     // Get a table ready that fills the screen and is transparent. Give it a header so that the first cell
     // is not occluded by the iOS status bar.
@@ -61,7 +93,7 @@
     self.tableView.dataSource = self;
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.layer.masksToBounds = YES; // TODO BSEELY: does it matter? This can be expensive so if it's not already the default or not needed, we should remove it
-    self.tableView.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 20)];
+    self.tableView.tableHeaderView = _tableHeaderView;
     
     // Put a large progress spinner into the view to appease the user while the first set of
     // EMTLPhotos is loaded.
@@ -120,12 +152,10 @@
     UIImage *image = [photo loadImageWithSize:EMTLImageSizeMediumAspect delegate:self];
     
     if(image) {
-        NSLog(@"setting image for index path %i", indexPath.row);
         [cell setImage:image animated:(photo.imageProgress != 0)];
         photo.imageProgress = 0;
     }
     else {
-        NSLog(@"setting progress for index path %i to %f", indexPath.row, photo.imageProgress);
         cell.imageView.layer.opacity = 0;
         cell.progressBar.layer.opacity = 1;
         cell.progressBar.progress = photo.imageProgress;
@@ -167,20 +197,26 @@
 #pragma mark -
 #pragma mark EMTLPhotoQueryDelegate
 
-- (void)photoSource:(EMTLPhotoSource *)source willUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery
+- (void)photoQueryWillUpdate:(EMTLPhotoQuery *)query
 {
     NSLog(@"will get new photos");
 }
 
-- (void)photoSource:(EMTLPhotoSource *)source didUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery
+
+- (void)photoQueryDidUpdate:(EMTLPhotoQuery *)query
 {
-    NSLog(@"got new photos, %i", photoQuery.photoList.count);
+    NSLog(@"got new photos, %i", query.photoList.count);
     [_tableView reloadData];
 }
 
-- (void)photoSource:(EMTLPhotoSource *)source isUpdatingPhotoQuery:(EMTLPhotoQuery *)photoQuery progress:(float)progress
+- (void)photoQueryIsUpdating:(EMTLPhotoQuery *)query progress:(float)progress
 {
     NSLog(@"New photos are loading");
+}
+
+- (void)photoQueryFinishedUpdating:(EMTLPhotoQuery *)query
+{
+    NSLog(@"Query finished loading");
 }
 
 
@@ -198,7 +234,6 @@
         int photoIndex = [_photoQuery.photoList indexOfObject:photo];
         NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:photoIndex inSection:0]];
         
-        NSLog(@"progress for image with index path: %i", photoIndex);
         [_tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationNone];
     }
     

@@ -11,6 +11,7 @@
 #import "EMTLPhotoQuery.h"
 #import "EMTLPhotoSource.h"
 #import "EMTLPhoto.h"
+#import "EMTLPhotoSource_Private.h"
 
 NSString *const kPhotoUsername = @"user_name";
 NSString *const kPhotoUserID = @"user_id";
@@ -55,7 +56,7 @@ NSString *const kFavoriteIconURL = @"icon_url";
     if (self)
     {
         _photoQueries = [NSMutableDictionary dictionary];
-        _imageCache = [[NSMutableDictionary alloc] init];
+        _imageCache = [NSMutableDictionary dictionary];
     }
     
     return self;
@@ -159,11 +160,27 @@ NSString *const kFavoriteIconURL = @"icon_url";
         [self _addPhotoQuery:query forQueryID:queryID];
         
         // Let subclasses do any setup they need to do
-        [self _setupQuery:query];
+        query.queryArguments = [self _setupQueryArguments:queryArguments forQuery:query];
+        query.blankQueryArguments = [query.queryArguments copy];
         
     }
     
     return query;
+}
+
+- (NSDictionary *)_setupQueryArguments:(NSDictionary *)queryArguments forQuery:(EMTLPhotoQuery *)query
+{
+    // Subclasses override
+}
+
+- (void)updateQuery:(EMTLPhotoQuery *)query
+{
+    // Subclasses override
+}
+
+- (void)cancelQuery:(EMTLPhotoQuery *)query
+{
+    // Subclasses override
 }
 
 
@@ -195,16 +212,9 @@ NSString *const kFavoriteIconURL = @"icon_url";
     // Subclasses override
 }
 
-- (void)updateQuery:(EMTLPhotoQuery *)query
-{
-    // Subclasses override
-}
 
 
-- (void)stopQuery:(EMTLPhotoQuery *)query
-{
-    // Subclasses override
-}
+
 
 
 #pragma mark -

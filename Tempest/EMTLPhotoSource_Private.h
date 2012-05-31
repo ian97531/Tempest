@@ -10,7 +10,7 @@
 
 @interface EMTLPhotoSource ()
 
-- (void)_setupQuery:(EMTLPhotoQuery *)query;
+- (NSDictionary *)_setupQueryArguments:(NSDictionary *)queryArguments forQuery:(EMTLPhotoQuery *)query;
 
 
 @end

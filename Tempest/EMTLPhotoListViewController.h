@@ -15,14 +15,18 @@
     @protected
     EMTLPhotoQuery *_photoQuery;
     UITableView *_tableView;
+    UIView *_tableHeaderView;
 }
 
 - (id)initWithPhotoQuery:(EMTLPhotoQuery *)query;
+- (void)reloadQuery;
+- (void)toggleChromeVisibility;
 
 // EMTLPhotoQueryDelegate
-- (void)photoSource:(EMTLPhotoSource *)source willUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery;
-- (void)photoSource:(EMTLPhotoSource *)source didUpdatePhotoQuery:(EMTLPhotoQuery *)photoQuery;
-- (void)photoSource:(EMTLPhotoSource *)source isUpdatingPhotoQuery:(EMTLPhotoQuery *)photoQuery progress:(float)progress;
+- (void)photoQueryWillUpdate:(EMTLPhotoQuery *)query;
+- (void)photoQueryDidUpdate:(EMTLPhotoQuery *)query;
+- (void)photoQueryIsUpdating:(EMTLPhotoQuery *)query progress:(float)progress;
+- (void)photoQueryFinishedUpdating:(EMTLPhotoQuery *)query;
 
 //EMTLImageDelegate
 - (void)photo:(EMTLPhoto *)photo willRequestImageWithSize:(EMTLImageSize)size;

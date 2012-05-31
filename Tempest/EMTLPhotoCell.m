@@ -194,9 +194,7 @@
 
 - (void)setImage:(UIImage *)image animated:(BOOL)animated
 {
-    NSLog(@"setting image");
     [imageView setImage:image];
-    NSLog(@"set image");
     if(animated) {
         [UIView animateWithDuration:0.3 animations:^(void) {
             imageView.layer.opacity = 1;
