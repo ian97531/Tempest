@@ -60,11 +60,11 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Tempest/EMTLPhotoSource.m"
-         timestampString = "360123282.032202"
+         timestampString = "360185939.11459"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "162"
-         endingLineNumber = "162"
+         startingLineNumber = "276"
+         endingLineNumber = "276"
          landmarkName = "-addPhotoQueryType:withArguments:"
          landmarkType = "5">
       </FileBreakpoint>

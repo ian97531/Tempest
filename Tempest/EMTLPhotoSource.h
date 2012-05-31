@@ -58,8 +58,14 @@ extern NSString *const kFavoriteIconURL;
     __weak id<EMTLPhotoSourceAuthorizationDelegate> _authorizationDelegate;
     NSMutableDictionary *_photoQueries;
     NSCache *_imageCache;
+    
     NSString *_photoListCacheDir;
+    NSMutableDictionary *_photoListCacheDates;
+    
     NSString *_imageCacheDir;
+    NSMutableArray *_imageCacheSortedDates;
+    NSMutableDictionary *_imageCacheFiles;
+    dispatch_queue_t _imageCacheQueue;
     
     @protected
     

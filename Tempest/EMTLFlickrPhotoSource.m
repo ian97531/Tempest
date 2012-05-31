@@ -380,6 +380,12 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 - (NSDictionary *)dictionaryFromResponseData:(NSData *)data
 {
     NSError *error = nil;
+    
+    if (!data)
+    {
+        return [NSDictionary dictionary];
+    }
+    
     NSDictionary *jsonResults = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
     
     if (jsonResults == nil)
