@@ -16,6 +16,7 @@
     EMTLPhotoQuery *_photoQuery;
     UITableView *_tableView;
     UIView *_tableHeaderView;
+    UIButton *_reloadButton;
 }
 
 - (id)initWithPhotoQuery:(EMTLPhotoQuery *)query;

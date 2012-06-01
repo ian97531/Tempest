@@ -10,6 +10,8 @@
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
 
+#import "Math.h"
+
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
@@ -39,7 +41,7 @@
         NSLog(@"Query arguments: %@", [query.queryArguments description]);
         _photoQuery = query;
         _photoQuery.delegate = self;
-        [_photoQuery reloadPhotos];
+        [self reloadQuery];
     }
     
     return self;
@@ -48,6 +50,7 @@
 
 - (void)reloadQuery
 {
+
     [_photoQuery reloadPhotos];
 }
 
@@ -78,12 +81,12 @@
     headerImage.frame = CGRectMake(10, 30, 300, 113);
     [_tableHeaderView addSubview:headerImage];
     
-    UIButton *reloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [reloadButton setImage:[UIImage imageNamed:@"Reload.png"] forState:UIControlStateNormal];
-    reloadButton.frame = CGRectMake(248, 70, 35, 35);
-    reloadButton.layer.opacity = 0.8;
-    [reloadButton addTarget:self action:@selector(reloadQuery) forControlEvents:UIControlEventTouchUpInside];
-    [_tableHeaderView addSubview:reloadButton];
+    _reloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_reloadButton setImage:[UIImage imageNamed:@"Reload.png"] forState:UIControlStateNormal];
+    _reloadButton.frame = CGRectMake(238, 72, 35, 35);
+    _reloadButton.layer.opacity = 0.8;
+    [_reloadButton addTarget:self action:@selector(reloadQuery) forControlEvents:UIControlEventTouchUpInside];
+    [_tableHeaderView addSubview:_reloadButton];
     
     // Get a table ready that fills the screen and is transparent. Give it a header so that the first cell
     // is not occluded by the iOS status bar.
@@ -210,6 +213,7 @@
 - (void)photoQueryFinishedUpdating:(EMTLPhotoQuery *)query
 {
     NSLog(@"Query finished loading");
+
 }
 
 

@@ -282,6 +282,7 @@
 		EB8AA1FB1541F9FB004C6DF8 /* ClothBackground@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "ClothBackground@2x.png"; sourceTree = "<group>"; };
 		EB979CB11578318200104282 /* EMTLCachedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLCachedImage.h; sourceTree = "<group>"; };
 		EB979CB21578318200104282 /* EMTLCachedImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLCachedImage.m; sourceTree = "<group>"; };
+		EB979CB51578542900104282 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		EB9B5E69156568AB008D0CBD /* EMTLPhotoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoSource.h; sourceTree = "<group>"; };
 		EB9B5E6C156568BA008D0CBD /* EMTLPhotoQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoQuery.h; sourceTree = "<group>"; };
 		EB9B5E6D156568BA008D0CBD /* EMTLPhotoQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoQuery.m; sourceTree = "<group>"; };
@@ -340,6 +341,7 @@
 		EB5221E115377A3A00785F97 = {
 			isa = PBXGroup;
 			children = (
+				EB979CB51578542900104282 /* QuartzCore.framework */,
 				EB5221F815377A3A00785F97 /* Tempest */,
 				EB52221415377A3A00785F97 /* TempestTests */,
 				EB5221EF15377A3A00785F97 /* Frameworks */,

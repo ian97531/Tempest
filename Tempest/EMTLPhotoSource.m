@@ -152,9 +152,13 @@ NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
                 [image drawAtPoint:CGPointZero];
                 UIGraphicsEndImageContext();
                 
-                // Save the image to our in-memory cache.
-                [_imageCache setObject:image forKey:imageRef.filename];
-                NSLog(@"Loaded %@ into the in-memory cache", imageRef.filename);
+                // Save the image to our in-memory cache, if we were able to pull it from the disk
+                if (image)
+                {
+                    [_imageCache setObject:image forKey:imageRef.filename];
+                    NSLog(@"Loaded %@ into the in-memory cache", imageRef.filename);
+                }
+                
             
             });
         }
