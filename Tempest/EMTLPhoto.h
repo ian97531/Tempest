@@ -11,6 +11,7 @@
 
 @class EMTLPhotoSource;
 @class EMTLPhoto;
+@class EMTLLocation;
 
 
 @protocol EMTLImageDelegate <NSObject>
@@ -43,7 +44,7 @@
 @property (nonatomic, strong, readonly) NSString *datePostedString;
 @property (nonatomic, strong) NSArray *favorites;
 @property (nonatomic, strong) NSArray *comments;
-@property (nonatomic, strong) NSString *location;
+@property (nonatomic, strong) EMTLLocation *location;
 @property (nonatomic, readonly) BOOL isFavorite;
 @property (nonatomic) float imageProgress;
 

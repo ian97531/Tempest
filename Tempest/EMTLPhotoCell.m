@@ -116,7 +116,7 @@
     
     [super setFrame:frame];
     
-    CGRect cardRect = CGRectMake(cardView.frame.origin.x, cardView.frame.origin.y, cardView.frame.size.width, frame.size.height - 45);
+    CGRect cardRect = CGRectMake(cardView.frame.origin.x, cardView.frame.origin.y, cardView.frame.size.width, frame.size.height - 20);
     cardView.frame = cardRect;
     cardImageView.frame = cardRect;
     

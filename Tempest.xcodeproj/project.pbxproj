@@ -117,6 +117,7 @@
 		EB8AA1FE1541F9FB004C6DF8 /* ClothBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA1FA1541F9FA004C6DF8 /* ClothBackground.png */; };
 		EB8AA1FF1541F9FB004C6DF8 /* ClothBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA1FB1541F9FB004C6DF8 /* ClothBackground@2x.png */; };
 		EB979CB31578318200104282 /* EMTLCachedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = EB979CB21578318200104282 /* EMTLCachedImage.m */; };
+		EB979CB915796A2000104282 /* EMTLLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB979CB815796A1F00104282 /* EMTLLocation.m */; };
 		EB9B5E6E156568BA008D0CBD /* EMTLPhotoQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = EB9B5E6D156568BA008D0CBD /* EMTLPhotoQuery.m */; };
 		EB9B5E71156568C6008D0CBD /* EMTLPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = EB9B5E70156568C6008D0CBD /* EMTLPhoto.m */; };
 		EB9B5E7815656B1C008D0CBD /* EMTLFlickrPhotoSource.m in Sources */ = {isa = PBXBuildFile; fileRef = EB9B5E7715656B1C008D0CBD /* EMTLFlickrPhotoSource.m */; };
@@ -283,6 +284,8 @@
 		EB979CB11578318200104282 /* EMTLCachedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLCachedImage.h; sourceTree = "<group>"; };
 		EB979CB21578318200104282 /* EMTLCachedImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLCachedImage.m; sourceTree = "<group>"; };
 		EB979CB51578542900104282 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		EB979CB715796A1F00104282 /* EMTLLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLLocation.h; sourceTree = "<group>"; };
+		EB979CB815796A1F00104282 /* EMTLLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLLocation.m; sourceTree = "<group>"; };
 		EB9B5E69156568AB008D0CBD /* EMTLPhotoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoSource.h; sourceTree = "<group>"; };
 		EB9B5E6C156568BA008D0CBD /* EMTLPhotoQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoQuery.h; sourceTree = "<group>"; };
 		EB9B5E6D156568BA008D0CBD /* EMTLPhotoQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoQuery.m; sourceTree = "<group>"; };
@@ -607,6 +610,8 @@
 				EB9B5E6D156568BA008D0CBD /* EMTLPhotoQuery.m */,
 				EB9B5E6F156568C6008D0CBD /* EMTLPhoto.h */,
 				EB9B5E70156568C6008D0CBD /* EMTLPhoto.m */,
+				EB979CB715796A1F00104282 /* EMTLLocation.h */,
+				EB979CB815796A1F00104282 /* EMTLLocation.m */,
 				EB9B5E7515656AC1008D0CBD /* Flickr */,
 			);
 			name = PhotoSources;
@@ -841,6 +846,7 @@
 				EBBC51F8156D640100348F34 /* EMTLPhotoSource.m in Sources */,
 				EBBC51FC156DA17100348F34 /* EMTLFlickrFetchFavoritesAndCommentsOperation.m in Sources */,
 				EB979CB31578318200104282 /* EMTLCachedImage.m in Sources */,
+				EB979CB915796A2000104282 /* EMTLLocation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

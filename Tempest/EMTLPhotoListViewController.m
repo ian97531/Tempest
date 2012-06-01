@@ -9,6 +9,7 @@
 #import "EMTLPhotoListViewController.h"
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
+#import "EMTLLocation.h"
 
 #import "Math.h"
 
@@ -152,7 +153,11 @@
     cell.ownerLabel.text = photo.username;
     cell.dateLabel.text = [photo datePostedString];
     [cell setFavoritesString:[NSString stringWithFormat:@"%i Favorites", photo.favorites.count]];
-    [cell setCommentsString:photo.location]; //[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
+    
+    if(photo.location) {
+        [cell setCommentsString:photo.location.name]; //[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
+    }
+    
     
     
     //NSLog(@"getting image for index path %i", indexPath.row);

@@ -11,6 +11,7 @@
 #import "EMTLFlickrPhotoSource.h"
 #import "EMTLPhotoQuery.h"
 #import "EMTLPhoto.h"
+#import "EMTLLocation.h"
 #import "APISecrets.h"
 
 static double const kSecondsInThreeMonths = 7776500;
@@ -267,7 +268,8 @@ static int const kPhotosToLoad = 50;
         NSString *woe_id = [photoDict objectForKey:@"woeid"];
         if(woe_id)
         {
-            photo.location = woe_id;
+            photo.location = [[EMTLLocation alloc] init];
+            photo.location.woe_id = woe_id;
         }
         
         [photos addObject:photo];
