@@ -14,11 +14,14 @@
 #import "APISecrets.h"
 
 static double const kSecondsInThreeMonths = 7776500;
+static int const kPhotosToLoad = 50;
 
 @interface EMTLFlickrFetchPhotoQueryOperation ()
 
-- (NSArray *)_processPhotos:(NSData *)incomingData;
-- (NSDictionary *)_updateQueryArguments;
+- (int)pagesOfResults:(NSDictionary *)dictionary;
+- (NSArray *)_extractPhotos:(NSDictionary *)dictionary;
+- (NSDictionary *)_updateQueryArguments:(NSDictionary *)queryArguments;
+
 
 @end
 
@@ -38,7 +41,8 @@ static double const kSecondsInThreeMonths = 7776500;
         _photoSource = photoSource;
         _executing = NO;
         _finished = NO;
-
+        _query = [self _updateQueryArguments:photoQuery.queryArguments];
+        
         _commentsAndFavorites = [[NSOperationQueue alloc] init];
         [_commentsAndFavorites setMaxConcurrentOperationCount:5];
         [_commentsAndFavorites setSuspended:NO];
@@ -60,7 +64,7 @@ static double const kSecondsInThreeMonths = 7776500;
     _executing = YES;
     [self didChangeValueForKey:@"isExecuting"];
     
-    _query = [self _updateQueryArguments];
+    
     
     NSMutableDictionary *queryArguments = [NSMutableDictionary dictionaryWithDictionary:_query];
     
@@ -68,7 +72,7 @@ static double const kSecondsInThreeMonths = 7776500;
     NSMutableDictionary *requestParameters = [NSMutableDictionary dictionaryWithCapacity:8];
     
     [requestParameters setObject:kFlickrAPIKey forKey:kFlickrAPIArgumentAPIKey];
-    [requestParameters setObject:@"100" forKey:kFlickrAPIArgumentItemsPerPage];
+    [requestParameters setObject:[[NSNumber numberWithInt:kPhotosToLoad] stringValue] forKey:kFlickrAPIArgumentItemsPerPage];
     [requestParameters setObject:@"all" forKey:kFlickrAPIArgumentContacts];
     [requestParameters setObject:@"date_upload,owner_name,o_dims,last_update" forKey:kFlickrAPIArgumentExtras];
     [requestParameters setObject:@"date-posted-desc" forKey:kFlickrAPIArgumentSort];
@@ -94,7 +98,8 @@ static double const kSecondsInThreeMonths = 7776500;
         [requestParameters setObject:[[NSNumber numberWithInt:currentPage + 1] stringValue] forKey:@"page"];
     }
     
-   
+    // Let the photo source know that we're about to begin. We do this on the main thread in case
+    // this causes a UI update.
     dispatch_sync(dispatch_get_main_queue(), ^{ 
         if (!_executing)
         {
@@ -104,36 +109,43 @@ static double const kSecondsInThreeMonths = 7776500;
         [_photoSource operation:self willFetchPhotosForQuery:_photoQuery];
     });
     
-    
+    // Construct the request to Flickr
     OAMutableURLRequest *request = [_photoSource oaurlRequestForMethod:[queryArguments objectForKey:kFlickrQueryMethod] arguments:requestParameters];
     request.timeoutInterval = 10;
     
     NSLog(@"%@", [[request URL] absoluteString]);
     
-    
+    // Send the request for the photos synchronously.
     NSError *error = nil;
     NSURLResponse *response = nil;
     NSData *reply = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
     
-    if (response) {
-        NSLog(@"we got a response");
-    }
-    
     if (error) {
-        NSLog(@"we got an error");
+        NSLog(@"we got an error requesting the photo list");
+        NSLog(@"error: %@", error.localizedDescription);
     }
     
     
-    NSArray *photos = [self _processPhotos:reply];
+    NSDictionary *responseDictionary = [_photoSource dictionaryFromResponseData:reply];
     
+    // Make sure the query reflects the correct number of remaining results.
+    [_query setValue:[NSNumber numberWithInt:[self pagesOfResults:responseDictionary]] forKey:kFlickrQueryTotalPages];
     
+    // Get the photos
+    NSArray *photos = [self _extractPhotos:responseDictionary];
+    
+    // For each photo we need to gather the comments and favorites. We do this in clumps of 5
+    // photos at a time and stream the results back to the photosource.
     for (int i=0; i < photos.count; i = i + 5) {
         if (!_executing) return;
         
         for (int j=0; j < 5; j++) {
-            EMTLPhoto *photo = [photos objectAtIndex:(i + j)];
-            EMTLFlickrFetchFavoritesAndCommentsOperation *favOp = [[EMTLFlickrFetchFavoritesAndCommentsOperation alloc] initWithPhoto:photo photoSource:_photoSource];
-            [_commentsAndFavorites addOperation:favOp];
+            if ( i + j < photos.count)
+            {
+                EMTLPhoto *photo = [photos objectAtIndex:(i + j)];
+                EMTLFlickrFetchFavoritesAndCommentsOperation *favOp = [[EMTLFlickrFetchFavoritesAndCommentsOperation alloc] initWithPhoto:photo photoSource:_photoSource];
+                [_commentsAndFavorites addOperation:favOp];
+            }
         }
         
         [_commentsAndFavorites waitUntilAllOperationsAreFinished];
@@ -144,13 +156,20 @@ static double const kSecondsInThreeMonths = 7776500;
                 NSLog(@"aborting photo query operation");
                 return;
             }
-            [_photoSource operation:self fetchedPhotos:[photos subarrayWithRange:NSMakeRange(i, 5)] forQuery:_photoQuery];
+            
+            // Make sure the range we specifiy doesn't exceed the size of the photos array.
+            // This comes into play when we're sending the last set of photos back to the photosource.
+            int rangeSize = photos.count - i >= 5 ? 5 : photos.count - i;
+            
+            // Send this set of 5 photos back to the photosource, make sure this happens on the main thread in case this causes UI updates.
+            [_photoSource operation:self fetchedPhotos:[photos subarrayWithRange:NSMakeRange(i, rangeSize)] totalPhotos:photos.count forQuery:_photoQuery];
         });
         
 
     }
     
-    
+    // Let the photo source know that we've sent all of our photos. Send along the updated query as well that reflects how
+    // we got these photos.
     [_photoSource operation:self finishedFetchingPhotos:photos forQuery:_photoQuery updatedArguments:_query];
         
     [self willChangeValueForKey:@"isExecuting"];
@@ -192,10 +211,14 @@ static double const kSecondsInThreeMonths = 7776500;
 }
 
 
-- (NSArray *)_processPhotos:(NSData *)incomingData
+- (int)pagesOfResults:(NSDictionary *)dictionary
 {
-    NSDictionary *newPhotos = [_photoSource dictionaryFromResponseData:incomingData];
-    //NSLog([newPhotos description]);
+    return [[[dictionary objectForKey:@"photos"] objectForKey:@"pages"] intValue];
+}
+
+
+- (NSArray *)_extractPhotos:(NSDictionary *)newPhotos
+{
     
     if (!newPhotos) {
         NSLog(@"There was an error interpreting the json response from the request for more photos from %@", _photoSource.serviceName);
@@ -247,12 +270,12 @@ static double const kSecondsInThreeMonths = 7776500;
 }
 
 
-- (NSDictionary *)_updateQueryArguments
+- (NSDictionary *)_updateQueryArguments:(NSDictionary *)queryArguments
 {
     
-    NSMutableDictionary *newQuery = [NSMutableDictionary dictionaryWithDictionary:_photoQuery.queryArguments];
+    NSMutableDictionary *newQuery = [NSMutableDictionary dictionaryWithDictionary:queryArguments];
     NSLog(@"in _updateQueryArguments");
-    NSLog([newQuery description]);
+    NSLog(@"Old Query: %@", [newQuery description]);
     
     int minYear = 0;
     int minMonth = 0;
@@ -292,13 +315,19 @@ static double const kSecondsInThreeMonths = 7776500;
         minYear = [[newQuery objectForKey:kFlickrQueryMinYear] intValue];
         minMonth = [[newQuery objectForKey:kFlickrQueryMinMonth] intValue];
         minDay = [[newQuery objectForKey:kFlickrQueryMinDay] intValue];
-        maxYear = maxYear;
-        maxMonth = maxMonth;
-        maxDay = maxDay;
+        
+        maxYear = [[newQuery objectForKey:kFlickrQueryMaxYear] intValue];
+        maxMonth = [[newQuery objectForKey:kFlickrQueryMaxMonth] intValue];
+        maxDay = [[newQuery objectForKey:kFlickrQueryMaxDay] intValue];
         
         
         // If we've run out of pages, we need to set a new date range to search and reset the page numbering.
-        if (currentPage >= totalPages) {
+        if (totalPages && currentPage + 1 >= totalPages) {
+            
+            maxYear = minYear;
+            maxMonth = minMonth;
+            maxDay = minDay;
+            
             NSLog(@"Next search will change the date range.");            
             if ((minMonth - 3) < 1)
             {
@@ -312,6 +341,7 @@ static double const kSecondsInThreeMonths = 7776500;
             
             totalPages = 0;
             currentPage = 0;
+            
             
         }
         

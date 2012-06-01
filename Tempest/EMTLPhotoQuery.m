@@ -17,6 +17,7 @@
 @synthesize blankQueryArguments = _blankQueryArguments;
 @synthesize photoList = _photoList;
 @synthesize source = _source;
+@synthesize totalPhotos = _totalPhotos;
 
 - (id)initWithQueryID:(NSString *)queryID queryType:(EMTLPhotoQueryType)queryType arguments:(NSDictionary *)arguments source:(EMTLPhotoSource *)source cachedPhotos:(NSArray *)photos
 {
@@ -30,6 +31,9 @@
         _blankQueryArguments = [arguments copy];
         _source = source;
         _reloading = NO;
+        _totalPhotos = 0;
+        _numPhotosExpected = 0;
+        _numPhotosReceived = 0;
         
         if (photos) {
             NSLog(@"Got cached photos in the photo query");
@@ -45,13 +49,17 @@
     return self;
 }
 
-- (void)photoSource:(EMTLPhotoSource *)source fetchedPhotos:(NSArray *)photos;
+- (void)photoSource:(EMTLPhotoSource *)source fetchedPhotos:(NSArray *)photos totalPhotos:(int)total;
 {
     if (_reloading) {
         // If we're reloading, we want to dump the existing array of photos.
         _photoList = [NSMutableArray array];
         _reloading = NO;
     }
+    
+    _numPhotosExpected = total;
+    _numPhotosReceived += photos.count;
+    
     // We should be gracefully merging the new photos in here.
     [_photoList addObjectsFromArray:photos];
     
@@ -60,7 +68,11 @@
 
 -(void)photoSource:(EMTLPhotoSource *)source finishedFetchingPhotosWithUpdatedArguments:(NSDictionary *)arguments
 {
+    NSLog(@"New Query: %@", [arguments description]);
+
     _queryArguments = arguments;
+    _numPhotosExpected = 0;
+    _numPhotosReceived = 0;
     [_delegate photoQueryFinishedUpdating:self];
 }
 
@@ -83,6 +95,8 @@
 {
     _reloading = YES;
     [_source cancelQuery:self];
+    _numPhotosExpected = 0;
+    _numPhotosReceived = 0;
     _queryArguments = [_blankQueryArguments copy];
     
     [_source updateQuery:self];
@@ -92,6 +106,11 @@
 {
     NSArray *photoList = [_photoList copy];
     return photoList;
+}
+
+- (int)totalPhotos
+{
+    return _photoList.count + (_numPhotosExpected - _numPhotosReceived);
 }
 
 @end

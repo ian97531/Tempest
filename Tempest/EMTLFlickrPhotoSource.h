@@ -63,7 +63,7 @@ extern NSString *const kFlickrDefaultIconURLString;
 - (BOOL)isResponseOK:(NSDictionary *)responseDictionary;
 
 // Callbacks for EMTLFlickrFetchPhotoQueryOperation
-- (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation fetchedPhotos:(NSArray *)photos forQuery:(EMTLPhotoQuery *)query;
+- (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation fetchedPhotos:(NSArray *)photos totalPhotos:(int)total forQuery:(EMTLPhotoQuery *)query;
 - (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation finishedFetchingPhotos:(NSArray *)photos forQuery:(EMTLPhotoQuery *)query updatedArguments:(NSDictionary *)arguments;
 - (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation willFetchPhotosForQuery:(EMTLPhotoQuery *)query;
 - (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation isFetchingPhotosForQuery:(EMTLPhotoQuery *)query WithProgress:(float)progress;

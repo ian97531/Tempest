@@ -36,7 +36,7 @@
     if (self != nil)
     {
         NSLog(@"in view controller");
-        NSLog([query.queryArguments description]);
+        NSLog(@"Query arguments: %@", [query.queryArguments description]);
         _photoQuery = query;
         _photoQuery.delegate = self;
         [_photoQuery reloadPhotos];
@@ -55,7 +55,7 @@
 {
     
     BOOL statusBarVisible = ![UIApplication sharedApplication].statusBarHidden;
-    [[UIApplication sharedApplication] setStatusBarHidden:statusBarVisible animated:YES];
+    [[UIApplication sharedApplication] setStatusBarHidden:statusBarVisible withAnimation:UIStatusBarAnimationSlide];
         
 }
 
@@ -142,6 +142,10 @@
     
     EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:indexPath.row];
     
+    if (indexPath.row + 15 > _photoQuery.totalPhotos) {
+        [_photoQuery morePhotos];
+    }
+    
     cell.ownerLabel.text = photo.username;
     cell.dateLabel.text = [photo datePostedString];
     [cell setFavoritesString:[NSString stringWithFormat:@"%i Favorites", photo.favorites.count]];
@@ -181,18 +185,7 @@
     
 }
 
-#pragma mark -
-#pragma mark UIScrollViewDelegate
 
-- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
-{
-    
-}
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
-{
-    
-}
 
 #pragma mark -
 #pragma mark EMTLPhotoQueryDelegate
@@ -249,6 +242,17 @@
         
         [_tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationNone];
     }
+}
+
+
+#pragma mark -
+#pragma mark Memory Management
+
+- (void)didReceiveMemoryWarning
+{
+    NSLog(@"--------");
+    NSLog(@"-------- RECIEVED MEMORY WARNING --------");
+    NSLog(@"--------");
 }
 
 

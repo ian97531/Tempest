@@ -40,6 +40,9 @@ extern NSString *const kFavoriteUsername;
 extern NSString *const kFavoriteUserID;
 extern NSString *const kFavoriteIconURL;
 
+extern int const kImageCacheCapacity;
+extern NSString *const kImageCacheFilesDatesDict;
+
 @protocol EMTLImageDelegate;
 @class EMTLPhotoSource;
 @class EMTLPhotoQuery;
@@ -63,9 +66,9 @@ extern NSString *const kFavoriteIconURL;
     NSMutableDictionary *_photoListCacheDates;
     
     NSString *_imageCacheDir;
-    NSMutableArray *_imageCacheSortedDates;
-    NSMutableDictionary *_imageCacheFiles;
+    NSMutableArray *_imageCacheSortedRefs;
     dispatch_queue_t _imageCacheQueue;
+    NSString *_imageCacheIndexPath;
     
     @protected
     

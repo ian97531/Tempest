@@ -12,6 +12,7 @@
 #import "EMTLPhotoSource.h"
 #import "EMTLPhoto.h"
 #import "EMTLPhotoSource_Private.h"
+#import "EMTLCachedImage.h"
 
 NSString *const kPhotoObject = @"photo_object";
 
@@ -37,6 +38,9 @@ NSString *const kFavoriteDate = @"favorite_date";
 NSString *const kFavoriteUsername = @"user_name";
 NSString *const kFavoriteUserID = @"user_id";
 NSString *const kFavoriteIconURL = @"icon_url";
+
+int const kImageCacheCapacity = 100;
+NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
 
 @interface EMTLPhotoSource ()
 - (NSString *)_photoQueryIDFromQueryType:(EMTLPhotoQueryType)queryType andArguments:(NSDictionary *)arguments; // Assumes that argument keys and values are strings
@@ -117,75 +121,47 @@ NSString *const kFavoriteIconURL = @"icon_url";
     
     // Create our queue for background disk image cache operations.
     _imageCacheQueue = dispatch_queue_create("com.Elemental.ImageCacheQueue", DISPATCH_QUEUE_SERIAL);
-        
-    NSFileManager *fileManager = [NSFileManager defaultManager];
     
-    // Grab the an enumerator to list the contents of the image cache directory.
-    NSError *error = nil;
-    NSURL *imageCacheURL = [NSURL fileURLWithPath:_imageCacheDir isDirectory:YES];
-    NSArray *fileProperties = [NSArray arrayWithObjects:NSURLNameKey, NSURLCreationDateKey, nil];
-    NSDirectoryEnumerator *imageEnumerator = [fileManager enumeratorAtURL:imageCacheURL 
-                                               includingPropertiesForKeys:fileProperties 
-                                                                  options:nil
-                                                             errorHandler:^(NSURL *url, NSError *error) {
-                                                                 NSLog(@"An error occurred while enumerating over %@.", [url absoluteString]);
-                                                                 NSLog(@"Error: %@", [error localizedDescription]);
-                                                                 return YES;
-                                                             }];
-    
-    _imageCacheFiles = [NSMutableDictionary dictionary];
-    
-    NSLog(@"Reading the contents of the image cache directory");
-    // Save the creation dates for each file in the image cache directory
-    for (NSURL *fileURL in imageEnumerator) {
-        
-        NSDate *creationDate;
-        [fileURL getResourceValue:&creationDate forKey:NSURLCreationDateKey error:nil];
-        
-        [_imageCacheFiles setObject:fileURL forKey:creationDate];
-    }
+    _imageCacheIndexPath = [NSString stringWithFormat:@"%@/%@", _imageCacheDir, kImageCacheFilesDatesDict];
+    _imageCacheSortedRefs = [NSKeyedUnarchiver unarchiveObjectWithFile:_imageCacheIndexPath];
     
     
     // If we retrieved any files, process them
-    if([_imageCacheFiles count]) {
+    if(_imageCacheSortedRefs) {
         
-        NSLog(@"We have files in the disk image cache!");
-        // Find the newest image in the cache, save that as the newest date in _imageCacheDate
-        _imageCacheSortedDates = [[_imageCacheFiles allKeys] mutableCopy];
+        NSLog(@"We have %i files in the disk image cache!", _imageCacheSortedRefs.count);
                                    
-        [_imageCacheSortedDates sortUsingComparator:^(NSDate *date1, NSDate *date2) {
-            return [date1 compare:date2];
+        [_imageCacheSortedRefs sortUsingComparator:^(EMTLCachedImage *image1, EMTLCachedImage *image2) {
+            // Sort the list in descending order by the date posted.
+            return [image2.datePosted compare:image1.datePosted];
         }];
-        
-        
+                
         // Start loading the images into the in-memory cache in the background in descending date order.
         // We queue each iteration separately in a serial queue so that the imageFromCacheWithSize:forPhoto:
         // method can squeeze some blocks in to pull out photos while we're still populating the in-memory cache.
         
 
-        for (NSDate *fileDate in _imageCacheSortedDates) {
+        for (EMTLCachedImage *imageRef in _imageCacheSortedRefs) {
             dispatch_async(_imageCacheQueue, ^{
-                
-                NSURL *fileURL = [_imageCacheFiles objectForKey:fileDate];
                 
                 // Force CG to draw the image so the JPEG is already decompressed by the time
                 // our view controller gets its hand on this. This helps to avoid a stutter
                 // when displaying the image on-screen for the first time.
-                UIImage *image = [UIImage imageWithContentsOfFile:[fileURL path]];
+                UIImage *image = [UIImage imageWithContentsOfFile:imageRef.path];
                 UIGraphicsBeginImageContext(CGSizeMake(image.size.width, image.size.height));
                 [image drawAtPoint:CGPointZero];
                 UIGraphicsEndImageContext();
                 
                 // Save the image to our in-memory cache.
-                [_imageCache setObject:image forKey:[[fileURL pathComponents] lastObject]];
-                NSLog(@"Loaded %@ into the in-memory cache", [[fileURL pathComponents] lastObject]);
+                [_imageCache setObject:image forKey:imageRef.filename];
+                NSLog(@"Loaded %@ into the in-memory cache", imageRef.filename);
             
             });
         }
     }
     else {
         NSLog(@"Found no files in the disk image cache");
-        _imageCacheSortedDates = [NSMutableArray array];
+        _imageCacheSortedRefs = [NSMutableArray array];
     }
     
     
@@ -322,8 +298,8 @@ NSString *const kFavoriteIconURL = @"icon_url";
 #pragma mark Caching Stuff
 - (void)cachePhotoList:(NSArray *)photos forQueryID:(NSString *)queryID
 {
-    // If photo list caching is disabled, bail.
-    if (!_photoListCacheDir) return;
+    // If photo list caching is disabled or the photolist is emtpy, bail.
+    if (!_photoListCacheDir || photos.count == 0) return;
     
     // Grab the date of the first photo in the list, and the date of the first photo in the cached list
     NSDate *dateOfFirstPhoto = [[photos objectAtIndex:0] datePosted];
@@ -362,6 +338,7 @@ NSString *const kFavoriteIconURL = @"icon_url";
     
     if (photoList) {
         NSLog(@"Found photo list in cache for queryID: %@", queryID);
+        NSLog(@"First photo id is: %@", [[photoList objectAtIndex:0] photoID]);
         for (EMTLPhoto *photo in photoList) {
             photo.source = self;
         }
@@ -381,7 +358,7 @@ NSString *const kFavoriteIconURL = @"icon_url";
         
         // If this image is newer than the last image in our disk cache, or there are fewer
         // than 100 objects in our disk cache, then add this to the cache.
-        if (_imageCacheSortedDates.count <= 100 || [photo.datePosted compare:[_imageCacheSortedDates lastObject]]) {
+        if (_imageCacheSortedRefs.count < kImageCacheCapacity || [photo.datePosted compare:[[_imageCacheSortedRefs lastObject] datePosted]] == NSOrderedDescending) {
             
             NSLog(@"Saving image %@ into the on-disk cache", cacheKey);
             // Write the image into the correct location in the image cache.
@@ -390,15 +367,56 @@ NSString *const kFavoriteIconURL = @"icon_url";
             NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
             [imageData writeToFile:cachedImagePath atomically:YES];
             
-            // Save the URL into our cached files dictionary
-            // Save the date into our sorted date array
-            [_imageCacheFiles setObject:imageURL forKey:photo.datePosted];
-            [_imageCacheSortedDates addObject:photo.datePosted];
+            // Create a cached image object to store the data.
+            EMTLCachedImage *cachedImageRef = [[EMTLCachedImage alloc] initWithDate:photo.datePosted url:imageURL];
             
-            [_imageCacheSortedDates sortUsingComparator:^(NSDate *date1, NSDate *date2) {
-                return [date1 compare:date2];
+            [_imageCacheSortedRefs addObject:cachedImageRef];
+            
+            [_imageCacheSortedRefs sortUsingComparator:^(EMTLCachedImage *image1, EMTLCachedImage *image2) {
+                // Sort the list in descending order by the date posted.
+                return [image2.datePosted compare:image1.datePosted];
             }];
             
+            
+            // If we've exceeded 100 items in the disk cache, we want to dump the oldest.
+            if(_imageCacheSortedRefs.count > kImageCacheCapacity) {
+                
+                // Find the oldest image
+                EMTLCachedImage *oldestCachedImageRef = [_imageCacheSortedRefs lastObject];
+                NSFileManager *fileManger = [NSFileManager defaultManager];
+                NSError *error;
+                
+                NSLog(@"reaping a file from the on-disk image cache. %@ for date %@", oldestCachedImageRef.filename, oldestCachedImageRef.datePosted);
+                
+                // Remove the file
+                [fileManger removeItemAtURL:oldestCachedImageRef.urlToImage error:&error];
+                
+                // Do not delete the records of the file unless it was actaully deleted,
+                // otherwise the file will be leaked.
+                if(error)
+                {
+                    NSLog(@"Unable to remove oldest cached file: %@", oldestCachedImageRef.filename);
+                    NSLog(@"Error message: %@", [error localizedDescription]);
+                }
+                
+                // If the file was successfully deleted, we want to remove the records of the file
+                // from our data structures.
+                else {
+                    [_imageCacheSortedRefs removeObject:oldestCachedImageRef];
+                }
+            
+            }
+            
+            // Record the new dates and files dictionary.
+            // Maybe we could find a better place to write this?
+            if(![NSKeyedArchiver archiveRootObject:_imageCacheSortedRefs toFile:_imageCacheIndexPath])
+            {
+                NSLog(@"Unable to write the image cache dictionary to the disk at path: %@", _imageCacheIndexPath);
+            }
+            
+        }
+        else {
+            NSLog(@"Skipping caching %@ because it's too old.", cacheKey);
         }
         
     });
@@ -412,9 +430,6 @@ NSString *const kFavoriteIconURL = @"icon_url";
     if (image) {
         NSLog(@"got image for %@ from cache", cacheKey);
     }   
-    else {
-        NSLog(@"did not get image for %@ from cache", cacheKey);
-    }
     
     return image;
 }

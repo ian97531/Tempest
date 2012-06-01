@@ -229,10 +229,10 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 
 
 
-- (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation fetchedPhotos:(NSArray *)photos forQuery:(EMTLPhotoQuery *)query
+- (void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation fetchedPhotos:(NSArray *)photos totalPhotos:(int)total forQuery:(EMTLPhotoQuery *)query
 {
     // Cache the results here.
-    [query photoSource:self fetchedPhotos:photos];
+    [query photoSource:self fetchedPhotos:photos totalPhotos:total];
 }
 
 -(void)operation:(EMTLFlickrFetchPhotoQueryOperation *)operation finishedFetchingPhotos:(NSArray *)photos forQuery:(EMTLPhotoQuery *)query updatedArguments:(NSDictionary *)arguments
