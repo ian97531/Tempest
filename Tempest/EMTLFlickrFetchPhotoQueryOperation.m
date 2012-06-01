@@ -74,7 +74,7 @@ static int const kPhotosToLoad = 50;
     [requestParameters setObject:kFlickrAPIKey forKey:kFlickrAPIArgumentAPIKey];
     [requestParameters setObject:[[NSNumber numberWithInt:kPhotosToLoad] stringValue] forKey:kFlickrAPIArgumentItemsPerPage];
     [requestParameters setObject:@"all" forKey:kFlickrAPIArgumentContacts];
-    [requestParameters setObject:@"date_upload,owner_name,o_dims,last_update" forKey:kFlickrAPIArgumentExtras];
+    [requestParameters setObject:@"date_upload,owner_name,o_dims,last_update,description,license,geo,tags" forKey:kFlickrAPIArgumentExtras];
     [requestParameters setObject:@"date-posted-desc" forKey:kFlickrAPIArgumentSort];
     
     [requestParameters setObject:[NSString stringWithFormat:@"%04i-%02i-%02i", 
@@ -263,6 +263,13 @@ static int const kPhotosToLoad = 50;
         
         EMTLPhoto *photo = [[EMTLPhoto alloc] initWithDict:photoDict];
         photo.source = _photoSource;
+        
+        NSString *woe_id = [photoDict objectForKey:@"woeid"];
+        if(woe_id)
+        {
+            photo.location = woe_id;
+        }
+        
         [photos addObject:photo];
     }
     

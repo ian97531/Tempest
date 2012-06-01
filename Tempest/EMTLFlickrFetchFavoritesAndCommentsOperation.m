@@ -54,6 +54,11 @@
     
     _photo.comments = _comments;
     _photo.favorites = _favorites;
+
+    if (_photo.location) {
+        [self _startLocationRequest];
+        _photo.location = _location;
+    }
     
     [self willChangeValueForKey:@"isExecuting"];
     _executing = NO;
@@ -148,6 +153,26 @@
     
 }
 
+- (void)_startLocationRequest
+{
+    // Fetch the comments
+    NSMutableDictionary *locationArgs = [NSMutableDictionary dictionaryWithCapacity:4];
+    
+    [locationArgs setObject:kFlickrAPIKey 
+                     forKey:kFlickrAPIArgumentAPIKey];
+    
+    [locationArgs setObject:_photo.location
+                     forKey:kFlickrAPIArgumentLocation];
+    
+    OAMutableURLRequest *locationRequest = [_photoSource oaurlRequestForMethod:kFlickrAPIMethodPhotoLocation arguments:locationArgs];
+    
+    NSURLResponse *response = nil;
+    NSError *error = nil;
+    NSData *locationData = [NSURLConnection sendSynchronousRequest:locationRequest returningResponse:&response error:&error];
+    
+    _location = [self _processLocation:locationData];
+}
+
 
 - (NSArray *)_processFavorites:(NSData *)favoritesData
 {
@@ -240,8 +265,22 @@
         }
         return comments;
     }
+}
 
-
+- (NSString *)_processLocation:(NSData *)locationData
+{
+    NSDictionary *locationDict = [_photoSource dictionaryFromResponseData:locationData];
+    
+    if(!locationDict) {
+        NSLog(@"There was an error interpreting the json response for comments from %@", _photoSource.serviceName);
+        return nil;
+    }
+    
+    else {
+        return [[locationDict objectForKey:@"place"] objectForKey:@"name"];
+    }
+    
+    
 }
 
 

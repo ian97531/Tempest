@@ -18,6 +18,7 @@
     int _favoritesCurrentPage;
     NSMutableArray *_favorites;
     NSMutableArray *_comments;
+    NSString *_location;
 
     BOOL _executing;
     BOOL _finished;

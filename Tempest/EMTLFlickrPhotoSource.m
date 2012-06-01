@@ -35,6 +35,7 @@ NSString *const kFlickrAPIMethodFavoritePhotos = @"flickr.favorites.getList";
 NSString *const kFlickrAPIMethodUserPhotos = @"flickr.people.getPhotos";
 NSString *const kFlickrAPIMethodPhotoFavorites = @"flickr.photos.getFavorites";
 NSString *const kFlickrAPIMethodPhotoComments = @"flickr.photos.comments.getList";
+NSString *const kFlickrAPIMethodPhotoLocation = @"flickr.places.getInfo";
 
 NSString *const kFlickrAPIArgumentUserID = @"user_id";
 NSString *const kFlickrAPIArgumentPhotoID = @"photo_id";
@@ -44,6 +45,7 @@ NSString *const kFlickrAPIArgumentAPIKey = @"api_key";
 NSString *const kFlickrAPIArgumentContacts = @"contacts";
 NSString *const kFlickrAPIArgumentSort = @"sort";
 NSString *const kFlickrAPIArgumentExtras = @"extras";
+NSString *const kFlickrAPIArgumentLocation = @"woe_id";
 
 
 NSString *const kFlickrRequestTokenURL = @"http://www.flickr.com/services/oauth/request_token";

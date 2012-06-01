@@ -33,6 +33,7 @@
 @property (nonatomic, strong, readonly) NSString *uniqueID;
 @property (nonatomic, strong, readonly) NSURL *imageURL;
 @property (nonatomic, strong, readonly) NSString *title;
+@property (nonatomic, strong, readonly) NSString *description;
 @property (nonatomic, strong, readonly) NSString *userID;
 @property (nonatomic, strong, readonly) NSString *username;
 @property (nonatomic, strong, readonly) NSDate *datePosted;
@@ -42,6 +43,7 @@
 @property (nonatomic, strong, readonly) NSString *datePostedString;
 @property (nonatomic, strong) NSArray *favorites;
 @property (nonatomic, strong) NSArray *comments;
+@property (nonatomic, strong) NSString *location;
 @property (nonatomic, readonly) BOOL isFavorite;
 @property (nonatomic) float imageProgress;
 

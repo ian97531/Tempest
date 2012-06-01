@@ -27,6 +27,7 @@ NSString *const kPhotoDateUpdated = @"date_updated";
 NSString *const kPhotoComments = @"comments";
 NSString *const kPhotoFavorites = @"favorites";
 NSString *const kPhotoIsFavorite = @"is_favorite";
+NSString *const kPhotoLocation = @"location";
 
 NSString *const kCommentText = @"comment_text";
 NSString *const kCommentDate = @"comment_date";

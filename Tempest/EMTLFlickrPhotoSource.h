@@ -27,6 +27,7 @@ extern NSString *const kFlickrAPIMethodFavoritePhotos;
 extern NSString *const kFlickrAPIMethodUserPhotos;
 extern NSString *const kFlickrAPIMethodPhotoFavorites;
 extern NSString *const kFlickrAPIMethodPhotoComments;
+extern NSString *const kFlickrAPIMethodPhotoLocation;
 
 extern NSString *const kFlickrAPIArgumentUserID;
 extern NSString *const kFlickrAPIArgumentPhotoID;
@@ -36,6 +37,7 @@ extern NSString *const kFlickrAPIArgumentAPIKey;
 extern NSString *const kFlickrAPIArgumentContacts;
 extern NSString *const kFlickrAPIArgumentSort;
 extern NSString *const kFlickrAPIArgumentExtras;
+extern NSString *const kFlickrAPIArgumentLocation;
 
 extern NSString *const kFlickrRequestTokenURL;
 extern NSString *const kFlickrAuthorizationURL;

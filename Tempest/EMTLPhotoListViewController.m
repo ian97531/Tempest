@@ -152,7 +152,7 @@
     cell.ownerLabel.text = photo.username;
     cell.dateLabel.text = [photo datePostedString];
     [cell setFavoritesString:[NSString stringWithFormat:@"%i Favorites", photo.favorites.count]];
-    [cell setCommentsString:[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
+    [cell setCommentsString:photo.location]; //[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
     
     
     //NSLog(@"getting image for index path %i", indexPath.row);

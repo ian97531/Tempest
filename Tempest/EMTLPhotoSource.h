@@ -28,6 +28,7 @@ extern NSString *const kPhotoDateUpdated;
 extern NSString *const kPhotoComments;
 extern NSString *const kPhotoFavorites;
 extern NSString *const kPhotoIsFavorite;
+extern NSString *const kPhotoLocation;
 
 extern NSString *const kCommentText;
 extern NSString *const kCommentDate;

@@ -14,6 +14,7 @@
 @synthesize uniqueID;
 @synthesize imageURL;
 @synthesize title;
+@synthesize description;
 @synthesize userID;
 @synthesize username;
 @synthesize dateUpdated;
@@ -25,6 +26,7 @@
 @synthesize source;
 @synthesize comments;
 @synthesize favorites;
+@synthesize location;
 @synthesize imageProgress = _imageProgress;
 
 + (id)photoWithDict:(NSDictionary *)dict
@@ -67,6 +69,7 @@
         
         comments = [NSArray array];
         favorites = [NSArray array];
+        location = nil;
         _imageProgress = 0;
         
         
@@ -90,6 +93,7 @@
         aspectRatio = [aDecoder decodeObjectForKey:kPhotoImageAspectRatio];
         dateUpdated = [aDecoder decodeObjectForKey:kPhotoDateUpdated];
         isFavorite = [aDecoder decodeBoolForKey:kPhotoIsFavorite];
+        location = [aDecoder decodeObjectForKey:kPhotoLocation];
         
         comments = [aDecoder decodeObjectForKey:kPhotoComments];
         favorites = [aDecoder decodeObjectForKey:kPhotoFavorites];
@@ -113,6 +117,7 @@
     [aCoder encodeObject:aspectRatio forKey:kPhotoImageAspectRatio];
     [aCoder encodeObject:dateUpdated forKey:kPhotoDateUpdated];
     [aCoder encodeBool:isFavorite forKey:kPhotoIsFavorite];
+    [aCoder encodeObject:location forKey:kPhotoLocation];
     
     [aCoder encodeObject:comments forKey:kPhotoComments];
     [aCoder encodeObject:favorites forKey:kPhotoFavorites];
