@@ -45,7 +45,7 @@
 @property (nonatomic, strong) NSArray *favorites;
 @property (nonatomic, strong) NSArray *comments;
 @property (nonatomic, strong) EMTLLocation *location;
-@property (nonatomic, readonly) BOOL isFavorite;
+@property (nonatomic) BOOL isFavorite;
 @property (nonatomic) float imageProgress;
 
 
@@ -59,9 +59,13 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 
+// Image Loading methods
 - (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
 - (void)cancelImageWithSize:(EMTLImageSize)size;
 - (NSString *)datePostedString;
+
+// Set the favorite status
+- (void)setFavorite:(BOOL)isFavorite;
 
 // Callbacks for Image loading
 - (void)photoSource:(EMTLPhotoSource *)source willRequestImageWithSize:(EMTLImageSize)size;

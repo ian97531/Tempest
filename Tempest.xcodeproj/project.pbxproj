@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		28CD7CE9155EE88C00892383 /* EMTLConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CD7CE8155EE88C00892383 /* EMTLConstants.m */; };
 		28CD7CF1155F21B500892383 /* EMTLPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CD7CF0155F21B500892383 /* EMTLPhotoCell.m */; };
+		EB14ED661579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14ED651579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m */; };
+		EB14ED6D15798DE100724F0C /* EMTLUser.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14ED6C15798DE100724F0C /* EMTLUser.m */; };
 		EB5221F115377A3A00785F97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F015377A3A00785F97 /* UIKit.framework */; };
 		EB5221F315377A3A00785F97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F215377A3A00785F97 /* Foundation.framework */; };
 		EB5221F515377A3A00785F97 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F415377A3A00785F97 /* CoreGraphics.framework */; };
@@ -118,6 +120,10 @@
 		EB8AA1FF1541F9FB004C6DF8 /* ClothBackground@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA1FB1541F9FB004C6DF8 /* ClothBackground@2x.png */; };
 		EB979CB31578318200104282 /* EMTLCachedImage.m in Sources */ = {isa = PBXBuildFile; fileRef = EB979CB21578318200104282 /* EMTLCachedImage.m */; };
 		EB979CB915796A2000104282 /* EMTLLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB979CB815796A1F00104282 /* EMTLLocation.m */; };
+		EB979CBE1579792200104282 /* FavoriteButton_Off.png in Resources */ = {isa = PBXBuildFile; fileRef = EB979CBA1579792200104282 /* FavoriteButton_Off.png */; };
+		EB979CBF1579792200104282 /* FavoriteButton_Off@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB979CBB1579792200104282 /* FavoriteButton_Off@2x.png */; };
+		EB979CC01579792200104282 /* FavoriteButton_On.png in Resources */ = {isa = PBXBuildFile; fileRef = EB979CBC1579792200104282 /* FavoriteButton_On.png */; };
+		EB979CC11579792200104282 /* FavoriteButton_On@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB979CBD1579792200104282 /* FavoriteButton_On@2x.png */; };
 		EB9B5E6E156568BA008D0CBD /* EMTLPhotoQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = EB9B5E6D156568BA008D0CBD /* EMTLPhotoQuery.m */; };
 		EB9B5E71156568C6008D0CBD /* EMTLPhoto.m in Sources */ = {isa = PBXBuildFile; fileRef = EB9B5E70156568C6008D0CBD /* EMTLPhoto.m */; };
 		EB9B5E7815656B1C008D0CBD /* EMTLFlickrPhotoSource.m in Sources */ = {isa = PBXBuildFile; fileRef = EB9B5E7715656B1C008D0CBD /* EMTLFlickrPhotoSource.m */; };
@@ -149,6 +155,10 @@
 		28CD7CE8155EE88C00892383 /* EMTLConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLConstants.m; sourceTree = "<group>"; };
 		28CD7CEF155F21B400892383 /* EMTLPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoCell.h; sourceTree = "<group>"; };
 		28CD7CF0155F21B500892383 /* EMTLPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoCell.m; sourceTree = "<group>"; };
+		EB14ED641579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFlickrSetFavoriteStateOperation.h; sourceTree = "<group>"; };
+		EB14ED651579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickrSetFavoriteStateOperation.m; sourceTree = "<group>"; };
+		EB14ED6B15798DE100724F0C /* EMTLUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLUser.h; sourceTree = "<group>"; };
+		EB14ED6C15798DE100724F0C /* EMTLUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLUser.m; sourceTree = "<group>"; };
 		EB5221EC15377A3A00785F97 /* Tempest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tempest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB5221F015377A3A00785F97 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		EB5221F215377A3A00785F97 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -286,6 +296,10 @@
 		EB979CB51578542900104282 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		EB979CB715796A1F00104282 /* EMTLLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLLocation.h; sourceTree = "<group>"; };
 		EB979CB815796A1F00104282 /* EMTLLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLLocation.m; sourceTree = "<group>"; };
+		EB979CBA1579792200104282 /* FavoriteButton_Off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FavoriteButton_Off.png; sourceTree = "<group>"; };
+		EB979CBB1579792200104282 /* FavoriteButton_Off@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FavoriteButton_Off@2x.png"; sourceTree = "<group>"; };
+		EB979CBC1579792200104282 /* FavoriteButton_On.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = FavoriteButton_On.png; sourceTree = "<group>"; };
+		EB979CBD1579792200104282 /* FavoriteButton_On@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "FavoriteButton_On@2x.png"; sourceTree = "<group>"; };
 		EB9B5E69156568AB008D0CBD /* EMTLPhotoSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoSource.h; sourceTree = "<group>"; };
 		EB9B5E6C156568BA008D0CBD /* EMTLPhotoQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoQuery.h; sourceTree = "<group>"; };
 		EB9B5E6D156568BA008D0CBD /* EMTLPhotoQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoQuery.m; sourceTree = "<group>"; };
@@ -432,6 +446,10 @@
 		EB69B200153CD46B003D8422 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				EB979CBA1579792200104282 /* FavoriteButton_Off.png */,
+				EB979CBB1579792200104282 /* FavoriteButton_Off@2x.png */,
+				EB979CBC1579792200104282 /* FavoriteButton_On.png */,
+				EB979CBD1579792200104282 /* FavoriteButton_On@2x.png */,
 				EBBC520A1576E2D900348F34 /* Reload.png */,
 				EBBC520B1576E2D900348F34 /* Reload@2x.png */,
 				EBBC52011576DB4200348F34 /* Label.png */,
@@ -603,6 +621,8 @@
 			children = (
 				EB9B5E69156568AB008D0CBD /* EMTLPhotoSource.h */,
 				EBBC51F7156D640100348F34 /* EMTLPhotoSource.m */,
+				EB14ED6B15798DE100724F0C /* EMTLUser.h */,
+				EB14ED6C15798DE100724F0C /* EMTLUser.m */,
 				EB979CB11578318200104282 /* EMTLCachedImage.h */,
 				EB979CB21578318200104282 /* EMTLCachedImage.m */,
 				EBBC51F9156D728300348F34 /* EMTLPhotoSource_Private.h */,
@@ -628,6 +648,8 @@
 				EB9B5E7D15656B64008D0CBD /* EMTLFlickrFetchImageOperation.m */,
 				EBBC51FA156DA17100348F34 /* EMTLFlickrFetchFavoritesAndCommentsOperation.h */,
 				EBBC51FB156DA17100348F34 /* EMTLFlickrFetchFavoritesAndCommentsOperation.m */,
+				EB14ED641579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.h */,
+				EB14ED651579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m */,
 			);
 			name = Flickr;
 			sourceTree = "<group>";
@@ -780,6 +802,10 @@
 				EBBC52081576DB4200348F34 /* LabelTempest@2x.png in Resources */,
 				EBBC520C1576E2D900348F34 /* Reload.png in Resources */,
 				EBBC520D1576E2D900348F34 /* Reload@2x.png in Resources */,
+				EB979CBE1579792200104282 /* FavoriteButton_Off.png in Resources */,
+				EB979CBF1579792200104282 /* FavoriteButton_Off@2x.png in Resources */,
+				EB979CC01579792200104282 /* FavoriteButton_On.png in Resources */,
+				EB979CC11579792200104282 /* FavoriteButton_On@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -847,6 +873,8 @@
 				EBBC51FC156DA17100348F34 /* EMTLFlickrFetchFavoritesAndCommentsOperation.m in Sources */,
 				EB979CB31578318200104282 /* EMTLCachedImage.m in Sources */,
 				EB979CB915796A2000104282 /* EMTLLocation.m in Sources */,
+				EB14ED661579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m in Sources */,
+				EB14ED6D15798DE100724F0C /* EMTLUser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

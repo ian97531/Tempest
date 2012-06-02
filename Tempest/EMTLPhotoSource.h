@@ -14,6 +14,7 @@
 #import "OAMutableURLRequest.h"
 #import "APISecrets.h"
 #import "EMTLConstants.h"
+#import "EMTLUser.h"
 
 extern NSString *const kPhotoObject;
 
@@ -49,6 +50,7 @@ extern NSString *const kImageCacheFilesDatesDict;
 @class EMTLPhotoQuery;
 @class EMTLPhoto;
 @class EMTLPhotoAssets;
+@class EMTLUser;
 
 @protocol EMTLPhotoSourceAuthorizationDelegate
 - (void)photoSource:(EMTLPhotoSource *)photoSource requiresAuthorizationAtURL:(NSURL *)url;
@@ -71,17 +73,18 @@ extern NSString *const kImageCacheFilesDatesDict;
     dispatch_queue_t _imageCacheQueue;
     NSString *_imageCacheIndexPath;
     
+    
+    
     @protected
     
     NSString *_serviceName;
-    NSString *_username;
-    NSString *_userID;
+    EMTLUser *_user;
+    NSDictionary *_users;
     
 }
 
 @property (nonatomic, readonly) NSString *serviceName;
-@property (nonatomic, readonly) NSString *userID;
-@property (nonatomic, readonly) NSString *username;
+@property (nonatomic, readonly) EMTLUser *user;
 
 
 // Authorization
@@ -101,6 +104,12 @@ extern NSString *const kImageCacheFilesDatesDict;
 // Photo Image Loading
 - (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;
 - (void)cancelImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;
+
+// Setting Photo Status
+- (void)setFavoriteStatus:(BOOL)isFavorite forPhoto:(EMTLPhoto *)photo;
+
+// Users
+- (EMTLUser *)userForUserID:(NSString *)userID;
 
 @end
 

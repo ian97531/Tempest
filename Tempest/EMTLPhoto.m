@@ -71,6 +71,7 @@
         favorites = [NSArray array];
         location = nil;
         _imageProgress = 0;
+        isFavorite = NO;
         
         
     }
@@ -134,6 +135,25 @@
 {
     [source cancelImageForPhoto:self size:size];
 }
+
+- (void)setFavorite:(BOOL)isFavoritePhoto
+{
+    if (isFavoritePhoto != isFavorite) {
+        [source setFavoriteStatus:(BOOL)isFavoritePhoto forPhoto:self];
+        isFavorite = isFavoritePhoto;
+    }
+    
+    // If we've added ourselves, we need to update the favorites array.
+//    if (isFavorite) {
+//        NSDictionary *newFavorite = [NSDictionary dictionaryWithObjectsAndKeys:
+//                                     [NSDate date],     kFavoriteDate,
+//                                     
+//                                     nil
+//    }
+    
+    
+}
+
 
 - (void)photoSource:(EMTLPhotoSource *)source willRequestImageWithSize:(EMTLImageSize)size
 {

@@ -14,6 +14,7 @@
 @interface EMTLPhotoCell : UITableViewCell
 {
     BOOL fadeContents;
+    BOOL _favoriteIndicatorOn;
 }
 
 @property (nonatomic, strong) UIImageView *imageView;
@@ -26,11 +27,15 @@
 @property (nonatomic, strong) UIButton *favoritesButton;
 @property (nonatomic, strong) UIButton *commentsButton;
 @property (nonatomic, strong) UIProgressView *progressBar;
+@property (nonatomic, strong) UIButton *favoriteIndicator;
+@property (nonatomic) BOOL favoriteIndicatorTurnedOn;
 
 
 - (void)setFavoritesString:(NSString *)favoritesString;
 - (void)setCommentsString:(NSString *)commentsString;
 - (void)setImage:(UIImage *)image animated:(BOOL)animated;
+- (void)setFavoriteIndicatorTurnedOn:(BOOL)favoriteState;
+- (BOOL)favoriteIndicatorTurnedOn;
 
 
 

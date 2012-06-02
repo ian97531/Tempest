@@ -56,8 +56,7 @@ NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
 
 @implementation EMTLPhotoSource
 
-@synthesize userID = _userID;
-@synthesize username = _username;
+@synthesize user = _user;
 @synthesize serviceName = _serviceName;
 
 - (id)init
@@ -67,6 +66,8 @@ NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
     {
         _photoQueries = [NSMutableDictionary dictionary];
         
+        // Users
+        _users = [NSDictionary dictionary];
         
         // In-memory caching for images
         _imageCache = [[NSCache alloc] init];
@@ -207,7 +208,7 @@ NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
 
 
 #pragma mark -
-#pragma Photo Query
+#pragma mark Photo Queries
 
 - (EMTLPhotoQuery *)currentPhotos
 {
@@ -222,7 +223,7 @@ NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
 - (EMTLPhotoQuery *)favoritePhotosForUser:(NSString *)user_id
 {    
     if (!user_id) {
-        user_id = _userID;
+        user_id = _user.userID;
     }
     NSDictionary *args = [NSDictionary dictionaryWithObject:user_id forKey:kPhotoUserID];
     
@@ -232,7 +233,7 @@ NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
 - (EMTLPhotoQuery *)photosForUser:(NSString *)user_id
 {
     if (!user_id) {
-        user_id = _userID;
+        user_id = _user.userID;
     }
     NSDictionary *args = [NSDictionary dictionaryWithObject:user_id forKey:kPhotoUserID];
     
@@ -449,7 +450,6 @@ NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
 #pragma mark Image Loading
 
 
-
 - (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size
 {
     // Subclasses override
@@ -462,6 +462,24 @@ NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
     // Subclasses override
 }
 
+
+#pragma mark -
+#pragma mark Setting Favorite State
+
+- (void)setFavoriteStatus:(BOOL)isFavorite forPhoto:(EMTLPhoto *)photo
+{
+    // Subclasses override
+}
+
+
+#pragma mark -
+#pragma mark User Loading
+
+- (EMTLUser *)userForUserID:(NSString *)userID
+{
+    // Subclasses override
+    return nil;
+}
 
 #pragma mark -
 #pragma mark Private Subclass Overrides

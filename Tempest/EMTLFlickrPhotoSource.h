@@ -21,6 +21,8 @@ extern NSString *const kFlickrQueryMinDay;
 extern NSString *const kFlickrQueryMethod;
 extern NSString *const kFlickrQueryIdentifier;
 
+extern NSString *const kFlickrAPIMethodTestLogin;
+extern NSString *const kFlickrAPIMethodUserInfo;
 extern NSString *const kFlickrAPIMethodSearch;
 extern NSString *const kFlickrAPIMethodPopularPhotos;
 extern NSString *const kFlickrAPIMethodFavoritePhotos;
@@ -28,6 +30,8 @@ extern NSString *const kFlickrAPIMethodUserPhotos;
 extern NSString *const kFlickrAPIMethodPhotoFavorites;
 extern NSString *const kFlickrAPIMethodPhotoComments;
 extern NSString *const kFlickrAPIMethodPhotoLocation;
+extern NSString *const kFlickrAPIMethodAddFavorite;
+extern NSString *const kFlickrAPIMethodRemoveFavorite;
 
 extern NSString *const kFlickrAPIArgumentUserID;
 extern NSString *const kFlickrAPIArgumentPhotoID;
@@ -49,6 +53,7 @@ extern NSString *const kFlickrDefaultIconURLString;
 
 @class EMTLFlickrFetchPhotoQueryOperation;
 @class EMTLFlickrFetchImageOperation;
+@class EMTLFlickrSetFavoriteStateOperation;
 
 @interface EMTLFlickrPhotoSource : EMTLPhotoSource
 {
@@ -74,5 +79,9 @@ extern NSString *const kFlickrDefaultIconURLString;
 - (void)operation:(EMTLFlickrFetchImageOperation *)operation willRequestImageForPhoto:(EMTLPhoto *)photo withSize:(EMTLImageSize)size;
 - (void)operation:(EMTLFlickrFetchImageOperation *)operation didRequestImageForPhoto:(EMTLPhoto *)photo withSize:(EMTLImageSize)size progress:(float)progress;
 - (void)operation:(EMTLFlickrFetchImageOperation *)operation didLoadImage:(UIImage *)image forPhoto:(EMTLPhoto *)photo withSize:(EMTLImageSize)size;
+
+// Callbacks for EMTLFlickrSetFavoriteStateOperation
+- (void)operation:(EMTLFlickrSetFavoriteStateOperation *)operation successfullySetFavoriteStateForPhoto:(EMTLPhoto *)photo;
+- (void)operation:(EMTLFlickrSetFavoriteStateOperation *)operation failedToSetFavoriteStateForPhoto:(EMTLPhoto *)photo;
 
 @end

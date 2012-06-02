@@ -10,6 +10,7 @@
 #import "EMTLPhotoQuery.h"
 #import "EMTLFlickrFetchPhotoQueryOperation.h"
 #import "EMTLFlickrFetchImageOperation.h"
+#import "EMTLFlickrSetFavoriteStateOperation.h"
 #import "EMTLOperationQueue.h"
 #import "EMTLPhoto.h"
 #import "OAMutableURLRequest.h"
@@ -29,6 +30,8 @@ NSString *const kFlickrQueryMethod = @"flickr-method";
 NSString *const kFlickrQueryIdentifier = @"flickr-identifier";
 NSString *const kFlickrQueryAPIKey = @"flickr-api-key";
 
+NSString *const kFlickrAPIMethodTestLogin = @"flickr.test.login";
+NSString *const kFlickrAPIMethodUserInfo = @"flickr.people.getInfo";
 NSString *const kFlickrAPIMethodSearch = @"flickr.photos.search";
 NSString *const kFlickrAPIMethodPopularPhotos = @"flickr.interestingness.getList";
 NSString *const kFlickrAPIMethodFavoritePhotos = @"flickr.favorites.getList";
@@ -36,6 +39,8 @@ NSString *const kFlickrAPIMethodUserPhotos = @"flickr.people.getPhotos";
 NSString *const kFlickrAPIMethodPhotoFavorites = @"flickr.photos.getFavorites";
 NSString *const kFlickrAPIMethodPhotoComments = @"flickr.photos.comments.getList";
 NSString *const kFlickrAPIMethodPhotoLocation = @"flickr.places.getInfo";
+NSString *const kFlickrAPIMethodAddFavorite = @"flickr.favorites.add";
+NSString *const kFlickrAPIMethodRemoveFavorite = @"flickr.favorites.remove";
 
 NSString *const kFlickrAPIArgumentUserID = @"user_id";
 NSString *const kFlickrAPIArgumentPhotoID = @"photo_id";
@@ -99,7 +104,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
     accessToken = [[OAToken alloc] initWithUserDefaultsUsingServiceProviderName:kFlickrDefaultsServiceProviderName prefix:kFlickrDefaultsPrefix];
     if (accessToken)
     {
-        OAMutableURLRequest *loginRequest = [self oaurlRequestForMethod:@"flickr.test.login" arguments:nil];
+        OAMutableURLRequest *loginRequest = [self oaurlRequestForMethod:kFlickrAPIMethodTestLogin arguments:nil];
         OADataFetcher *fetcher = [[OADataFetcher alloc] init];
         [fetcher fetchDataWithRequest:loginRequest 
                              delegate:self 
@@ -264,7 +269,8 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 }
 
 
-
+#pragma mark -
+#pragma mark Image Loading
 
 - (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;
 {
@@ -318,9 +324,89 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 }
 
 
+#pragma mark -
+#pragma mark Setting Favorite State
+
+- (void)setFavoriteStatus:(BOOL)isFavorite forPhoto:(EMTLPhoto *)photo
+{
+    EMTLFlickrSetFavoriteStateOperation *favoriteOp = [[EMTLFlickrSetFavoriteStateOperation alloc] initWithPhoto:photo newFavoriteState:isFavorite photoSource:self];
+    [[EMTLOperationQueue photoQueue] addOperation:favoriteOp];
+}
 
 
+- (void)operation:(EMTLFlickrSetFavoriteStateOperation *)operation successfullySetFavoriteStateForPhoto:(EMTLPhoto *)photo
+{
+    // we should update the photo list cache here.
+    NSLog(@"Yay! the favorite status for photo: %@ was updated", photo.photoID);
+}
 
+- (void)operation:(EMTLFlickrSetFavoriteStateOperation *)operation failedToSetFavoriteStateForPhoto:(EMTLPhoto *)photo
+{
+    NSLog(@"Failed to update the favorite status for photo: %@", photo.photoID);
+}
+
+
+#pragma mark -
+#pragma mark User Loading
+
+- (EMTLUser *)userForUserID:(NSString *)userID
+{
+    EMTLUser *the_user = [_users objectForKey:userID];
+    if (the_user) {
+        return the_user;
+    }
+    
+    NSMutableDictionary *userArgs = [NSMutableDictionary dictionaryWithCapacity:4];
+    
+    [userArgs setObject:kFlickrAPIKey 
+                      forKey:kFlickrAPIArgumentAPIKey];
+    
+    [userArgs setObject:userID
+                      forKey:kFlickrAPIArgumentUserID];
+    
+    
+    OAMutableURLRequest *userRequest = [self oaurlRequestForMethod:kFlickrAPIMethodUserInfo arguments:userArgs];
+    
+    NSURLResponse *response = nil;
+    NSError *error = nil;
+    NSData *userData = [NSURLConnection sendSynchronousRequest:userRequest returningResponse:&response error:&error];
+    
+    NSDictionary *userDict = [self dictionaryFromResponseData:userData];
+    
+    if(!userDict) {
+        NSLog(@"There was an error interpreting the json response for user from %@", userID);
+        return nil;
+    }
+    
+    else {
+        NSDictionary *userDetails = [userDict objectForKey:@"person"];
+        
+        EMTLUser *newUser = [[EMTLUser alloc] init];
+        
+        newUser.userID = userID;
+        newUser.username = [userDetails objectForKey:@"username"];
+        newUser.real_name = [userDetails objectForKey:@"realname"];
+        newUser.location = [[userDetails objectForKey:@"location"] objectForKey:@"_content"];
+        
+        NSString *iconFarm = [userDetails objectForKey:@"iconfarm"];
+        NSString *iconServer = [userDetails objectForKey:@"iconserver"];
+        
+        if (![iconFarm isEqualToString:@"0"] && ![iconServer isEqualToString:@"0"]) {
+            NSString *iconURL = [NSString stringWithFormat:@"http://farm%@.staticflickr.com/%@buddyicons/%@.jpg", iconFarm, iconServer, userID];
+            newUser.iconURL = [NSURL URLWithString:iconURL];
+        }
+        else {
+            newUser.iconURL = [NSURL URLWithString:kFlickrDefaultIconURLString];
+        }
+        
+        NSLog(@"Got user");
+        [_users setValue:newUser forKey:userID];
+        return newUser;
+    }
+
+    
+    
+}
 
     
 
@@ -489,8 +575,10 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
         
         if (loginInfo)
         {
-            _userID = [[loginInfo objectForKey:@"user"] objectForKey:@"id"];
-            _username = [[[loginInfo objectForKey:@"user"] objectForKey:@"username"] objectForKey:@"_content"];
+            NSString *_userID = [[loginInfo objectForKey:@"user"] objectForKey:@"id"];
+            
+            _user = [self userForUserID:_userID];
+            
             [self.authorizationDelegate authorizationCompleteForPhotoSource:self];
         }
         else

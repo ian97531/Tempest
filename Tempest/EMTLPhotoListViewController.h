@@ -22,6 +22,7 @@
 - (id)initWithPhotoQuery:(EMTLPhotoQuery *)query;
 - (void)reloadQuery;
 - (void)toggleChromeVisibility;
+- (void)favoriteButtonPushed:(id)sender;
 
 // EMTLPhotoQueryDelegate
 - (void)photoQueryWillUpdate:(EMTLPhotoQuery *)query;

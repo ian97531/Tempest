@@ -20,6 +20,7 @@
 @synthesize ownerLabel;
 @synthesize dateLabel;
 @synthesize progressBar;
+@synthesize favoriteIndicator;
 
 @synthesize favoritesButton;
 @synthesize commentsButton;
@@ -68,14 +69,18 @@
         ownerLabel.backgroundColor = [UIColor clearColor];
         
         favoritesButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        favoritesButton.frame = CGRectMake(16, 347, 288, 16);
+        favoritesButton.frame = CGRectMake(50, 352, 243, 16);
         favoritesButton.titleLabel.font = [UIFont fontWithName:@"Whatever" size:14];
         [favoritesButton setTitleColor:[UIColor colorWithWhite:0 alpha:0.6] forState:UIControlStateNormal];
         [favoritesButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
         [favoritesButton addTarget:self action:@selector(switchToFavoritesView) forControlEvents:UIControlEventTouchUpInside];
         
+        favoriteIndicator = [UIButton buttonWithType:UIButtonTypeCustom];
+        favoriteIndicator.frame = CGRectMake(8, 330, 45, 35);
+        [favoriteIndicator setImage:[UIImage imageNamed:@"FavoriteButton_Off.png"] forState:UIControlStateNormal];
+        
         commentsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        commentsButton.frame = CGRectMake(16, 369, 288, 16);
+        commentsButton.frame = CGRectMake(16, 390, 288, 16);
         commentsButton.titleLabel.font = [UIFont fontWithName:@"Whatever" size:14];
         [commentsButton setTitleColor:[UIColor colorWithWhite:0 alpha:0.6] forState:UIControlStateNormal];
         [commentsButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
@@ -101,6 +106,7 @@
         
         [cardView addSubview:commentsButton];
         [cardView addSubview:favoritesButton];
+        [cardView addSubview:favoriteIndicator];
         
         [self.contentView addSubview:cardView];
         
@@ -125,8 +131,9 @@
     backgroundGutter.frame = imageRect;
     progressBar.center = backgroundGutter.center;
     
-    favoritesButton.frame = CGRectMake(favoritesButton.frame.origin.x, frame.size.height - 102, favoritesButton.frame.size.width, favoritesButton.frame.size.height);
-    commentsButton.frame = CGRectMake(commentsButton.frame.origin.x, frame.size.height - 78, commentsButton.frame.size.width, commentsButton.frame.size.height);
+    favoritesButton.frame = CGRectMake(favoritesButton.frame.origin.x, frame.size.height - 98, favoritesButton.frame.size.width, favoritesButton.frame.size.height);
+    commentsButton.frame = CGRectMake(commentsButton.frame.origin.x, frame.size.height - 65, commentsButton.frame.size.width, commentsButton.frame.size.height);
+    favoriteIndicator.frame = CGRectMake(favoriteIndicator.frame.origin.x, frame.size.height - 110, favoriteIndicator.frame.size.width, favoriteIndicator.frame.size.height);
     
 }
 
@@ -205,6 +212,23 @@
         imageView.layer.opacity = 1;
         progressBar.layer.opacity = 0;
     }
+}
+
+- (void)setFavoriteIndicatorTurnedOn:(BOOL)favoriteState
+{
+    _favoriteIndicatorOn = favoriteState;
+    
+    if (_favoriteIndicatorOn) {
+        [favoriteIndicator setImage:[UIImage imageNamed:@"FavoriteButton_On.png"] forState:UIControlStateNormal];
+    }
+    else {
+        [favoriteIndicator setImage:[UIImage imageNamed:@"FavoriteButton_Off.png"] forState:UIControlStateNormal];
+    }
+}
+
+- (BOOL)favoriteIndicatorTurnedOn
+{
+    return _favoriteIndicatorOn;
 }
 
 

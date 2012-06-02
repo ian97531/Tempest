@@ -64,6 +64,16 @@
 }
 
 
+- (void)favoriteButtonPushed:(id)sender
+{
+    UIButton *favoriteButton = (UIButton *)sender;
+    EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:favoriteButton.tag];
+    
+    [photo setFavorite:!photo.isFavorite];
+    [_tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:favoriteButton.tag inSection:0]] withRowAnimation:NO];
+    
+}
+
 - (void)loadView
 {
     
@@ -153,6 +163,11 @@
     cell.ownerLabel.text = photo.username;
     cell.dateLabel.text = [photo datePostedString];
     [cell setFavoritesString:[NSString stringWithFormat:@"%i Favorites", photo.favorites.count]];
+    cell.favoriteIndicator.tag = indexPath.row;
+    cell.favoriteIndicatorTurnedOn = photo.isFavorite;
+    [cell.favoriteIndicator addTarget:self action:@selector(favoriteButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
     
     if(photo.location) {
         [cell setCommentsString:photo.location.name]; //[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
@@ -192,6 +207,8 @@
     
     
 }
+
+
 
 
 

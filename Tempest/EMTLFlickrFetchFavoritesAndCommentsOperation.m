@@ -10,6 +10,7 @@
 #import "EMTLPhoto.h"
 #import "EMTLFlickrPhotoSource.h"
 #import "EMTLLocation.h"
+#import "EMTLUser.h"
 
 
 @implementation EMTLFlickrFetchFavoritesAndCommentsOperation
@@ -201,6 +202,12 @@
             int iconfarm = [[favoriteDict objectForKey:@"iconfarm"] intValue];
             int iconserver = [[favoriteDict objectForKey:@"iconserver"] intValue];
             NSString *nsid = [favoriteDict objectForKey:@"nsid"];
+            
+            // If the nsid is same as the calling user, then this photo has been favorited and we should mark it as such.
+            if ([nsid isEqualToString:_photoSource.user.userID])
+            {
+                _photo.isFavorite = YES;
+            }
             
             // If the iconfarm and iconserver were supplied, then we can construct the icon URL,
             // otherwise, we'll use flickr's generic icon url.
