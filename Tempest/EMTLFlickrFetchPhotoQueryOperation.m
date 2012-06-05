@@ -17,7 +17,7 @@ static double const kSecondsInThreeMonths = 7776500;
 
 @interface EMTLFlickrFetchPhotoQueryOperation ()
 
-- (NSArray *)_processPhotos;
+- (NSArray *)_processPhotos:(NSData *)incomingData;
 - (NSDictionary *)_updateQueryArguments;
 
 @end
@@ -241,8 +241,7 @@ static double const kSecondsInThreeMonths = 7776500;
 {
     
     NSMutableDictionary *newQuery = [NSMutableDictionary dictionaryWithDictionary:_photoQuery.queryArguments];
-    NSLog(@"in _updateQueryArguments");
-    NSLog([newQuery description]);
+    NSLog(@"in _updateQueryArguments:\n%@", newQuery);
     
     int minYear = 0;
     int minMonth = 0;

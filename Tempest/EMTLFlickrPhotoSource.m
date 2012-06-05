@@ -200,8 +200,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
     
     query.queryArguments = newQuery;
     
-    NSLog(@"new query args:");
-    NSLog([query.queryArguments description]);
+    NSLog(@"new query args:\n %@", query.queryArguments);
 
 }
 
