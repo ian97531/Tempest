@@ -198,31 +198,24 @@
             NSDate *favorite_date = [NSDate dateWithTimeIntervalSince1970:[[favoriteDict objectForKey:@"favedate"] doubleValue]];
             [favoriteDict setValue:favorite_date forKey:kFavoriteDate];
             
-            // Construct the icon URL
-            int iconfarm = [[favoriteDict objectForKey:@"iconfarm"] intValue];
-            int iconserver = [[favoriteDict objectForKey:@"iconserver"] intValue];
-            NSString *nsid = [favoriteDict objectForKey:@"nsid"];
+            // Setup the user
+            EMTLUser *user = [_photoSource userForUserID:[favoriteDict objectForKey:@"nsid"]];
             
             // If the nsid is same as the calling user, then this photo has been favorited and we should mark it as such.
-            if ([nsid isEqualToString:_photoSource.user.userID])
+            if (user == _photoSource.user)
             {
+                NSLog(@"photo is favorite %@", _photo.photoID);
                 _photo.isFavorite = YES;
             }
             
-            // If the iconfarm and iconserver were supplied, then we can construct the icon URL,
-            // otherwise, we'll use flickr's generic icon url.
-            NSURL *userIconURL;
-            if (iconfarm && iconserver) {
-                userIconURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://farm%i.staticflickr.com/%i/buddyicons/%@.jpg", iconfarm, iconserver, nsid]];
-            }
-            else {
-                userIconURL = [NSURL URLWithString:kFlickrDefaultIconURLString];
+            if (!user.username)
+            {
+                user.username = [favoriteDict objectForKey:@"username"];
             }
             
-            [favoriteDict setValue:userIconURL forKey:kFavoriteIconURL];
-            [favoriteDict setValue:nsid forKey:kFavoriteUserID];
-            [favoriteDict setValue:[favoriteDict objectForKey:@"username"] forKey:kFavoriteUsername];
+            [favoriteDict setValue:user forKey:kFavoriteUser];
             
+                        
             // Add the modified dict to the array of favorites.
             [favorites addObject:favoriteDict];
             
@@ -250,23 +243,16 @@
             NSDate *comment_date = [NSDate dateWithTimeIntervalSince1970:[[commentDict objectForKey:@"datecreate"] doubleValue]];
             [commentDict setValue:comment_date forKey:kCommentDate];
             
-            // Get the icon URL for the user who left the comment
-            int iconfarm = [[commentDict objectForKey:@"iconfarm"] intValue];
-            int iconserver = [[commentDict objectForKey:@"iconserver"] intValue];
-            NSString *nsid = [commentDict objectForKey:@"author"];
+            // Setup the user
+            EMTLUser *user = [_photoSource userForUserID:[commentDict objectForKey:@"author"]];
             
-            NSURL *userIconURL;
-            if (iconfarm && iconserver) {
-                userIconURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://farm%i.staticflickr.com/%i/buddyicons/%@.jpg", iconfarm, iconserver, nsid]];
+            if (!user.username)
+            {
+                user.username = [commentDict objectForKey:@"authorname"];
             }
-            else {
-                userIconURL = [NSURL URLWithString:kFlickrDefaultIconURLString];
-            }
-            [commentDict setValue:userIconURL forKey:kCommentIconURL];
+            
+            [commentDict setValue:user forKey:kCommentUser];
             [commentDict setValue:[commentDict objectForKey:@"_content"] forKey:kCommentText];
-            [commentDict setValue:nsid forKey:kCommentUserID];
-            [commentDict setValue:[commentDict objectForKey:@"authorname"] forKey:kCommentUsername];
-            
             
             [comments addObject:commentDict];
         }
@@ -280,13 +266,12 @@
     
     if(!locationDict) 
     {
-        NSLog(@"There was an error interpreting the json response for comments from %@", _photoSource.serviceName);
+        NSLog(@"There was an error interpreting the json response for location from %@", _photoSource.serviceName);
     }
     
     else {
         
         NSDictionary *place = [locationDict objectForKey:@"place"];
-        NSLog(@"Location for %@: %@", _photo.photoID, place.description);
         NSString *place_string = @"";
         
         // These are the place types we can process

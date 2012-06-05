@@ -261,8 +261,7 @@ static int const kPhotosToLoad = 50;
         [photoDict setObject:[photoDict objectForKey:@"ownername"] forKey:kPhotoUsername];
         [photoDict setObject:[photoDict objectForKey:@"title"] forKey:kPhotoTitle];
         
-        EMTLPhoto *photo = [[EMTLPhoto alloc] initWithDict:photoDict];
-        photo.source = _photoSource;
+        EMTLPhoto *photo = [[EMTLPhoto alloc] initWithSource:_photoSource dict:photoDict];
         
         NSString *woe_id = [photoDict objectForKey:@"woeid"];
         if(woe_id)

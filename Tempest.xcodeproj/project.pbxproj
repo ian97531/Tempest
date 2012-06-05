@@ -11,6 +11,8 @@
 		28CD7CF1155F21B500892383 /* EMTLPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CD7CF0155F21B500892383 /* EMTLPhotoCell.m */; };
 		EB14ED661579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14ED651579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m */; };
 		EB14ED6D15798DE100724F0C /* EMTLUser.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14ED6C15798DE100724F0C /* EMTLUser.m */; };
+		EB14EDCF157E95C200724F0C /* EMTLBackgroundConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14EDCE157E95C200724F0C /* EMTLBackgroundConnection.m */; };
+		EB14EDD2157E970300724F0C /* EMTLDownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14EDD1157E970300724F0C /* EMTLDownloadOperation.m */; };
 		EB1FF975157D444A009DA624 /* EMTLFlickrFetchUserOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1FF974157D444A009DA624 /* EMTLFlickrFetchUserOperation.m */; };
 		EB5221F115377A3A00785F97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F015377A3A00785F97 /* UIKit.framework */; };
 		EB5221F315377A3A00785F97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F215377A3A00785F97 /* Foundation.framework */; };
@@ -160,6 +162,10 @@
 		EB14ED651579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickrSetFavoriteStateOperation.m; sourceTree = "<group>"; };
 		EB14ED6B15798DE100724F0C /* EMTLUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLUser.h; sourceTree = "<group>"; };
 		EB14ED6C15798DE100724F0C /* EMTLUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLUser.m; sourceTree = "<group>"; };
+		EB14EDCD157E95C200724F0C /* EMTLBackgroundConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLBackgroundConnection.h; sourceTree = "<group>"; };
+		EB14EDCE157E95C200724F0C /* EMTLBackgroundConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLBackgroundConnection.m; sourceTree = "<group>"; };
+		EB14EDD0157E970300724F0C /* EMTLDownloadOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLDownloadOperation.h; sourceTree = "<group>"; };
+		EB14EDD1157E970300724F0C /* EMTLDownloadOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLDownloadOperation.m; sourceTree = "<group>"; };
 		EB1FF973157D444A009DA624 /* EMTLFlickrFetchUserOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFlickrFetchUserOperation.h; sourceTree = "<group>"; };
 		EB1FF974157D444A009DA624 /* EMTLFlickrFetchUserOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickrFetchUserOperation.m; sourceTree = "<group>"; };
 		EB5221EC15377A3A00785F97 /* Tempest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tempest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -408,6 +414,8 @@
 				EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */,
 				EB9B5E7F15657211008D0CBD /* EMTLOperationQueue.h */,
 				EB9B5E8015657212008D0CBD /* EMTLOperationQueue.m */,
+				EB14EDCD157E95C200724F0C /* EMTLBackgroundConnection.h */,
+				EB14EDCE157E95C200724F0C /* EMTLBackgroundConnection.m */,
 				EB9B5E6815656856008D0CBD /* PhotoSources */,
 				EB69B201153CD46B003D8422 /* OAuthConsumer */,
 				EB69B200153CD46B003D8422 /* Resources */,
@@ -635,6 +643,8 @@
 				EB9B5E70156568C6008D0CBD /* EMTLPhoto.m */,
 				EB979CB715796A1F00104282 /* EMTLLocation.h */,
 				EB979CB815796A1F00104282 /* EMTLLocation.m */,
+				EB14EDD0157E970300724F0C /* EMTLDownloadOperation.h */,
+				EB14EDD1157E970300724F0C /* EMTLDownloadOperation.m */,
 				EB9B5E7515656AC1008D0CBD /* Flickr */,
 			);
 			name = PhotoSources;
@@ -881,6 +891,8 @@
 				EB14ED661579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m in Sources */,
 				EB14ED6D15798DE100724F0C /* EMTLUser.m in Sources */,
 				EB1FF975157D444A009DA624 /* EMTLFlickrFetchUserOperation.m in Sources */,
+				EB14EDCF157E95C200724F0C /* EMTLBackgroundConnection.m in Sources */,
+				EB14EDD2157E970300724F0C /* EMTLDownloadOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

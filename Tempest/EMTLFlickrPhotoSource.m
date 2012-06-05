@@ -352,13 +352,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 
 - (EMTLUser *)userForUserID:(NSString *)userID
 {
-    
-    
-    
-    
-    
-    
-    
+    return [self userFromCache:userID];    
 }
 
 
@@ -549,6 +543,11 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
             NSString *_userID = [[loginInfo objectForKey:@"user"] objectForKey:@"id"];
             
             _user = [self userForUserID:_userID];
+            
+            if(!_user.username) {
+                _user.username = [[loginInfo objectForKey:@"user"] objectForKey:@"username"];
+            }
+            
             
             [self.authorizationDelegate authorizationCompleteForPhotoSource:self];
         }

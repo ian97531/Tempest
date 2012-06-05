@@ -31,14 +31,10 @@ NSString *const kPhotoLocation = @"location";
 
 NSString *const kCommentText = @"comment_text";
 NSString *const kCommentDate = @"comment_date";
-NSString *const kCommentUsername = @"user_name";
-NSString *const kCommentUserID = @"user_id";
-NSString *const kCommentIconURL = @"icon_url";
+NSString *const kCommentUser = @"comment_user";
 
 NSString *const kFavoriteDate = @"favorite_date";
-NSString *const kFavoriteUsername = @"user_name";
-NSString *const kFavoriteUserID = @"user_id";
-NSString *const kFavoriteIconURL = @"icon_url";
+NSString *const kFavoriteUser = @"favorite_user";
 
 int const kImageCacheCapacity = 100;
 NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
@@ -72,7 +68,6 @@ NSString *const kUserCacheDict = @"Users";
         // In-memory caching for queries
         _photoQueries = [NSMutableDictionary dictionary];
         
-    
         // In-memory caching for users
         _userCache = [NSDictionary dictionary];
         
@@ -82,7 +77,7 @@ NSString *const kUserCacheDict = @"Users";
         
         
         //
-        // DISK CACHING
+        // DISK CACHING INIT
         //
         
         NSFileManager *fileManager = [NSFileManager defaultManager];
@@ -93,21 +88,46 @@ NSString *const kUserCacheDict = @"Users";
         
         
         // Setup disk caching for users
+        _userCacheDir = [cacheDir stringByAppendingString:@"/users"];
         
+        NSError *userError = nil;
+        [fileManager createDirectoryAtPath:_userCacheDir withIntermediateDirectories:YES attributes:nil error:&userError];
+        
+        // If there's an error, disable user caching by nilling out the directory variable.
+        // Otherwise, initialize the user cache.
+        if (userError)
+        {
+            NSLog(@"Error creating the _imageCacheDir. Disabling image caching.  %@", [userError localizedDescription]);
+            _userCacheDir = nil;
+            _userCache = [NSMutableDictionary dictionary];
+        }
+        else
+        {
+            NSString *cachePath = [NSString stringWithFormat:@"%@/%@", _userCacheDir, kUserCacheDict];
+            _userCache = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath];
+            
+            if (_userCache) {
+                NSLog(@"Found user list cache");
+            }
+            else {
+                NSLog(@"No user cache found, setting up an empty user cache");
+                _userCache = [NSMutableDictionary dictionary];
+            }
+
+        }
         
         
         // Setup disk image caching
-        
         _imageCacheDir = [cacheDir stringByAppendingString:@"/images"];
         
-        NSError *error = nil;
-        [fileManager createDirectoryAtPath:_imageCacheDir withIntermediateDirectories:YES attributes:nil error:&error];
+        NSError *imageError = nil;
+        [fileManager createDirectoryAtPath:_imageCacheDir withIntermediateDirectories:YES attributes:nil error:&imageError];
         
         // If there's an error, disable image caching by nilling out the directory variable.
         // Otherwise, initialize the image cache.
-        if (error)
+        if (imageError)
         {
-            NSLog(@"Error creating the _imageCacheDir. Disabling image caching.  %@", [error localizedDescription]);
+            NSLog(@"Error creating the _imageCacheDir. Disabling image caching.  %@", [imageError localizedDescription]);
             _imageCacheDir = nil;
         }
         else
@@ -116,18 +136,19 @@ NSString *const kUserCacheDict = @"Users";
         }
         
         
+        
         // Setup disk photo list caching.
         _photoListCacheDir = [cacheDir stringByAppendingString:@"/photo_lists"];
         _photoListCacheDates = [NSMutableDictionary dictionary];
         
         // Create the photo list caching directory
-        error = nil;
-        [fileManager createDirectoryAtPath:_photoListCacheDir withIntermediateDirectories:YES attributes:nil error:&error];
+        NSError *photoListError = nil;
+        [fileManager createDirectoryAtPath:_photoListCacheDir withIntermediateDirectories:YES attributes:nil error:&photoListError];
         
         // If unable to create the directory, disable photolist caching by setting the variable to nil
-        if (error)
+        if (photoListError)
         {
-            NSLog(@"Error creating the _photoListCacheDir. Disabling photolist caching.  %@", [error localizedDescription]);
+            NSLog(@"Error creating the _photoListCacheDir. Disabling photolist caching.  %@", [photoListError localizedDescription]);
             _photoListCacheDir = nil;
         }
         
@@ -464,9 +485,19 @@ NSString *const kUserCacheDict = @"Users";
     
     [_userCache setValue:user forKey:cacheKey];
     
-    // Serialize and write out the photo list to the cache.
-    NSString *cachePath = [NSString stringWithFormat:@"%@/%@", _photoListCacheDir, queryID];
-    if([NSKeyedArchiver archiveRootObject:photos toFile:cachePath])
+    // Serialize and write out the photo list to the cache, unless user caching has been
+    // disabled.
+    if (_userCacheDir) {
+        NSString *cachePath = [NSString stringWithFormat:@"%@/%@", _userCacheDir, kUserCacheDict];
+        if([NSKeyedArchiver archiveRootObject:_userCache toFile:cachePath])
+        {
+            NSLog(@"successfully updated the on-disk user cache with user %@", user.username);
+        }
+        else 
+        {
+            NSLog(@"failed to update the on-disk user chace with user %@", user.username);
+        }
+    }
     
     
 }
@@ -476,6 +507,12 @@ NSString *const kUserCacheDict = @"Users";
 {
     NSString *cacheKey = [self _cacheKeyForUserID:userID];
     EMTLUser *the_user = [_userCache objectForKey:cacheKey];
+    
+    if (!the_user)
+    {
+        the_user = [[EMTLUser alloc] initWIthUserID:userID source:self];
+        [_userCache setValue:the_user forKey:cacheKey];
+    }
     
     return the_user;
     

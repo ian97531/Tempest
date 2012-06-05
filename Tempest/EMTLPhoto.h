@@ -12,6 +12,7 @@
 @class EMTLPhotoSource;
 @class EMTLPhoto;
 @class EMTLLocation;
+@class EMTLUser;
 
 
 @protocol EMTLImageDelegate <NSObject>
@@ -29,14 +30,14 @@
 @private
     __weak id<EMTLImageDelegate> _delegate;
     float _imageProgress;
+    EMTLPhotoSource *_source;
 }
 
 @property (nonatomic, strong, readonly) NSString *uniqueID;
 @property (nonatomic, strong, readonly) NSURL *imageURL;
 @property (nonatomic, strong, readonly) NSString *title;
 @property (nonatomic, strong, readonly) NSString *description;
-@property (nonatomic, strong, readonly) NSString *userID;
-@property (nonatomic, strong, readonly) NSString *username;
+@property (nonatomic, strong, readonly) EMTLUser *user;
 @property (nonatomic, strong, readonly) NSDate *datePosted;
 @property (nonatomic, strong, readonly) NSDate *dateUpdated;
 @property (nonatomic, strong, readonly) NSString *photoID;
@@ -48,12 +49,11 @@
 @property (nonatomic) BOOL isFavorite;
 @property (nonatomic) float imageProgress;
 
+@property (nonatomic, strong) EMTLPhotoSource *source;
 
-@property (nonatomic, assign) EMTLPhotoSource *source;
 
-
-+ (id)photoWithDict:(NSDictionary *)dict;
-- (id)initWithDict:(NSDictionary *)dict;
++ (id)photoWithSource:(EMTLPhotoSource *)source dict:(NSDictionary *)dict;
+- (id)initWithSource:(EMTLPhotoSource *)source dict:(NSDictionary *)dict;
 
 // NSCoding Methods
 - (id)initWithCoder:(NSCoder *)aDecoder;

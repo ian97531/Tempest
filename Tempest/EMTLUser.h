@@ -27,7 +27,6 @@
     NSString *_username;
     NSString *_real_name;
     NSString *_location;
-    NSURL *_iconURL;
     UIImage *_icon;
     NSDate *_date_retrieved;
     EMTLPhotoSource *_source;
@@ -38,7 +37,6 @@
 @property (nonatomic, strong) NSString *username;
 @property (nonatomic, strong) NSString *real_name;
 @property (nonatomic, strong) NSString *location;
-@property (nonatomic, strong) NSURL *iconURL;
 @property (nonatomic, strong) UIImage *icon;
 @property (nonatomic, strong) NSDate *date_retrieved;
 

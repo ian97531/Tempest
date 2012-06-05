@@ -10,6 +10,7 @@
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
 #import "EMTLLocation.h"
+#import "EMTLUser.h"
 
 #import "Math.h"
 
@@ -160,7 +161,7 @@
         [_photoQuery morePhotos];
     }
     
-    cell.ownerLabel.text = photo.username;
+    cell.ownerLabel.text = photo.user.username;
     cell.dateLabel.text = [photo datePostedString];
     [cell setFavoritesString:[NSString stringWithFormat:@"%i Favorites", photo.favorites.count]];
     cell.favoriteIndicator.tag = indexPath.row;

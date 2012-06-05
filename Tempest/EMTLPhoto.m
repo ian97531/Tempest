@@ -15,36 +15,33 @@
 @synthesize imageURL;
 @synthesize title;
 @synthesize description;
-@synthesize userID;
-@synthesize username;
+@synthesize user;
 @synthesize dateUpdated;
 @synthesize datePosted;
 @synthesize photoID;
 @synthesize aspectRatio;
 @synthesize isFavorite;
 @synthesize datePostedString;
-@synthesize source;
+@synthesize source = _source;
 @synthesize comments;
 @synthesize favorites;
 @synthesize location;
 @synthesize imageProgress = _imageProgress;
 
-+ (id)photoWithDict:(NSDictionary *)dict
++ (id)photoWithSource:(EMTLPhotoSource *)source dict:(NSDictionary *)dict
 {
-    return [[EMTLPhoto alloc] initWithDict:dict];
+    return [[EMTLPhoto alloc] initWithSource:source dict:dict];
 }
 
-- (id)initWithDict:(NSDictionary *)dict
+- (id)initWithSource:(EMTLPhotoSource *)source dict:(NSDictionary *)dict;
 {
     self = [super init];
     if(self) {
+        _source = source;
         
         for (NSString *key in dict) {
             if ([key isEqualToString:kPhotoUserID]) {
-                userID = [dict objectForKey:kPhotoUserID];
-            }
-            else if ([key isEqualToString:kPhotoUsername]) {
-                username = [dict objectForKey:kPhotoUsername];
+                user = [_source userForUserID:[dict objectForKey:kPhotoUserID]];
             }
             else if ([key isEqualToString:kPhotoTitle]) {
                 title = [dict objectForKey:kPhotoTitle];
@@ -64,7 +61,11 @@
             else if ([key isEqualToString:kPhotoDateUpdated]) {
                 dateUpdated = [dict objectForKey:kPhotoDateUpdated];
             }
-
+        }
+        
+        NSString *username = [dict objectForKey:kPhotoUsername];
+        if (username) {
+            user.username = username;
         }
         
         comments = [NSArray array];
@@ -85,8 +86,7 @@
 {
     self = [super init];
     if (self) {
-        userID = [aDecoder decodeObjectForKey:kPhotoUserID];
-        username = [aDecoder decodeObjectForKey:kPhotoUsername];
+        user = [aDecoder decodeObjectForKey:kPhotoUserID];
         title = [aDecoder decodeObjectForKey:kPhotoTitle];
         photoID = [aDecoder decodeObjectForKey:kPhotoID];
         imageURL = [aDecoder decodeObjectForKey:kPhotoImageURL];
@@ -109,8 +109,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     
-    [aCoder encodeObject:userID forKey:kPhotoUserID];
-    [aCoder encodeObject:username forKey:kPhotoUsername];
+    [aCoder encodeObject:user forKey:kPhotoUserID];
     [aCoder encodeObject:title forKey:kPhotoTitle];
     [aCoder encodeObject:photoID forKey:kPhotoID];
     [aCoder encodeObject:imageURL forKey:kPhotoImageURL];
@@ -128,28 +127,52 @@
 - (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate
 {
     _delegate = delegate;
-    return [source imageForPhoto:self size:size];
+    return [_source imageForPhoto:self size:size];
 }
 
 - (void)cancelImageWithSize:(EMTLImageSize)size
 {
-    [source cancelImageForPhoto:self size:size];
+    [_source cancelImageForPhoto:self size:size];
 }
 
 - (void)setFavorite:(BOOL)isFavoritePhoto
 {
     if (isFavoritePhoto != isFavorite) {
-        [source setFavoriteStatus:(BOOL)isFavoritePhoto forPhoto:self];
+        [_source setFavoriteStatus:(BOOL)isFavoritePhoto forPhoto:self];
         isFavorite = isFavoritePhoto;
     }
     
     // If we've added ourselves, we need to update the favorites array.
-//    if (isFavorite) {
-//        NSDictionary *newFavorite = [NSDictionary dictionaryWithObjectsAndKeys:
-//                                     [NSDate date],     kFavoriteDate,
-//                                     
-//                                     nil
-//    }
+    if (isFavorite) {
+        NSMutableDictionary *myFavorite = [NSMutableDictionary dictionaryWithCapacity:2];
+        
+        [myFavorite setValue:[NSDate date] forKey:kFavoriteDate];
+        [myFavorite setValue:_source.user forKey:kFavoriteUser];
+        
+        favorites = [favorites arrayByAddingObject:myFavorite];
+    }
+    
+    // If we've unfavorited this picture, we need to remove ourselves from the array.
+    else
+    {
+        NSDictionary *toDelete;
+        for (NSDictionary *favorite in favorites) {
+            if (_source.user == [favorite objectForKey:kFavoriteUser])
+            {
+                toDelete = favorite;
+                break;
+            }
+        }
+        
+        if (toDelete)
+        {
+            
+            NSMutableArray *newFavorites = [favorites mutableCopy];
+            [newFavorites removeObject:toDelete];
+            
+            favorites = [NSArray arrayWithArray:newFavorites];
+        }
+    }
     
     
 }
@@ -185,7 +208,7 @@
 
 - (NSString *)uniqueID
 {
-    return [NSString stringWithFormat:@"%@-%@", source.serviceName, photoID];
+    return [NSString stringWithFormat:@"%@-%@", _source.serviceName, photoID];
 }
 
 

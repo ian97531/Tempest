@@ -122,18 +122,18 @@
     
     [super setFrame:frame];
     
-    CGRect cardRect = CGRectMake(cardView.frame.origin.x, cardView.frame.origin.y, cardView.frame.size.width, frame.size.height - 20);
+    CGRect cardRect = CGRectIntegral(CGRectMake(cardView.frame.origin.x, cardView.frame.origin.y, cardView.frame.size.width, frame.size.height - 20));
     cardView.frame = cardRect;
     cardImageView.frame = cardRect;
     
-    CGRect imageRect = CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y, imageView.frame.size.width, frame.size.height - 150);
+    CGRect imageRect = CGRectIntegral(CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y, imageView.frame.size.width, frame.size.height - 150));
     imageView.frame = imageRect;
     backgroundGutter.frame = imageRect;
     progressBar.center = backgroundGutter.center;
     
-    favoritesButton.frame = CGRectMake(favoritesButton.frame.origin.x, frame.size.height - 98, favoritesButton.frame.size.width, favoritesButton.frame.size.height);
-    commentsButton.frame = CGRectMake(commentsButton.frame.origin.x, frame.size.height - 65, commentsButton.frame.size.width, commentsButton.frame.size.height);
-    favoriteIndicator.frame = CGRectMake(favoriteIndicator.frame.origin.x, frame.size.height - 110, favoriteIndicator.frame.size.width, favoriteIndicator.frame.size.height);
+    favoritesButton.frame = CGRectIntegral(CGRectMake(favoritesButton.frame.origin.x, frame.size.height - 98, favoritesButton.frame.size.width, favoritesButton.frame.size.height));
+    commentsButton.frame = CGRectIntegral(CGRectMake(commentsButton.frame.origin.x, frame.size.height - 65, commentsButton.frame.size.width, commentsButton.frame.size.height));
+    favoriteIndicator.frame = CGRectIntegral(CGRectMake(favoriteIndicator.frame.origin.x, frame.size.height - 110, favoriteIndicator.frame.size.width, favoriteIndicator.frame.size.height));
     
 }
 

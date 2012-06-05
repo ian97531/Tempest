@@ -109,13 +109,29 @@
         
         NSString *iconFarm = [userDetails objectForKey:@"iconfarm"];
         NSString *iconServer = [userDetails objectForKey:@"iconserver"];
-        
+        NSURL *iconURL;
         if (![iconFarm isEqualToString:@"0"] && ![iconServer isEqualToString:@"0"]) {
             NSString *iconURL = [NSString stringWithFormat:@"http://farm%@.staticflickr.com/%@buddyicons/%@.jpg", iconFarm, iconServer, _user.userID];
-            _user.iconURL = [NSURL URLWithString:iconURL];
+            iconURL = [NSURL URLWithString:iconURL];
         }
         else {
-            _user.iconURL = [NSURL URLWithString:kFlickrDefaultIconURLString];
+            iconURL = [NSURL URLWithString:kFlickrDefaultIconURLString];
+        }
+        
+        // Grab the icon
+        NSURLResponse *response;
+        NSError *error;
+        NSURLRequest *iconRequest = [NSURLRequest requestWithURL:iconURL cachePolicy:NSURLCacheStorageNotAllowed timeoutInterval:10.0];
+        NSData *iconData = [NSURLConnection sendSynchronousRequest:iconRequest returningResponse:&response error:&error];
+        
+        if(!error) {
+            _user.icon = [UIImage imageWithData:iconData];
+            UIGraphicsBeginImageContext(CGSizeMake(_user.icon.size.width, _user.icon.size.height));
+            [_user.icon drawAtPoint:CGPointZero];
+            UIGraphicsEndImageContext();
+        }
+        else {
+            NSLog(@"Could not load the icon for user %@", _user.username);
         }
         
         NSLog(@"Got user");

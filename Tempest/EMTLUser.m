@@ -7,6 +7,7 @@
 //
 
 #import "EMTLUser.h"
+#import "EMTLPhotoSource.h"
 
 @implementation EMTLUser
 
@@ -15,7 +16,6 @@
 @synthesize real_name = _real_name;
 @synthesize location = _location;
 @synthesize icon = _icon;
-@synthesize iconURL = _iconURL;
 @synthesize date_retrieved = _date_retrieved;
 
 @synthesize source = _source;
@@ -47,7 +47,6 @@
         _real_name = [aDecoder decodeObjectForKey:@"real_name"];
         _location = [aDecoder decodeObjectForKey:@"location"];
         _icon = [aDecoder decodeObjectForKey:@"icon"];
-        _iconURL = [aDecoder decodeObjectForKey:@"iconURL"];
         _date_retrieved = [aDecoder decodeObjectForKey:@"date_retrieved"];
     }
     
@@ -62,7 +61,6 @@
     [aCoder encodeObject:_real_name forKey:@"real_name"];
     [aCoder encodeObject:_location forKey:@"location"];
     [aCoder encodeObject:_icon forKey:@"icon"];
-    [aCoder encodeObject:_iconURL forKey:@"iconURL"];
     [aCoder encodeObject:_date_retrieved forKey:@"date_retrieved"];
     
 }
@@ -70,7 +68,7 @@
 #pragma mark -
 #pragma mark User Loading
 
-- (void)loadUserWithdelegate:(id<EMTLUserDelegate>)delegate
+- (void)loadUserWithDelegate:(id<EMTLUserDelegate>)delegate
 {
     _delegate = delegate;
     

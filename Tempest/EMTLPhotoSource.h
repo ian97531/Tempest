@@ -33,14 +33,10 @@ extern NSString *const kPhotoLocation;
 
 extern NSString *const kCommentText;
 extern NSString *const kCommentDate;
-extern NSString *const kCommentUsername;
-extern NSString *const kCommentUserID;
-extern NSString *const kCommentIconURL;
+extern NSString *const kCommentUser;
 
 extern NSString *const kFavoriteDate;
-extern NSString *const kFavoriteUsername;
-extern NSString *const kFavoriteUserID;
-extern NSString *const kFavoriteIconURL;
+extern NSString *const kFavoriteUser;
 
 extern int const kImageCacheCapacity;
 extern NSString *const kImageCacheFilesDatesDict;
@@ -74,8 +70,8 @@ extern NSString *const kUserCacheDict;
     dispatch_queue_t _imageCacheQueue;
     NSString *_imageCacheIndexPath;
     
-    
     NSDictionary *_userCache;
+    NSString *_userCacheDir;
     
     @protected
     

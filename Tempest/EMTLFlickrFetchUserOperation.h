@@ -14,7 +14,6 @@
 @interface EMTLFlickrFetchUserOperation : NSOperation
 {
     @private
-    BOOL _isFavorite;
     BOOL _executing;
     BOOL _finished;
     EMTLUser *_user;

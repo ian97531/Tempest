@@ -205,6 +205,7 @@ NSInteger normalize(id obj1, id obj2, void *context)
         for (NSString *key in [extraOAuthParameters allKeys]) {
             parameter = [[OARequestParameter alloc] initWithName:key value:[extraOAuthParameters objectForKey:key]];
             [parameterPairs addObject:[parameter URLEncodedNameValuePair]];
+            [parameter release];
         }
     }
     
