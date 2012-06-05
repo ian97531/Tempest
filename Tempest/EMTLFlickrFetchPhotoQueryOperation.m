@@ -23,7 +23,6 @@ static int const kPhotosToLoad = 50;
 - (NSArray *)_extractPhotos:(NSDictionary *)dictionary;
 - (NSDictionary *)_updateQueryArguments:(NSDictionary *)queryArguments;
 
-
 @end
 
 
@@ -283,8 +282,7 @@ static int const kPhotosToLoad = 50;
 {
     
     NSMutableDictionary *newQuery = [NSMutableDictionary dictionaryWithDictionary:queryArguments];
-    NSLog(@"in _updateQueryArguments");
-    NSLog(@"Old Query: %@", [newQuery description]);
+    NSLog(@"in _updateQueryArguments:\n%@", newQuery);
     
     int minYear = 0;
     int minMonth = 0;

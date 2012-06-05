@@ -38,8 +38,8 @@
     self = [super initWithNibName:nil bundle:nil];
     if (self != nil)
     {
-        NSLog(@"in view controller");
-        NSLog(@"Query arguments: %@", [query.queryArguments description]);
+
+        NSLog(@"in view controller\n%@", query.queryArguments);
         _photoQuery = query;
         _photoQuery.delegate = self;
         [self reloadQuery];
