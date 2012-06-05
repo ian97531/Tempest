@@ -7,20 +7,30 @@
 //
 
 
-#import "EMTLPhotoSource.h"
 #import <Foundation/Foundation.h>
 
-@protocol EMTLUserIconDelegate <NSObject>
+@class EMTLUser;
+@class EMTLPhotoSource;
 
-- (void)userWillRequestIcon:(EMTLUser *)user;
-- (void)user:(EMTLUser *)user didLoadIcon:(UIImage *)image;
+@protocol EMTLUserDelegate <NSObject>
+
+- (void)userWillLoad:(EMTLUser *)user;
+- (void)userDidLoad:(EMTLUser *)user;
 
 
 @end
 
 @interface EMTLUser : NSObject <NSCoding>
 {
-    id <EMTLUserIconDelegate> _delegate;
+    id <EMTLUserDelegate> _delegate;
+    NSString *_userID;
+    NSString *_username;
+    NSString *_real_name;
+    NSString *_location;
+    NSURL *_iconURL;
+    UIImage *_icon;
+    NSDate *_date_retrieved;
+    EMTLPhotoSource *_source;
 }
 
 
@@ -30,11 +40,17 @@
 @property (nonatomic, strong) NSString *location;
 @property (nonatomic, strong) NSURL *iconURL;
 @property (nonatomic, strong) UIImage *icon;
-
-@property (nonatomic) int numberOfPhotos;
+@property (nonatomic, strong) NSDate *date_retrieved;
 
 @property (nonatomic) EMTLPhotoSource *source;
 
-- (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLUserIconDelegate>)delegate;
+- (id)initWIthUserID:(NSString *)userID source:(EMTLPhotoSource *)source;
+
+// Loading the user
+- (void)loadUserWithDelegate:(id<EMTLUserDelegate>)delegate;
+
+// Callbacks for User loading
+- (void)photoSourceWillRequestUser:(EMTLPhotoSource *)source;
+- (void)photoSourceDidLoadUser:(EMTLPhotoSource *)source;
 
 @end

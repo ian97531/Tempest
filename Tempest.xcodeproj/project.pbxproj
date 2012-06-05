@@ -11,6 +11,7 @@
 		28CD7CF1155F21B500892383 /* EMTLPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CD7CF0155F21B500892383 /* EMTLPhotoCell.m */; };
 		EB14ED661579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14ED651579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m */; };
 		EB14ED6D15798DE100724F0C /* EMTLUser.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14ED6C15798DE100724F0C /* EMTLUser.m */; };
+		EB1FF975157D444A009DA624 /* EMTLFlickrFetchUserOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1FF974157D444A009DA624 /* EMTLFlickrFetchUserOperation.m */; };
 		EB5221F115377A3A00785F97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F015377A3A00785F97 /* UIKit.framework */; };
 		EB5221F315377A3A00785F97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F215377A3A00785F97 /* Foundation.framework */; };
 		EB5221F515377A3A00785F97 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F415377A3A00785F97 /* CoreGraphics.framework */; };
@@ -159,6 +160,8 @@
 		EB14ED651579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickrSetFavoriteStateOperation.m; sourceTree = "<group>"; };
 		EB14ED6B15798DE100724F0C /* EMTLUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLUser.h; sourceTree = "<group>"; };
 		EB14ED6C15798DE100724F0C /* EMTLUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLUser.m; sourceTree = "<group>"; };
+		EB1FF973157D444A009DA624 /* EMTLFlickrFetchUserOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFlickrFetchUserOperation.h; sourceTree = "<group>"; };
+		EB1FF974157D444A009DA624 /* EMTLFlickrFetchUserOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickrFetchUserOperation.m; sourceTree = "<group>"; };
 		EB5221EC15377A3A00785F97 /* Tempest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tempest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB5221F015377A3A00785F97 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		EB5221F215377A3A00785F97 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -358,7 +361,6 @@
 		EB5221E115377A3A00785F97 = {
 			isa = PBXGroup;
 			children = (
-				EB979CB51578542900104282 /* QuartzCore.framework */,
 				EB5221F815377A3A00785F97 /* Tempest */,
 				EB52221415377A3A00785F97 /* TempestTests */,
 				EB5221EF15377A3A00785F97 /* Frameworks */,
@@ -383,6 +385,7 @@
 				EB5221F415377A3A00785F97 /* CoreGraphics.framework */,
 				EB5221F615377A3A00785F97 /* CoreData.framework */,
 				EB5221F215377A3A00785F97 /* Foundation.framework */,
+				EB979CB51578542900104282 /* QuartzCore.framework */,
 				EB69B285153CDE2E003D8422 /* Security.framework */,
 				EB52220D15377A3A00785F97 /* SenTestingKit.framework */,
 				EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */,
@@ -650,6 +653,8 @@
 				EBBC51FB156DA17100348F34 /* EMTLFlickrFetchFavoritesAndCommentsOperation.m */,
 				EB14ED641579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.h */,
 				EB14ED651579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m */,
+				EB1FF973157D444A009DA624 /* EMTLFlickrFetchUserOperation.h */,
+				EB1FF974157D444A009DA624 /* EMTLFlickrFetchUserOperation.m */,
 			);
 			name = Flickr;
 			sourceTree = "<group>";
@@ -875,6 +880,7 @@
 				EB979CB915796A2000104282 /* EMTLLocation.m in Sources */,
 				EB14ED661579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m in Sources */,
 				EB14ED6D15798DE100724F0C /* EMTLUser.m in Sources */,
+				EB1FF975157D444A009DA624 /* EMTLFlickrFetchUserOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

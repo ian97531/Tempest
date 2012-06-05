@@ -11,6 +11,7 @@
 #import "EMTLFlickrFetchPhotoQueryOperation.h"
 #import "EMTLFlickrFetchImageOperation.h"
 #import "EMTLFlickrSetFavoriteStateOperation.h"
+#import "EMTLFlickrFetchUserOperation.h"
 #import "EMTLOperationQueue.h"
 #import "EMTLPhoto.h"
 #import "OAMutableURLRequest.h"
@@ -351,64 +352,34 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 
 - (EMTLUser *)userForUserID:(NSString *)userID
 {
-    EMTLUser *the_user = [_users objectForKey:userID];
-    if (the_user) {
-        return the_user;
-    }
-    
-    NSMutableDictionary *userArgs = [NSMutableDictionary dictionaryWithCapacity:4];
-    
-    [userArgs setObject:kFlickrAPIKey 
-                      forKey:kFlickrAPIArgumentAPIKey];
-    
-    [userArgs setObject:userID
-                      forKey:kFlickrAPIArgumentUserID];
     
     
-    OAMutableURLRequest *userRequest = [self oaurlRequestForMethod:kFlickrAPIMethodUserInfo arguments:userArgs];
     
-    NSURLResponse *response = nil;
-    NSError *error = nil;
-    NSData *userData = [NSURLConnection sendSynchronousRequest:userRequest returningResponse:&response error:&error];
     
-    NSDictionary *userDict = [self dictionaryFromResponseData:userData];
     
-    if(!userDict) {
-        NSLog(@"There was an error interpreting the json response for user from %@", userID);
-        return nil;
-    }
-    
-    else {
-        NSDictionary *userDetails = [userDict objectForKey:@"person"];
-        
-        EMTLUser *newUser = [[EMTLUser alloc] init];
-        
-        newUser.userID = userID;
-        newUser.username = [userDetails objectForKey:@"username"];
-        newUser.real_name = [userDetails objectForKey:@"realname"];
-        newUser.location = [[userDetails objectForKey:@"location"] objectForKey:@"_content"];
-        
-        NSString *iconFarm = [userDetails objectForKey:@"iconfarm"];
-        NSString *iconServer = [userDetails objectForKey:@"iconserver"];
-        
-        if (![iconFarm isEqualToString:@"0"] && ![iconServer isEqualToString:@"0"]) {
-            NSString *iconURL = [NSString stringWithFormat:@"http://farm%@.staticflickr.com/%@buddyicons/%@.jpg", iconFarm, iconServer, userID];
-            newUser.iconURL = [NSURL URLWithString:iconURL];
-        }
-        else {
-            newUser.iconURL = [NSURL URLWithString:kFlickrDefaultIconURLString];
-        }
-        
-        NSLog(@"Got user");
-        [_users setValue:newUser forKey:userID];
-        return newUser;
-    }
-
     
     
 }
 
+
+- (void)loadUser:(EMTLUser *)user withUserID:(NSString *)userID
+{
     
+}
+    
+
+- (void)operation:(EMTLFlickrFetchUserOperation *)operation willRequestUser:(EMTLUser *)user
+{
+    [user photoSourceWillRequestUser:self];
+}
+
+- (void)operation:(EMTLFlickrFetchUserOperation *)operation didLoadUser:(EMTLUser *)user
+{
+    // we should cache the user here;
+    
+    
+    [user photoSourceDidLoadUser:self];
+}
 
 
 #pragma mark -

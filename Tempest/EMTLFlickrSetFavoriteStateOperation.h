@@ -13,7 +13,7 @@
 
 @interface EMTLFlickrSetFavoriteStateOperation : NSOperation
 {
-@private
+    @private
     BOOL _isFavorite;
     BOOL _executing;
     BOOL _finished;

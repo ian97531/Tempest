@@ -10,14 +10,31 @@
 
 @implementation EMTLUser
 
-@synthesize userID;
-@synthesize username;
-@synthesize real_name;
-@synthesize location;
-@synthesize icon;
-@synthesize iconURL;
+@synthesize userID = _userID;
+@synthesize username = _username;
+@synthesize real_name = _real_name;
+@synthesize location = _location;
+@synthesize icon = _icon;
+@synthesize iconURL = _iconURL;
+@synthesize date_retrieved = _date_retrieved;
 
-@synthesize numberOfPhotos;
+@synthesize source = _source;
+
+- (id)initWIthUserID:(NSString *)userID source:(EMTLPhotoSource *)source
+{
+    self = [super self];
+    if (self)
+    {
+        _userID = userID;
+        _source = source;
+    }
+    
+    return self;
+}
+
+
+#pragma mark -
+#pragma mark NSCoding Methods
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
@@ -25,13 +42,13 @@
     self = [super init];
     if (self)
     {
-        userID = [aDecoder decodeObjectForKey:@"userID"];
-        username = [aDecoder decodeObjectForKey:@"username"];
-        real_name = [aDecoder decodeObjectForKey:@"real_name"];
-        location = [aDecoder decodeObjectForKey:@"location"];
-        icon = [aDecoder decodeObjectForKey:@"icon"];
-        iconURL = [aDecoder decodeObjectForKey:@"iconURL"];
-        numberOfPhotos = [aDecoder decodeIntForKey:@"numberOfPhotos"];
+        _userID = [aDecoder decodeObjectForKey:@"userID"];
+        _username = [aDecoder decodeObjectForKey:@"username"];
+        _real_name = [aDecoder decodeObjectForKey:@"real_name"];
+        _location = [aDecoder decodeObjectForKey:@"location"];
+        _icon = [aDecoder decodeObjectForKey:@"icon"];
+        _iconURL = [aDecoder decodeObjectForKey:@"iconURL"];
+        _date_retrieved = [aDecoder decodeObjectForKey:@"date_retrieved"];
     }
     
     return self;
@@ -40,21 +57,39 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder 
 {
-    [aCoder encodeObject:userID forKey:@"userID"];
-    [aCoder encodeObject:username forKey:@"username"];
-    [aCoder encodeObject:real_name forKey:@"real_name"];
-    [aCoder encodeObject:location forKey:@"location"];
-    [aCoder encodeObject:icon forKey:@"icon"];
-    [aCoder encodeObject:iconURL forKey:@"iconURL"];
-    [aCoder encodeInt:numberOfPhotos forKey:@"numberOfPhotos"];
+    [aCoder encodeObject:_userID forKey:@"userID"];
+    [aCoder encodeObject:_username forKey:@"username"];
+    [aCoder encodeObject:_real_name forKey:@"real_name"];
+    [aCoder encodeObject:_location forKey:@"location"];
+    [aCoder encodeObject:_icon forKey:@"icon"];
+    [aCoder encodeObject:_iconURL forKey:@"iconURL"];
+    [aCoder encodeObject:_date_retrieved forKey:@"date_retrieved"];
     
 }
 
+#pragma mark -
+#pragma mark User Loading
 
-- (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLUserIconDelegate>)delegate
+- (void)loadUserWithdelegate:(id<EMTLUserDelegate>)delegate
 {
     _delegate = delegate;
-    return nil;
+    
+    [_source loadUser:self withUserID:_userID];
+
+}
+
+
+#pragma mark -
+#pragma mark User Loading Callbacks
+
+- (void)photoSourceWillRequestUser:(EMTLPhotoSource *)source
+{
+    [_delegate userWillLoad:self];
+}
+
+- (void)photoSourceDidLoadUser:(EMTLPhotoSource *)source
+{
+    [_delegate userDidLoad:self];
 }
 
 @end

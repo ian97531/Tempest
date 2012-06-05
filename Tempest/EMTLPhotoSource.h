@@ -44,6 +44,7 @@ extern NSString *const kFavoriteIconURL;
 
 extern int const kImageCacheCapacity;
 extern NSString *const kImageCacheFilesDatesDict;
+extern NSString *const kUserCacheDict;
 
 @protocol EMTLImageDelegate;
 @class EMTLPhotoSource;
@@ -74,12 +75,12 @@ extern NSString *const kImageCacheFilesDatesDict;
     NSString *_imageCacheIndexPath;
     
     
+    NSDictionary *_userCache;
     
     @protected
     
     NSString *_serviceName;
     EMTLUser *_user;
-    NSDictionary *_users;
     
 }
 
@@ -110,6 +111,7 @@ extern NSString *const kImageCacheFilesDatesDict;
 
 // Users
 - (EMTLUser *)userForUserID:(NSString *)userID;
+- (void)loadUser:(EMTLUser *)user withUserID:(NSString *)userID;
 
 @end
 

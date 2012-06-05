@@ -42,6 +42,7 @@ NSString *const kFavoriteIconURL = @"icon_url";
 
 int const kImageCacheCapacity = 100;
 NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
+NSString *const kUserCacheDict = @"Users";
 
 @interface EMTLPhotoSource ()
 - (NSString *)_photoQueryIDFromQueryType:(EMTLPhotoQueryType)queryType andArguments:(NSDictionary *)arguments; // Assumes that argument keys and values are strings
@@ -64,21 +65,38 @@ NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
     self = [super init];
     if (self)
     {
+        //
+        // MEMORY CACHING INIT
+        //
+        
+        // In-memory caching for queries
         _photoQueries = [NSMutableDictionary dictionary];
         
-        // Users
-        _users = [NSDictionary dictionary];
+    
+        // In-memory caching for users
+        _userCache = [NSDictionary dictionary];
         
         // In-memory caching for images
         _imageCache = [[NSCache alloc] init];
         
         
-        // Setup disk image caching
+        
+        //
+        // DISK CACHING
+        //
+        
         NSFileManager *fileManager = [NSFileManager defaultManager];
         
         NSArray *dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, 
                                                                 NSUserDomainMask, YES);
         NSString *cacheDir = [dirPaths objectAtIndex:0];
+        
+        
+        // Setup disk caching for users
+        
+        
+        
+        // Setup disk image caching
         
         _imageCacheDir = [cacheDir stringByAppendingString:@"/images"];
         
@@ -440,10 +458,39 @@ NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
     return image;
 }
 
+- (void)cacheUser:(EMTLUser *)user
+{
+    NSString *cacheKey = [self _cacheKeyForUserID:user.userID];
+    
+    [_userCache setValue:user forKey:cacheKey];
+    
+    // Serialize and write out the photo list to the cache.
+    NSString *cachePath = [NSString stringWithFormat:@"%@/%@", _photoListCacheDir, queryID];
+    if([NSKeyedArchiver archiveRootObject:photos toFile:cachePath])
+    
+    
+}
+
+
+- (EMTLUser *)userFromCache:(NSString *)userID
+{
+    NSString *cacheKey = [self _cacheKeyForUserID:userID];
+    EMTLUser *the_user = [_userCache objectForKey:cacheKey];
+    
+    return the_user;
+    
+}
+
 
 - (NSString *)_cacheKeyForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size
 {
     return [NSString stringWithFormat:@"%@-%i", photo.uniqueID, size];
+}
+
+
+- (NSString *)_cacheKeyForUserID:(NSString *)userID
+{
+    return [NSString stringWithFormat:@"%@-%@", self.serviceName, userID];
 }
 
 #pragma mark -
@@ -479,7 +526,15 @@ NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
 {
     // Subclasses override
     return nil;
+    
 }
+
+- (void)loadUser:(EMTLUser *)user withUserID:(NSString *)userID
+{
+    // Subclasses override
+}
+
+
 
 #pragma mark -
 #pragma mark Private Subclass Overrides

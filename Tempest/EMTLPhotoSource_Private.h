@@ -17,6 +17,10 @@
 - (void)cacheImage:(UIImage *)image withSize:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo;
 - (UIImage *)imageFromCacheWithSize:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo;
 
+- (void)cacheUser:(EMTLUser *)user;
+- (EMTLUser *)userFromCache:(NSString *)userID;
+
 - (NSString *)_cacheKeyForPhoto:(EMTLPhoto *)photo imageSize:(EMTLImageSize)size;
+- (NSString *)_cacheKeyForUserID:(NSString *)userID;
 
 @end
