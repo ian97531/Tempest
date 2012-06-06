@@ -9,6 +9,13 @@
 #import "EMTLPhoto.h"
 #import "EMTLPhotoSource.h"
 
+@interface EMTLPhoto ()
+
+- (NSArray *)_generateFavoriteUsersArray:(NSArray *)faves;
+
+@end
+
+
 @implementation EMTLPhoto
 
 @synthesize uniqueID;
@@ -103,6 +110,8 @@
         
         _imageProgress = 0;
         
+        _favoritesUsers = [self _generateFavoriteUsersArray:_favorites];
+        
     }
     return self;
 
@@ -176,18 +185,33 @@
         }
     }
     
+    _favoritesUsers = [self _generateFavoriteUsersArray:_favorites];
+    
     
 }
 
 - (void)setFavorites:(NSArray *)favorites
 {
-    NSMutableArray *users = [NSMutableArray arrayWithCapacity:favorites.count];
-    for (NSDictionary *favoriteItem in favorites) {
+    
+    _favoritesUsers = [self _generateFavoriteUsersArray:favorites];
+    _favorites = favorites;
+}
+
+- (NSArray *)_generateFavoriteUsersArray:(NSArray *)faves
+{
+    // Sort the list of favorites by date, newest first.
+    NSArray *sortedFaves = [faves sortedArrayUsingComparator:^(NSDictionary *id1, NSDictionary *id2){
+        return [(NSDate *)[id2 objectForKey:kFavoriteDate] compare:(NSDate *)[id1 objectForKey:kFavoriteDate]];
+    }];
+    
+    NSMutableArray *users = [NSMutableArray arrayWithCapacity:sortedFaves.count];
+    
+    // Put the users into an array
+    for (NSDictionary *favoriteItem in sortedFaves) {
         [users addObject:[favoriteItem objectForKey:kFavoriteUser]]; 
     }
     
-    _favoritesUsers = users;
-    _favorites = favorites;
+    return users;
 }
 
 

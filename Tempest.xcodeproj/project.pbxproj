@@ -56,6 +56,7 @@
 		EB69B288153CDE3A003D8422 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B287153CDE3A003D8422 /* CFNetwork.framework */; };
 		EB69B28A153CDE40003D8422 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B289153CDE40003D8422 /* libxml2.dylib */; };
 		EB69B28C153CDE59003D8422 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */; };
+		EB6E5A23157FFF860040D9CB /* Marker SD.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB6E5A22157FFF860040D9CB /* Marker SD.ttf */; };
 		EB88B5EE1546247D00E6A6EE /* PolaroidTextured4.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5EC1546247D00E6A6EE /* PolaroidTextured4.png */; };
 		EB88B5EF1546247D00E6A6EE /* PolaroidTextured4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5ED1546247D00E6A6EE /* PolaroidTextured4@2x.png */; };
 		EB8AA18B1540D1F6004C6DF8 /* Small-0.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA1791540D1F6004C6DF8 /* Small-0.png */; };
@@ -239,6 +240,7 @@
 		EB69B287153CDE3A003D8422 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		EB69B289153CDE40003D8422 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		EB6E5A22157FFF860040D9CB /* Marker SD.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Marker SD.ttf"; sourceTree = "<group>"; };
 		EB850DAE153E0A710073BBAE /* APISecrets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APISecrets.h; sourceTree = "<group>"; };
 		EB88B5EC1546247D00E6A6EE /* PolaroidTextured4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PolaroidTextured4.png; sourceTree = "<group>"; };
 		EB88B5ED1546247D00E6A6EE /* PolaroidTextured4@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PolaroidTextured4@2x.png"; sourceTree = "<group>"; };
@@ -469,6 +471,7 @@
 		EB69B200153CD46B003D8422 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				EB6E5A22157FFF860040D9CB /* Marker SD.ttf */,
 				EB979CBA1579792200104282 /* FavoriteButton_Off.png */,
 				EB979CBB1579792200104282 /* FavoriteButton_Off@2x.png */,
 				EB979CBC1579792200104282 /* FavoriteButton_On.png */,
@@ -835,6 +838,7 @@
 				EB979CBF1579792200104282 /* FavoriteButton_Off@2x.png in Resources */,
 				EB979CC01579792200104282 /* FavoriteButton_On.png in Resources */,
 				EB979CC11579792200104282 /* FavoriteButton_On@2x.png in Resources */,
+				EB6E5A23157FFF860040D9CB /* Marker SD.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

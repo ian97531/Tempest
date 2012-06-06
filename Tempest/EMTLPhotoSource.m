@@ -175,7 +175,7 @@ NSString *const kUserCacheDict = @"Users";
     // If we retrieved any files, process them
     if(_imageCacheSortedRefs) {
         
-        NSLog(@"We have %i files in the disk image cache!", _imageCacheSortedRefs.count);
+        //NSLog(@"We have %i files in the disk image cache!", _imageCacheSortedRefs.count);
                                    
         [_imageCacheSortedRefs sortUsingComparator:^(EMTLCachedImage *image1, EMTLCachedImage *image2) {
             // Sort the list in descending order by the date posted.
@@ -202,7 +202,7 @@ NSString *const kUserCacheDict = @"Users";
                 if (image)
                 {
                     [_imageCache setObject:image forKey:imageRef.filename];
-                    NSLog(@"Loaded %@ into the in-memory cache", imageRef.filename);
+                    //NSLog(@"Loaded %@ into the in-memory cache", imageRef.filename);
                 }
                 
             
@@ -365,7 +365,7 @@ NSString *const kUserCacheDict = @"Users";
         {
             // If successful, save the new date for this query ID
             [_photoListCacheDates setObject:dateOfFirstPhoto forKey:queryID];
-            NSLog(@"successfully cached queryID: %@ to disk", queryID);
+            //NSLog(@"successfully cached queryID: %@ to disk", queryID);
         }
         else {
             NSLog(@"Unable to write queryID %@ to disk", queryID);
@@ -373,7 +373,7 @@ NSString *const kUserCacheDict = @"Users";
     }
     else
     {
-        NSLog(@"photo list not newer than existing cached list, skipping cache.");
+        //NSLog(@"photo list not newer than existing cached list, skipping cache.");
     }
     
 }
@@ -387,8 +387,8 @@ NSString *const kUserCacheDict = @"Users";
     NSArray *photoList = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath];
     
     if (photoList) {
-        NSLog(@"Found photo list in cache for queryID: %@", queryID);
-        NSLog(@"First photo id is: %@", [[photoList objectAtIndex:0] photoID]);
+        //NSLog(@"Found photo list in cache for queryID: %@", queryID);
+        //NSLog(@"First photo id is: %@", [[photoList objectAtIndex:0] photoID]);
         for (EMTLPhoto *photo in photoList) {
             photo.source = self;
         }
@@ -410,7 +410,7 @@ NSString *const kUserCacheDict = @"Users";
         // than 100 objects in our disk cache, then add this to the cache.
         if (_imageCacheSortedRefs.count < kImageCacheCapacity || [photo.datePosted compare:[[_imageCacheSortedRefs lastObject] datePosted]] == NSOrderedDescending) {
             
-            NSLog(@"Saving image %@ into the on-disk cache", cacheKey);
+            //NSLog(@"Saving image %@ into the on-disk cache", cacheKey);
             // Write the image into the correct location in the image cache.
             NSString *cachedImagePath = [NSString stringWithFormat:@"%@/%@", _imageCacheDir, cacheKey];
             NSURL *imageURL = [NSURL fileURLWithPath:cachedImagePath isDirectory:NO];
@@ -436,7 +436,7 @@ NSString *const kUserCacheDict = @"Users";
                 NSFileManager *fileManger = [NSFileManager defaultManager];
                 NSError *error;
                 
-                NSLog(@"reaping a file from the on-disk image cache. %@ for date %@", oldestCachedImageRef.filename, oldestCachedImageRef.datePosted);
+                //NSLog(@"reaping a file from the on-disk image cache. %@ for date %@", oldestCachedImageRef.filename, oldestCachedImageRef.datePosted);
                 
                 // Remove the file
                 [fileManger removeItemAtURL:oldestCachedImageRef.urlToImage error:&error];
@@ -466,7 +466,7 @@ NSString *const kUserCacheDict = @"Users";
             
         }
         else {
-            NSLog(@"Skipping caching %@ because it's too old.", cacheKey);
+            //NSLog(@"Skipping caching %@ because it's too old.", cacheKey);
         }
         
     });
@@ -478,7 +478,7 @@ NSString *const kUserCacheDict = @"Users";
     NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
     UIImage *image = [_imageCache objectForKey:cacheKey];
     if (image) {
-        NSLog(@"got image for %@ from cache", cacheKey);
+        //NSLog(@"got image for %@ from cache", cacheKey);
     }   
     
     return image;
@@ -496,7 +496,7 @@ NSString *const kUserCacheDict = @"Users";
         NSString *cachePath = [NSString stringWithFormat:@"%@/%@", _userCacheDir, kUserCacheDict];
         if([NSKeyedArchiver archiveRootObject:_userCache toFile:cachePath])
         {
-            NSLog(@"successfully updated the on-disk user cache with user %@", user.username);
+            //NSLog(@"successfully updated the on-disk user cache with user %@", user.username);
         }
         else 
         {

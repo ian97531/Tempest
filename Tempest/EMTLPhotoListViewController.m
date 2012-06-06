@@ -41,7 +41,7 @@
     if (self != nil)
     {
 
-        NSLog(@"in view controller\n%@", query.queryArguments);
+        //NSLog(@"in view controller\n%@", query.queryArguments);
         _photoQuery = query;
         _photoQuery.delegate = self;
         [self reloadQuery];
@@ -68,11 +68,12 @@
 
 - (void)favoriteButtonPushed:(id)sender
 {
-    UIButton *favoriteButton = (UIButton *)sender;
-    EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:favoriteButton.tag];
+    UITapGestureRecognizer *favoriteGesture = (UITapGestureRecognizer *)sender;
+    
+    EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:favoriteGesture.view.tag];
     
     [photo setFavorite:!photo.isFavorite];
-    [_tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:favoriteButton.tag inSection:0]] withRowAnimation:NO];
+    [_tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:favoriteGesture.view.tag inSection:0]] withRowAnimation:NO];
     
 }
 
@@ -81,8 +82,8 @@
     
     UIView *parent = [[UIView alloc] init];
     
-    //UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleChromeVisibility)];
-    //[parent addGestureRecognizer:tap];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleChromeVisibility)];
+    [parent addGestureRecognizer:tap];
 
     // Set a background image.
     UIImageView *backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ClothBackground.png"]];
@@ -139,7 +140,8 @@
     // When the EMTLPhotos are returned to us using the photoSource:retreivedMorePhotos:
     // method, we stored the heights needed for each cell in the heights array.
     EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:indexPath.row];
-    return (294 / photo.aspectRatio.floatValue) + 150;
+    return roundf((294 / photo.aspectRatio.floatValue) + 150);
+    
 }
 
 #pragma mark -
@@ -154,6 +156,7 @@
     
     if (cell == nil) {
         cell = [[EMTLPhotoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PhotoCell"];
+        [cell.favoriteTapGesture addTarget:self action:@selector(favoriteButtonPushed:)];
     }
     
     EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:indexPath.row];
@@ -162,35 +165,30 @@
         [_photoQuery morePhotos];
     }
     
+    cell.photoID = photo.photoID;
+    
     cell.ownerLabel.text = photo.user.username;
     cell.dateLabel.text = [photo datePostedString];
     
+    cell.favoriteUsers.photoID = photo.photoID;
+    cell.favoriteUsers.signedInUser = _photoQuery.source.user;
     cell.favoriteUsers.users = photo.favoritesUsers;
+    
     [cell setCommentsString:[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
     
     cell.favoriteIndicator.tag = indexPath.row;
     cell.favoriteIndicatorTurnedOn = photo.isFavorite;
-    [cell.favoriteIndicator addTarget:self action:@selector(favoriteButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
     
-        
-    // If the cell has an image, we can skip this.
-    if (!cell.imageView.image)
-    {
-        NSLog(@"resetting the image");
-        UIImage *image = [photo loadImageWithSize:EMTLImageSizeMediumAspect delegate:self];
-        
-        if(image) {
-            float imageProgress = photo.imageProgress;
-            [cell setImage:image animated:(imageProgress != 0)];
-            photo.imageProgress = 0;
-        }
-        else {
-            cell.imageView.layer.opacity = 0;
-            cell.progressBar.layer.opacity = 1;
-            cell.progressBar.progress = photo.imageProgress;
-        }
-
+    
+    UIImage *image = [photo loadImageWithSize:EMTLImageSizeMediumAspect delegate:self];
+    
+    if(image) {
+        [cell setImage:image];
     }
+    else {
+        [cell setProgress:photo.imageProgress];
+    }
+
         
     return cell;
     
@@ -221,19 +219,19 @@
 
 - (void)photoQueryWillUpdate:(EMTLPhotoQuery *)query
 {
-    NSLog(@"will get new photos");
+    //NSLog(@"will get new photos");
 }
 
 
 - (void)photoQueryDidUpdate:(EMTLPhotoQuery *)query
 {
-    NSLog(@"got new photos, %i", query.photoList.count);
+    //NSLog(@"got new photos, %i", query.photoList.count);
     [_tableView reloadData];
 }
 
 - (void)photoQueryIsUpdating:(EMTLPhotoQuery *)query progress:(float)progress
 {
-    NSLog(@"New photos are loading");
+    //NSLog(@"New photos are loading");
 }
 
 - (void)photoQueryFinishedUpdating:(EMTLPhotoQuery *)query

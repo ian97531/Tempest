@@ -15,6 +15,7 @@
 {
     BOOL fadeContents;
     BOOL _favoriteIndicatorOn;
+    NSString *_photoID;
 }
 
 @property (nonatomic, strong) UIImageView *imageView;
@@ -27,15 +28,19 @@
 @property (nonatomic, strong) EMTLMagicUserList *favoriteUsers;
 @property (nonatomic, strong) UIButton *commentsButton;
 @property (nonatomic, strong) UIProgressView *progressBar;
-@property (nonatomic, strong) UIButton *favoriteIndicator;
+@property (nonatomic, strong) UIImageView *favoriteIndicator;
+@property (nonatomic, strong) UITapGestureRecognizer *favoriteTapGesture;
 @property (nonatomic) BOOL favoriteIndicatorTurnedOn;
+@property (nonatomic, strong) NSString *photoID;
 
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
 
 - (void)setCommentsString:(NSString *)commentsString;
-- (void)setImage:(UIImage *)image animated:(BOOL)animated;
+- (void)setImage:(UIImage *)image;
+- (void)setProgress:(float)progress;
 - (void)setFavoriteIndicatorTurnedOn:(BOOL)favoriteState;
 - (BOOL)favoriteIndicatorTurnedOn;
 
-
+- (void)logPhotoID;
 
 @end

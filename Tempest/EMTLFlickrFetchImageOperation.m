@@ -32,7 +32,11 @@
     [super connection:connection didReceiveData:data];
     
     float percent = (float)_incomingData.length/(float)_totalSize;
-    [_photoSource operation:self didRequestImageForPhoto:_photo withSize:_size progress:percent];
+    
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [_photoSource operation:self didRequestImageForPhoto:_photo withSize:_size progress:percent];
+    });
+    
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
@@ -45,15 +49,20 @@
     [image drawAtPoint:CGPointZero];
     UIGraphicsEndImageContext();
 
-    [_photoSource operation:self didLoadImage:image forPhoto:_photo withSize:_size];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [_photoSource operation:self didLoadImage:image forPhoto:_photo withSize:_size];
+    });
+    
 
 }
 
 
 - (void)start
 {
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [_photoSource operation:self willRequestImageForPhoto:_photo withSize:_size];
+    });
     
-    [_photoSource operation:self willRequestImageForPhoto:_photo withSize:_size];
     NSURLRequest *request = [NSURLRequest requestWithURL:_photo.imageURL cachePolicy:NSURLRequestReloadIgnoringLocalAndRemoteCacheData timeoutInterval:10.0];
     [self startRequest:request];
     

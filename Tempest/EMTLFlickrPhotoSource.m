@@ -184,7 +184,6 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 
     switch (query.queryType) {
         case EMTLPhotoQueryTimeline:
-            NSLog(@"asking for the timeline");
             [newQuery setValue:kFlickrAPIMethodSearch forKey:kFlickrQueryMethod];
             break;
             
@@ -218,7 +217,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 {
     if (![_photoListOperations objectForKey:query.photoQueryID])
     {
-        NSLog(@"starting a new photo list operation");
+        //NSLog(@"starting a new photo list operation");
         EMTLFlickrFetchPhotoQueryOperation *operation = [[EMTLFlickrFetchPhotoQueryOperation alloc] initWithPhotoQuery:query photoSource:self];
         [_photoListOperations setObject:operation forKey:query.photoQueryID];
         [[EMTLOperationQueue photoQueue] addOperation:operation];

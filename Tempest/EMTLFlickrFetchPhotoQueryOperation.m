@@ -113,7 +113,7 @@ static int const kPhotosToLoad = 50;
     OAMutableURLRequest *request = [_photoSource oaurlRequestForMethod:[queryArguments objectForKey:kFlickrQueryMethod] arguments:requestParameters];
     request.timeoutInterval = 10;
     
-    NSLog(@"%@", [[request URL] absoluteString]);
+    //NSLog(@"%@", [[request URL] absoluteString]);
     
     // Send the request for the photos synchronously.
     NSError *error = nil;
@@ -281,7 +281,7 @@ static int const kPhotosToLoad = 50;
 {
     
     NSMutableDictionary *newQuery = [NSMutableDictionary dictionaryWithDictionary:queryArguments];
-    NSLog(@"in _updateQueryArguments:\n%@", newQuery);
+    //NSLog(@"in _updateQueryArguments:\n%@", newQuery);
     
     int minYear = 0;
     int minMonth = 0;
@@ -334,7 +334,7 @@ static int const kPhotosToLoad = 50;
             maxMonth = minMonth;
             maxDay = minDay;
             
-            NSLog(@"Next search will change the date range.");            
+            //NSLog(@"Next search will change the date range.");            
             if ((minMonth - 3) < 1)
             {
                 minMonth = 12 + (minMonth - 3);

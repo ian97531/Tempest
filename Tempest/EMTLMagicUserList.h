@@ -14,6 +14,7 @@
 @interface EMTLMagicUserList : UIView
 {
     NSArray *_users;
+    EMTLUser *_signedInUser;;
     
     UIFont *_font;
     UIColor *_color;
@@ -31,15 +32,21 @@
     NSMutableAttributedString *_attributedString;
     NSMutableDictionary *_tappableAreas;
     NSValue *_allUsersTappableArea;
+    NSMutableArray *_underlinedRanges;
+    
+    NSString *_photoID;
 }
 
 @property (nonatomic, strong) NSArray *users;
+@property (nonatomic, strong) EMTLUser *signedInUser;
 @property (nonatomic, strong) UIFont *font;
 @property (nonatomic, strong) UIColor *textColor;
 @property (nonatomic, strong) NSString *prefix;
 @property (nonatomic, strong) NSString *empty;
 @property (nonatomic, strong) NSString *numericSuffix;
 @property (nonatomic, strong) NSString *singularNumericSuffix;
+
+@property (nonatomic, strong) NSString *photoID;
 
 - (id)initWithFrame:(CGRect)frame emtpyString:(NSString *)emptyString;
 

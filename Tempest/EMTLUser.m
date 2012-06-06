@@ -90,4 +90,9 @@
     [_delegate userDidLoad:self];
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@ (%@): %@", _source.serviceName, _userID, _username];
+}
+
 @end

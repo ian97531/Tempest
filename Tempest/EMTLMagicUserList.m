@@ -22,12 +22,14 @@
 @implementation EMTLMagicUserList
 
 @synthesize users = _users;
+@synthesize signedInUser = _signedInUser;
 @synthesize font = _font;
 @synthesize textColor = _color;
 @synthesize prefix = _prefixString;
 @synthesize empty = _emptyString;
 @synthesize numericSuffix = _numericSuffix;
 @synthesize singularNumericSuffix = _singularNumericSuffix;
+@synthesize photoID = _photoID;
 
 - (id)initWithFrame:(CGRect)frame emtpyString:(NSString *)emptyString
 {
@@ -41,6 +43,7 @@
         _prefixString = @"";
         _tappableAreas = [NSMutableDictionary dictionary];
         _allUsersTappableArea = nil;
+        _underlinedRanges = [NSMutableArray array];
         
         [self _regenerateString];
         self.backgroundColor = [UIColor clearColor];
@@ -128,21 +131,26 @@
 - (void)_regenerateString
 {
     
-    
+    NSLog(@"regenerating the string");
     if (!_users.count) {
-        NSLog(@"regenerating the string");
+        
         _attributedString = [[NSMutableAttributedString alloc] initWithString:_emptyString];
         
         _regenerateStringNeeded = NO;
         return;
     }
     
+    if([_photoID isEqualToString:@"7160024905"])
+    {
+        NSLog(@"stop here");
+    }
     
     
     if(_users.count == 1) {
         EMTLUser *user = [_users objectAtIndex:0];
-        NSString *likeString = [NSString stringWithFormat:@"%@ %@",_prefixString, user.username];
-        [_tappableAreas setObject:user forKey:[self _areaForNewString:user.username onString:_prefixString]];
+        NSString *name = (user == _signedInUser) ? @"you" : user.username;
+        NSString *likeString = [NSString stringWithFormat:@"%@ %@",_prefixString, name];
+        [_tappableAreas setObject:user forKey:[self _areaForNewString:name onString:_prefixString]];
         
         _attributedString = [[NSMutableAttributedString alloc] initWithString:likeString];
         
@@ -161,7 +169,9 @@
         for (int i = 0; i < _users.count; i++) {
             // Get the width for the user
             EMTLUser *user = [_users objectAtIndex:i];
-            int userSize = [user.username sizeWithFont:_font].width;
+            NSString *name = (user == _signedInUser) ? @"you" : user.username;
+            
+            int userSize = [name sizeWithFont:_font].width;
             availableWidth = availableWidth - userSize;
             
             // Unless this is the last user, we need to tack on the comma width.
@@ -183,8 +193,7 @@
             [usedUsers addObject:user];
             
         }
-        
-        
+                
         // If we couldn't include all users we need to back off and make room for the
         // " and x others" string.
         if (usedUsers.count < _users.count)
@@ -198,7 +207,8 @@
                 int neededWidth = [[NSString stringWithFormat:remainingUsersFormat, usersLeft] sizeWithFont:_font].width;
                 
                 // Find the width of the last object in the array and remove it.
-                int sizeOfLastItem = [[[usedUsers lastObject] username] sizeWithFont:_font].width;
+                NSString *name = ([usedUsers lastObject] == _signedInUser) ? @"you" : [[usedUsers lastObject] username];
+                int sizeOfLastItem = [name sizeWithFont:_font].width;
                 [usedUsers removeLastObject];
                 
                 // If the leftover available width, plus the width of the last item, plus the 
@@ -239,8 +249,9 @@
         // Pull together the usedUsers and generate the correct tappable areas.
         for (int i = 0; i < usedUsers.count; i++) {
             EMTLUser *user = [usedUsers objectAtIndex:i];
-            [_tappableAreas setObject:user forKey:[self _areaForNewString:user.username onString:likeString]];
-            likeString = [likeString stringByAppendingFormat:@" %@", user.username];
+            NSString *name = (user == _signedInUser) ? @"you" : user.username;
+            [_tappableAreas setObject:user forKey:[self _areaForNewString:name onString:likeString]];
+            likeString = [likeString stringByAppendingFormat:@" %@", name];
             if (i < usedUsers.count - 1)
             {
                 likeString = [likeString stringByAppendingString:@","];
@@ -249,13 +260,22 @@
         
         // Generate the remainder string and tappable area
         int numRemaining = (_users.count - usedUsers.count);
-        NSString *pluralRemainder = (numRemaining != 1) ? @"s" : @"";
         
-        NSString *remainder = [NSString stringWithFormat:@" and %i other%@", numRemaining, pluralRemainder];
-        _allUsersTappableArea = [self _areaForNewString:remainder onString:likeString];
+        // If there is a remainder, add the remainder string.
+        if (numRemaining) 
+        {
+            NSString *pluralRemainder = (numRemaining != 1) ? @"s" : @"";
+            
+            NSString *remainder = [NSString stringWithFormat:@" and %i other%@", numRemaining, pluralRemainder];
+            _allUsersTappableArea = [self _areaForNewString:remainder onString:likeString];
+            
+            likeString = [likeString stringByAppendingString:remainder];
+            
+        }
+        
         
         // Create the attributed string
-        _attributedString = [[NSMutableAttributedString alloc] initWithString:[likeString stringByAppendingString:remainder]];
+        _attributedString = [[NSMutableAttributedString alloc] initWithString:likeString];
         
         _regenerateStringNeeded = NO;
         return;
