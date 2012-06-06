@@ -24,9 +24,10 @@
 @synthesize datePostedString;
 @synthesize source = _source;
 @synthesize comments;
-@synthesize favorites;
+@synthesize favorites = _favorites;
 @synthesize location;
 @synthesize imageProgress = _imageProgress;
+@synthesize favoritesUsers = _favoritesUsers;
 
 + (id)photoWithSource:(EMTLPhotoSource *)source dict:(NSDictionary *)dict
 {
@@ -69,10 +70,11 @@
         }
         
         comments = [NSArray array];
-        favorites = [NSArray array];
+        _favorites = [NSArray array];
         location = nil;
         _imageProgress = 0;
         isFavorite = NO;
+        _favoritesUsers = [NSArray array];
         
         
     }
@@ -97,7 +99,7 @@
         location = [aDecoder decodeObjectForKey:kPhotoLocation];
         
         comments = [aDecoder decodeObjectForKey:kPhotoComments];
-        favorites = [aDecoder decodeObjectForKey:kPhotoFavorites];
+        _favorites = [aDecoder decodeObjectForKey:kPhotoFavorites];
         
         _imageProgress = 0;
         
@@ -120,7 +122,7 @@
     [aCoder encodeObject:location forKey:kPhotoLocation];
     
     [aCoder encodeObject:comments forKey:kPhotoComments];
-    [aCoder encodeObject:favorites forKey:kPhotoFavorites];
+    [aCoder encodeObject:_favorites forKey:kPhotoFavorites];
 }
 
 
@@ -149,14 +151,14 @@
         [myFavorite setValue:[NSDate date] forKey:kFavoriteDate];
         [myFavorite setValue:_source.user forKey:kFavoriteUser];
         
-        favorites = [favorites arrayByAddingObject:myFavorite];
+        _favorites = [_favorites arrayByAddingObject:myFavorite];
     }
     
     // If we've unfavorited this picture, we need to remove ourselves from the array.
     else
     {
         NSDictionary *toDelete;
-        for (NSDictionary *favorite in favorites) {
+        for (NSDictionary *favorite in _favorites) {
             if (_source.user == [favorite objectForKey:kFavoriteUser])
             {
                 toDelete = favorite;
@@ -167,14 +169,25 @@
         if (toDelete)
         {
             
-            NSMutableArray *newFavorites = [favorites mutableCopy];
+            NSMutableArray *newFavorites = [_favorites mutableCopy];
             [newFavorites removeObject:toDelete];
             
-            favorites = [NSArray arrayWithArray:newFavorites];
+            _favorites = [NSArray arrayWithArray:newFavorites];
         }
     }
     
     
+}
+
+- (void)setFavorites:(NSArray *)favorites
+{
+    NSMutableArray *users = [NSMutableArray arrayWithCapacity:favorites.count];
+    for (NSDictionary *favoriteItem in favorites) {
+        [users addObject:[favoriteItem objectForKey:kFavoriteUser]]; 
+    }
+    
+    _favoritesUsers = users;
+    _favorites = favorites;
 }
 
 

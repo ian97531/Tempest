@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @class EMTLProgressIndicatorViewController;
-
+@class EMTLMagicUserList;
 
 @interface EMTLPhotoCell : UITableViewCell
 {
@@ -24,14 +24,13 @@
 @property (nonatomic, strong) UIView *backgroundGutter;
 @property (nonatomic, strong) UILabel *ownerLabel;
 @property (nonatomic, strong) UILabel *dateLabel;
-@property (nonatomic, strong) UIButton *favoritesButton;
+@property (nonatomic, strong) EMTLMagicUserList *favoriteUsers;
 @property (nonatomic, strong) UIButton *commentsButton;
 @property (nonatomic, strong) UIProgressView *progressBar;
 @property (nonatomic, strong) UIButton *favoriteIndicator;
 @property (nonatomic) BOOL favoriteIndicatorTurnedOn;
 
 
-- (void)setFavoritesString:(NSString *)favoritesString;
 - (void)setCommentsString:(NSString *)commentsString;
 - (void)setImage:(UIImage *)image animated:(BOOL)animated;
 - (void)setFavoriteIndicatorTurnedOn:(BOOL)favoriteState;

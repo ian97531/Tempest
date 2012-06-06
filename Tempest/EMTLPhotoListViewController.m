@@ -11,6 +11,7 @@
 #import "EMTLPhoto.h"
 #import "EMTLLocation.h"
 #import "EMTLUser.h"
+#import "EMTLMagicUserList.h"
 
 #import "Math.h"
 
@@ -163,32 +164,34 @@
     
     cell.ownerLabel.text = photo.user.username;
     cell.dateLabel.text = [photo datePostedString];
-    [cell setFavoritesString:[NSString stringWithFormat:@"%i Favorites", photo.favorites.count]];
+    
+    cell.favoriteUsers.users = photo.favoritesUsers;
+    [cell setCommentsString:[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
+    
     cell.favoriteIndicator.tag = indexPath.row;
     cell.favoriteIndicatorTurnedOn = photo.isFavorite;
     [cell.favoriteIndicator addTarget:self action:@selector(favoriteButtonPushed:) forControlEvents:UIControlEventTouchUpInside];
     
-    
-    
-    if(photo.location) {
-        [cell setCommentsString:photo.location.name]; //[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
+        
+    // If the cell has an image, we can skip this.
+    if (!cell.imageView.image)
+    {
+        NSLog(@"resetting the image");
+        UIImage *image = [photo loadImageWithSize:EMTLImageSizeMediumAspect delegate:self];
+        
+        if(image) {
+            float imageProgress = photo.imageProgress;
+            [cell setImage:image animated:(imageProgress != 0)];
+            photo.imageProgress = 0;
+        }
+        else {
+            cell.imageView.layer.opacity = 0;
+            cell.progressBar.layer.opacity = 1;
+            cell.progressBar.progress = photo.imageProgress;
+        }
+
     }
-    
-    
-    
-    //NSLog(@"getting image for index path %i", indexPath.row);
-    UIImage *image = [photo loadImageWithSize:EMTLImageSizeMediumAspect delegate:self];
-    
-    if(image) {
-        [cell setImage:image animated:(photo.imageProgress != 0)];
-        photo.imageProgress = 0;
-    }
-    else {
-        cell.imageView.layer.opacity = 0;
-        cell.progressBar.layer.opacity = 1;
-        cell.progressBar.progress = photo.imageProgress;
-    }
-    
+        
     return cell;
     
 }

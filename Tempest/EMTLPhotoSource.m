@@ -108,6 +108,11 @@ NSString *const kUserCacheDict = @"Users";
             
             if (_userCache) {
                 NSLog(@"Found user list cache");
+                // Update the sources for each user.
+                // We need to change this behaviour if we ever have multiple photo sources.
+                for (EMTLUser *user in [_userCache allValues]) {
+                    user.source = self;
+                }
             }
             else {
                 NSLog(@"No user cache found, setting up an empty user cache");

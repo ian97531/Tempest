@@ -8,6 +8,8 @@
 
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
+#import "EMTLMagicUserList.h"
+
 #import <QuartzCore/QuartzCore.h>
 
 @implementation EMTLPhotoCell
@@ -22,7 +24,7 @@
 @synthesize progressBar;
 @synthesize favoriteIndicator;
 
-@synthesize favoritesButton;
+@synthesize favoriteUsers;
 @synthesize commentsButton;
 
 
@@ -68,12 +70,11 @@
         ownerLabel.layer.masksToBounds = YES;
         ownerLabel.backgroundColor = [UIColor clearColor];
         
-        favoritesButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        favoritesButton.frame = CGRectMake(50, 352, 243, 16);
-        favoritesButton.titleLabel.font = [UIFont fontWithName:@"Whatever" size:14];
-        [favoritesButton setTitleColor:[UIColor colorWithWhite:0 alpha:0.6] forState:UIControlStateNormal];
-        [favoritesButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
-        [favoritesButton addTarget:self action:@selector(switchToFavoritesView) forControlEvents:UIControlEventTouchUpInside];
+        favoriteUsers = [[EMTLMagicUserList alloc] initWithFrame:CGRectMake(50, 352, 243, 16) emtpyString:@"0 Likes"];
+        favoriteUsers.prefix = @"Liked by";
+        favoriteUsers.numericSuffix = @"likes";
+        favoriteUsers.font = [UIFont fontWithName:@"Whatever" size:14];
+        favoriteUsers.textColor = [UIColor colorWithWhite:0 alpha:0.6];
         
         favoriteIndicator = [UIButton buttonWithType:UIButtonTypeCustom];
         favoriteIndicator.frame = CGRectMake(8, 330, 45, 35);
@@ -105,7 +106,7 @@
         [cardView addSubview:ownerLabel];
         
         [cardView addSubview:commentsButton];
-        [cardView addSubview:favoritesButton];
+        [cardView addSubview:favoriteUsers];
         [cardView addSubview:favoriteIndicator];
         
         [self.contentView addSubview:cardView];
@@ -131,7 +132,7 @@
     backgroundGutter.frame = imageRect;
     progressBar.center = backgroundGutter.center;
     
-    favoritesButton.frame = CGRectIntegral(CGRectMake(favoritesButton.frame.origin.x, frame.size.height - 98, favoritesButton.frame.size.width, favoritesButton.frame.size.height));
+    favoriteUsers.frame = CGRectIntegral(CGRectMake(favoriteUsers.frame.origin.x, frame.size.height - 98, favoriteUsers.frame.size.width, favoriteUsers.frame.size.height));
     commentsButton.frame = CGRectIntegral(CGRectMake(commentsButton.frame.origin.x, frame.size.height - 65, commentsButton.frame.size.width, commentsButton.frame.size.height));
     favoriteIndicator.frame = CGRectIntegral(CGRectMake(favoriteIndicator.frame.origin.x, frame.size.height - 110, favoriteIndicator.frame.size.width, favoriteIndicator.frame.size.height));
     
@@ -142,7 +143,7 @@
 - (void)prepareForReuse
 {
 
-    //imageView.image = nil;
+    imageView.image = nil;
     //imageView.layer.opacity = 0;
     //progressBar.layer.opacity = 1;
     //[favoritesButton setTitle:@"" forState:UIControlStateNormal];
@@ -167,7 +168,7 @@
     [dateLabel removeFromSuperview];
     [ownerLabel removeFromSuperview];
     //[indicator.view removeFromSuperview];
-    [favoritesButton removeFromSuperview];
+    [favoriteUsers removeFromSuperview];
     [commentsButton removeFromSuperview];
     
 
@@ -185,13 +186,6 @@
 
 
 #pragma mark - EMTLPhotoDelegate methods
-- (void)setFavoritesString:(NSString *)favoritesString
-{
-    [favoritesButton setTitle:favoritesString forState:UIControlStateNormal];
-    
-
-    
-}
 
 - (void)setCommentsString:(NSString *)commentsString
 {

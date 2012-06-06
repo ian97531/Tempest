@@ -13,6 +13,9 @@
 		EB14ED6D15798DE100724F0C /* EMTLUser.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14ED6C15798DE100724F0C /* EMTLUser.m */; };
 		EB14EDCF157E95C200724F0C /* EMTLBackgroundConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14EDCE157E95C200724F0C /* EMTLBackgroundConnection.m */; };
 		EB14EDD2157E970300724F0C /* EMTLDownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14EDD1157E970300724F0C /* EMTLDownloadOperation.m */; };
+		EB14EDD5157EB61000724F0C /* EMTLFlickrFetchLocationOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14EDD4157EB60F00724F0C /* EMTLFlickrFetchLocationOperation.m */; };
+		EB14EDD8157EBBBF00724F0C /* EMTLMagicUserList.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14EDD7157EBBBF00724F0C /* EMTLMagicUserList.m */; };
+		EB14EDDA157EC2FB00724F0C /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB14EDD9157EC2FB00724F0C /* CoreText.framework */; };
 		EB1FF975157D444A009DA624 /* EMTLFlickrFetchUserOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1FF974157D444A009DA624 /* EMTLFlickrFetchUserOperation.m */; };
 		EB5221F115377A3A00785F97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F015377A3A00785F97 /* UIKit.framework */; };
 		EB5221F315377A3A00785F97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F215377A3A00785F97 /* Foundation.framework */; };
@@ -166,6 +169,11 @@
 		EB14EDCE157E95C200724F0C /* EMTLBackgroundConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLBackgroundConnection.m; sourceTree = "<group>"; };
 		EB14EDD0157E970300724F0C /* EMTLDownloadOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLDownloadOperation.h; sourceTree = "<group>"; };
 		EB14EDD1157E970300724F0C /* EMTLDownloadOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLDownloadOperation.m; sourceTree = "<group>"; };
+		EB14EDD3157EB60F00724F0C /* EMTLFlickrFetchLocationOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFlickrFetchLocationOperation.h; sourceTree = "<group>"; };
+		EB14EDD4157EB60F00724F0C /* EMTLFlickrFetchLocationOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickrFetchLocationOperation.m; sourceTree = "<group>"; };
+		EB14EDD6157EBBBE00724F0C /* EMTLMagicUserList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLMagicUserList.h; sourceTree = "<group>"; };
+		EB14EDD7157EBBBF00724F0C /* EMTLMagicUserList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLMagicUserList.m; sourceTree = "<group>"; };
+		EB14EDD9157EC2FB00724F0C /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		EB1FF973157D444A009DA624 /* EMTLFlickrFetchUserOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFlickrFetchUserOperation.h; sourceTree = "<group>"; };
 		EB1FF974157D444A009DA624 /* EMTLFlickrFetchUserOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickrFetchUserOperation.m; sourceTree = "<group>"; };
 		EB5221EC15377A3A00785F97 /* Tempest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tempest.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -339,6 +347,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB14EDDA157EC2FB00724F0C /* CoreText.framework in Frameworks */,
 				EB69B28C153CDE59003D8422 /* SystemConfiguration.framework in Frameworks */,
 				EB69B28A153CDE40003D8422 /* libxml2.dylib in Frameworks */,
 				EB69B288153CDE3A003D8422 /* CFNetwork.framework in Frameworks */,
@@ -367,6 +376,7 @@
 		EB5221E115377A3A00785F97 = {
 			isa = PBXGroup;
 			children = (
+				EB14EDD9157EC2FB00724F0C /* CoreText.framework */,
 				EB5221F815377A3A00785F97 /* Tempest */,
 				EB52221415377A3A00785F97 /* TempestTests */,
 				EB5221EF15377A3A00785F97 /* Frameworks */,
@@ -410,6 +420,8 @@
 				28CD7CE8155EE88C00892383 /* EMTLConstants.m */,
 				28CD7CEF155F21B400892383 /* EMTLPhotoCell.h */,
 				28CD7CF0155F21B500892383 /* EMTLPhotoCell.m */,
+				EB14EDD6157EBBBE00724F0C /* EMTLMagicUserList.h */,
+				EB14EDD7157EBBBF00724F0C /* EMTLMagicUserList.m */,
 				EB69B1F2153CD26D003D8422 /* EMTLPhotoListViewController.h */,
 				EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */,
 				EB9B5E7F15657211008D0CBD /* EMTLOperationQueue.h */,
@@ -659,6 +671,8 @@
 				EB9B5E7A15656B3C008D0CBD /* EMTLFlickrFetchPhotoQueryOperation.m */,
 				EB9B5E7C15656B64008D0CBD /* EMTLFlickrFetchImageOperation.h */,
 				EB9B5E7D15656B64008D0CBD /* EMTLFlickrFetchImageOperation.m */,
+				EB14EDD3157EB60F00724F0C /* EMTLFlickrFetchLocationOperation.h */,
+				EB14EDD4157EB60F00724F0C /* EMTLFlickrFetchLocationOperation.m */,
 				EBBC51FA156DA17100348F34 /* EMTLFlickrFetchFavoritesAndCommentsOperation.h */,
 				EBBC51FB156DA17100348F34 /* EMTLFlickrFetchFavoritesAndCommentsOperation.m */,
 				EB14ED641579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.h */,
@@ -893,6 +907,8 @@
 				EB1FF975157D444A009DA624 /* EMTLFlickrFetchUserOperation.m in Sources */,
 				EB14EDCF157E95C200724F0C /* EMTLBackgroundConnection.m in Sources */,
 				EB14EDD2157E970300724F0C /* EMTLDownloadOperation.m in Sources */,
+				EB14EDD5157EB61000724F0C /* EMTLFlickrFetchLocationOperation.m in Sources */,
+				EB14EDD8157EBBBF00724F0C /* EMTLMagicUserList.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

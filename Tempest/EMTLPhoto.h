@@ -31,6 +31,8 @@
     __weak id<EMTLImageDelegate> _delegate;
     float _imageProgress;
     EMTLPhotoSource *_source;
+    NSArray *_favoritesUsers;
+    NSArray *_favorites;
 }
 
 @property (nonatomic, strong, readonly) NSString *uniqueID;
@@ -44,6 +46,7 @@
 @property (nonatomic, strong, readonly) NSNumber *aspectRatio;
 @property (nonatomic, strong, readonly) NSString *datePostedString;
 @property (nonatomic, strong) NSArray *favorites;
+@property (nonatomic, readonly) NSArray *favoritesUsers;
 @property (nonatomic, strong) NSArray *comments;
 @property (nonatomic, strong) EMTLLocation *location;
 @property (nonatomic) BOOL isFavorite;
