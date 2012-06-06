@@ -545,7 +545,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
             _user = [self userForUserID:_userID];
             
             if(!_user.username) {
-                _user.username = [[loginInfo objectForKey:@"user"] objectForKey:@"username"];
+                _user.username = [[[loginInfo objectForKey:@"user"] objectForKey:@"username"] objectForKey:@"_content"];
             }
             
             
