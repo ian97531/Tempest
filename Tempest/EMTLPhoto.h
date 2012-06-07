@@ -33,6 +33,8 @@
     EMTLPhotoSource *_source;
     NSArray *_favoritesUsers;
     NSArray *_favorites;
+    
+    BOOL _updateUsers;
 }
 
 @property (nonatomic, strong, readonly) NSString *uniqueID;

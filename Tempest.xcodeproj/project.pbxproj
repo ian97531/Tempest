@@ -57,6 +57,9 @@
 		EB69B28A153CDE40003D8422 /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B289153CDE40003D8422 /* libxml2.dylib */; };
 		EB69B28C153CDE59003D8422 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */; };
 		EB6E5A23157FFF860040D9CB /* Marker SD.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB6E5A22157FFF860040D9CB /* Marker SD.ttf */; };
+		EB6E5A26158014260040D9CB /* Agent _C.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB6E5A25158014260040D9CB /* Agent _C.ttf */; };
+		EB6E5A2B15802FEA0040D9CB /* LabelTempest2.png in Resources */ = {isa = PBXBuildFile; fileRef = EB6E5A2915802FE90040D9CB /* LabelTempest2.png */; };
+		EB6E5A2C15802FEA0040D9CB /* LabelTempest2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB6E5A2A15802FE90040D9CB /* LabelTempest2@2x.png */; };
 		EB88B5EE1546247D00E6A6EE /* PolaroidTextured4.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5EC1546247D00E6A6EE /* PolaroidTextured4.png */; };
 		EB88B5EF1546247D00E6A6EE /* PolaroidTextured4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB88B5ED1546247D00E6A6EE /* PolaroidTextured4@2x.png */; };
 		EB8AA18B1540D1F6004C6DF8 /* Small-0.png in Resources */ = {isa = PBXBuildFile; fileRef = EB8AA1791540D1F6004C6DF8 /* Small-0.png */; };
@@ -241,6 +244,9 @@
 		EB69B289153CDE40003D8422 /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		EB69B28B153CDE59003D8422 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		EB6E5A22157FFF860040D9CB /* Marker SD.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Marker SD.ttf"; sourceTree = "<group>"; };
+		EB6E5A25158014260040D9CB /* Agent _C.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Agent _C.ttf"; sourceTree = "<group>"; };
+		EB6E5A2915802FE90040D9CB /* LabelTempest2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LabelTempest2.png; sourceTree = "<group>"; };
+		EB6E5A2A15802FE90040D9CB /* LabelTempest2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LabelTempest2@2x.png"; sourceTree = "<group>"; };
 		EB850DAE153E0A710073BBAE /* APISecrets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APISecrets.h; sourceTree = "<group>"; };
 		EB88B5EC1546247D00E6A6EE /* PolaroidTextured4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PolaroidTextured4.png; sourceTree = "<group>"; };
 		EB88B5ED1546247D00E6A6EE /* PolaroidTextured4@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "PolaroidTextured4@2x.png"; sourceTree = "<group>"; };
@@ -378,7 +384,6 @@
 		EB5221E115377A3A00785F97 = {
 			isa = PBXGroup;
 			children = (
-				EB14EDD9157EC2FB00724F0C /* CoreText.framework */,
 				EB5221F815377A3A00785F97 /* Tempest */,
 				EB52221415377A3A00785F97 /* TempestTests */,
 				EB5221EF15377A3A00785F97 /* Frameworks */,
@@ -402,6 +407,7 @@
 				EB69B287153CDE3A003D8422 /* CFNetwork.framework */,
 				EB5221F415377A3A00785F97 /* CoreGraphics.framework */,
 				EB5221F615377A3A00785F97 /* CoreData.framework */,
+				EB14EDD9157EC2FB00724F0C /* CoreText.framework */,
 				EB5221F215377A3A00785F97 /* Foundation.framework */,
 				EB979CB51578542900104282 /* QuartzCore.framework */,
 				EB69B285153CDE2E003D8422 /* Security.framework */,
@@ -471,6 +477,9 @@
 		EB69B200153CD46B003D8422 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				EB6E5A2915802FE90040D9CB /* LabelTempest2.png */,
+				EB6E5A2A15802FE90040D9CB /* LabelTempest2@2x.png */,
+				EB6E5A25158014260040D9CB /* Agent _C.ttf */,
 				EB6E5A22157FFF860040D9CB /* Marker SD.ttf */,
 				EB979CBA1579792200104282 /* FavoriteButton_Off.png */,
 				EB979CBB1579792200104282 /* FavoriteButton_Off@2x.png */,
@@ -839,6 +848,9 @@
 				EB979CC01579792200104282 /* FavoriteButton_On.png in Resources */,
 				EB979CC11579792200104282 /* FavoriteButton_On@2x.png in Resources */,
 				EB6E5A23157FFF860040D9CB /* Marker SD.ttf in Resources */,
+				EB6E5A26158014260040D9CB /* Agent _C.ttf in Resources */,
+				EB6E5A2B15802FEA0040D9CB /* LabelTempest2.png in Resources */,
+				EB6E5A2C15802FEA0040D9CB /* LabelTempest2@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

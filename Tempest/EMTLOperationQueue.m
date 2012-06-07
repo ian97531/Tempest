@@ -10,7 +10,7 @@
 
 @implementation EMTLOperationQueue
 
-+ (id)photoQueue
++ (EMTLOperationQueue *)photoQueue
 {
     static dispatch_once_t once;
     static id photoQueue;
@@ -21,5 +21,6 @@
     });
     return photoQueue;
 }
+
 
 @end

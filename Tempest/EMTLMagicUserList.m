@@ -131,18 +131,13 @@
 - (void)_regenerateString
 {
     
-    NSLog(@"regenerating the string");
+    //NSLog(@"regenerating the string");
     if (!_users.count) {
         
         _attributedString = [[NSMutableAttributedString alloc] initWithString:_emptyString];
         
         _regenerateStringNeeded = NO;
         return;
-    }
-    
-    if([_photoID isEqualToString:@"7160024905"])
-    {
-        NSLog(@"stop here");
     }
     
     

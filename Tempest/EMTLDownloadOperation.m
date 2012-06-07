@@ -36,7 +36,6 @@
 
 - (void)connection:(NSURLConnection *)aConnection didFailWithError:(NSError *)error
 {
-    
     [self willChangeValueForKey:@"isExecuting"];
     _executing = NO;
     [self didChangeValueForKey:@"isExecuting"];
@@ -56,6 +55,7 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
+    [_connection completed];
     [self willChangeValueForKey:@"isExecuting"];
     _executing = NO;
     [self didChangeValueForKey:@"isExecuting"];

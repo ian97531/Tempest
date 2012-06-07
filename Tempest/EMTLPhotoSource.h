@@ -39,6 +39,8 @@ extern NSString *const kFavoriteDate;
 extern NSString *const kFavoriteUser;
 
 extern int const kImageCacheCapacity;
+extern int const kImageCacheLeeway;
+
 extern NSString *const kImageCacheFilesDatesDict;
 extern NSString *const kUserCacheDict;
 
@@ -55,7 +57,7 @@ extern NSString *const kUserCacheDict;
 - (void)authorizationFailedForPhotoSource:(EMTLPhotoSource *)photoSource authorizationError:(NSError *)error;
 @end
 
-@interface EMTLPhotoSource : NSObject
+@interface EMTLPhotoSource : NSObject <NSCacheDelegate>
 {
     @private
     __weak id<EMTLPhotoSourceAuthorizationDelegate> _authorizationDelegate;
@@ -108,6 +110,8 @@ extern NSString *const kUserCacheDict;
 // Users
 - (EMTLUser *)userForUserID:(NSString *)userID;
 - (void)loadUser:(EMTLUser *)user withUserID:(NSString *)userID;
+
+- (void)cache:(NSCache *)cache willEvictObject:(id)obj;
 
 @end
 

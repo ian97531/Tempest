@@ -38,6 +38,13 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    for (NSString *name in [UIFont familyNames]) {
+        NSLog(@"Family name : %@", name);
+        for (NSString *font in [UIFont fontNamesForFamilyName:name]) {
+            NSLog(@"Font name : %@", font);             
+        }
+    }
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:NO];

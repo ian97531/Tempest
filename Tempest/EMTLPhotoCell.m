@@ -36,7 +36,7 @@
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
         
-        self.contentView.frame = CGRectMake(0, 0, 320, 425);
+        self.contentView.frame = CGRectMake(0, 0, 320, 450);
         
         // Setup photo card
         cardView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 415)];
@@ -81,7 +81,7 @@
         [cardView addSubview:imageView];
         
         UITapGestureRecognizer *imageTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(logPhotoID)];
-        [imageView addGestureRecognizer:imageTap];
+        [cardView addGestureRecognizer:imageTap];
         
         
         dateLabel = [[UILabel alloc] initWithFrame:CGRectMake(16, 13, 170, 20)];
@@ -102,7 +102,7 @@
         [cardView addSubview:ownerLabel];
         
         
-        favoriteUsers = [[EMTLMagicUserList alloc] initWithFrame:CGRectMake(52, 350, 250, 20) emtpyString:@"0 Likes"];
+        favoriteUsers = [[EMTLMagicUserList alloc] initWithFrame:CGRectMake(52, 350, 250, 25) emtpyString:@"0 Likes"];
         favoriteUsers.prefix = @"Liked by";
         favoriteUsers.numericSuffix = @"likes";
         favoriteUsers.font = [UIFont fontWithName:@"MarkerSD" size:14];
@@ -186,6 +186,8 @@
 {
     // Skip if the image is already set.
     if (image == imageView.image) {
+        imageView.layer.opacity = 1;
+        progressBar.layer.opacity = 0;
         return;
     }
     
@@ -213,7 +215,6 @@
     imageView.alpha = 0;
     progressBar.alpha = 1;
     progressBar.progress = progress;
-    NSLog(@"setting progress");
 }
 
 

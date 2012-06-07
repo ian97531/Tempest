@@ -46,13 +46,17 @@
     [_runLoop run];
 }
 
+- (void)completed
+{
+    [_runLoop removePort:_port forMode:NSDefaultRunLoopMode];
+}
 
 - (void)_setupRunLoop
 {
     // Open a port on the current runloop and schedule this connection in thtat runloop.
-    NSPort* port = [NSPort port];
+    _port = [NSPort port];
     _runLoop = [NSRunLoop currentRunLoop];
-    [_runLoop addPort:port forMode:NSDefaultRunLoopMode];
+    [_runLoop addPort:_port forMode:NSDefaultRunLoopMode];
     [self scheduleInRunLoop:_runLoop forMode:NSDefaultRunLoopMode];
 }
 

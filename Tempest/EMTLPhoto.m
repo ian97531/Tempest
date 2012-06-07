@@ -82,6 +82,7 @@
         _imageProgress = 0;
         isFavorite = NO;
         _favoritesUsers = [NSArray array];
+        _updateUsers = NO;
         
         
     }
@@ -110,7 +111,8 @@
         
         _imageProgress = 0;
         
-        _favoritesUsers = [self _generateFavoriteUsersArray:_favorites];
+        _updateUsers = YES;
+        
         
     }
     return self;
@@ -132,6 +134,68 @@
     
     [aCoder encodeObject:comments forKey:kPhotoComments];
     [aCoder encodeObject:_favorites forKey:kPhotoFavorites];
+    
+}
+
+- (void)setSource:(EMTLPhotoSource *)source
+{
+    _source = source;
+    
+    // If we've unarchived this photo object, we need to replace all of the users associated
+    // with it with users from the central store.
+    if (_updateUsers) {
+        
+        EMTLUser *newOwner = [source userForUserID:user.userID];
+        if (!newOwner.username) {
+            newOwner.username = user.username;
+        }
+        user = newOwner;
+        
+        NSMutableArray *newComments = [NSMutableArray arrayWithCapacity:comments.count];
+        NSMutableArray *newFaves = [NSMutableArray arrayWithCapacity:_favorites.count];
+        
+        for (NSDictionary *comment in comments) {
+            EMTLUser *oldUser = [comment objectForKey:kCommentUser];
+            EMTLUser *newUser = [source userForUserID:oldUser.userID];
+            
+            if (!newUser.username){
+                newUser.username = oldUser.username;
+            }
+            
+            NSDictionary *newComment = [NSDictionary dictionaryWithObjectsAndKeys:  
+                                        [comment objectForKey:kCommentDate], kCommentDate,
+                                        [comment objectForKey:kCommentText], kCommentText,
+                                        newUser, kCommentUser,
+                                        nil];
+            
+            [newComments addObject:newComment];
+        }
+        
+        comments = newComments;
+        
+        for (NSDictionary *favorite in _favorites) {
+            EMTLUser *oldUser = [favorite objectForKey:kFavoriteUser];
+            EMTLUser *newUser = [source userForUserID:oldUser.userID];
+            
+            if (!newUser.username){
+                newUser.username = oldUser.username;
+            }
+            
+            NSDictionary *newFave = [NSDictionary dictionaryWithObjectsAndKeys:  
+                                        [favorite objectForKey:kFavoriteDate], kFavoriteDate,
+                                        newUser, kFavoriteUser,
+                                        nil];
+            
+            [newFaves addObject:newFave];
+        }
+        
+        _favorites = newFaves;
+        _favoritesUsers = [self _generateFavoriteUsersArray:_favorites];
+        
+        _updateUsers = NO;
+        
+    }    
+    
 }
 
 

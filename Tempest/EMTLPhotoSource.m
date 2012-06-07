@@ -36,7 +36,9 @@ NSString *const kCommentUser = @"comment_user";
 NSString *const kFavoriteDate = @"favorite_date";
 NSString *const kFavoriteUser = @"favorite_user";
 
-int const kImageCacheCapacity = 100;
+int const kImageCacheCapacity = 20;
+int const kImageCacheLeeway = 20;
+
 NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
 NSString *const kUserCacheDict = @"Users";
 
@@ -73,6 +75,7 @@ NSString *const kUserCacheDict = @"Users";
         
         // In-memory caching for images
         _imageCache = [[NSCache alloc] init];
+        _imageCache.delegate = self;
         
         
         
@@ -137,6 +140,7 @@ NSString *const kUserCacheDict = @"Users";
         }
         else
         {
+            //_imageCacheDir = nil;
             [self _initImageCache];
         }
         
@@ -193,19 +197,45 @@ NSString *const kUserCacheDict = @"Users";
                 // Force CG to draw the image so the JPEG is already decompressed by the time
                 // our view controller gets its hand on this. This helps to avoid a stutter
                 // when displaying the image on-screen for the first time.
+
                 UIImage *image = [UIImage imageWithContentsOfFile:imageRef.path];
-                UIGraphicsBeginImageContext(CGSizeMake(image.size.width, image.size.height));
-                [image drawAtPoint:CGPointZero];
-                UIGraphicsEndImageContext();
                 
-                // Save the image to our in-memory cache, if we were able to pull it from the disk
-                if (image)
-                {
-                    [_imageCache setObject:image forKey:imageRef.filename];
-                    //NSLog(@"Loaded %@ into the in-memory cache", imageRef.filename);
+                CGImageRef cgImageRef = image.CGImage;
+                // System only supports RGB, set explicitly and prevent context error
+                // if the downloaded image is not the supported format
+                CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+                
+                CGContextRef context = CGBitmapContextCreate(NULL,
+                                                             CGImageGetWidth(cgImageRef),
+                                                             CGImageGetHeight(cgImageRef),
+                                                             8,
+                                                             // width * 4 will be enough because are in ARGB format, don't read from the image
+                                                             CGImageGetWidth(cgImageRef) * 4,
+                                                             colorSpace,
+                                                             // kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little 
+                                                             // makes system don't need to do extra conversion when displayed.
+                                                             kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little); 
+                CGColorSpaceRelease(colorSpace);
+                
+                if (context) {
+                    CGRect rect = (CGRect){CGPointZero, CGImageGetWidth(cgImageRef), CGImageGetHeight(cgImageRef)};
+                    CGContextDrawImage(context, rect, cgImageRef);
+                    CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
+                    CGContextRelease(context);
+                    
+                    UIImage *decompressedImage = [[UIImage alloc] initWithCGImage:decompressedImageRef];
+                    CGImageRelease(decompressedImageRef);
+                    
+                    
+                    // Save the image to our in-memory cache, if we were able to pull it from the disk
+                    if (decompressedImage)
+                    {
+                        [_imageCache setObject:decompressedImage forKey:imageRef.filename];
+                        //NSLog(@"Loaded %@ into the in-memory cache", imageRef.filename);
+                    }
+
                 }
                 
-            
             });
         }
     }
@@ -402,75 +432,80 @@ NSString *const kUserCacheDict = @"Users";
     NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
     [_imageCache setObject:image forKey:cacheKey];
     
-    // Next we want to dispatch a background block to see if we should store this image in
-    // our on-disk cache. The on-disk cache is only used when starting up the app.
-    dispatch_async(_imageCacheQueue, ^{
-        
-        // If this image is newer than the last image in our disk cache, or there are fewer
-        // than 100 objects in our disk cache, then add this to the cache.
-        if (_imageCacheSortedRefs.count < kImageCacheCapacity || [photo.datePosted compare:[[_imageCacheSortedRefs lastObject] datePosted]] == NSOrderedDescending) {
-            
-            //NSLog(@"Saving image %@ into the on-disk cache", cacheKey);
-            // Write the image into the correct location in the image cache.
-            NSString *cachedImagePath = [NSString stringWithFormat:@"%@/%@", _imageCacheDir, cacheKey];
-            NSURL *imageURL = [NSURL fileURLWithPath:cachedImagePath isDirectory:NO];
-            NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
-            [imageData writeToFile:cachedImagePath atomically:YES];
-            
-            // Create a cached image object to store the data.
-            EMTLCachedImage *cachedImageRef = [[EMTLCachedImage alloc] initWithDate:photo.datePosted url:imageURL];
-            
-            [_imageCacheSortedRefs addObject:cachedImageRef];
-            
-            [_imageCacheSortedRefs sortUsingComparator:^(EMTLCachedImage *image1, EMTLCachedImage *image2) {
-                // Sort the list in descending order by the date posted.
-                return [image2.datePosted compare:image1.datePosted];
-            }];
-            
-            
-            // If we've exceeded 100 items in the disk cache, we want to dump the oldest.
-            if(_imageCacheSortedRefs.count > kImageCacheCapacity) {
-                
-                // Find the oldest image
-                EMTLCachedImage *oldestCachedImageRef = [_imageCacheSortedRefs lastObject];
-                NSFileManager *fileManger = [NSFileManager defaultManager];
-                NSError *error;
-                
-                //NSLog(@"reaping a file from the on-disk image cache. %@ for date %@", oldestCachedImageRef.filename, oldestCachedImageRef.datePosted);
-                
-                // Remove the file
-                [fileManger removeItemAtURL:oldestCachedImageRef.urlToImage error:&error];
-                
-                // Do not delete the records of the file unless it was actaully deleted,
-                // otherwise the file will be leaked.
-                if(error)
-                {
-                    NSLog(@"Unable to remove oldest cached file: %@", oldestCachedImageRef.filename);
-                    NSLog(@"Error message: %@", [error localizedDescription]);
-                }
-                
-                // If the file was successfully deleted, we want to remove the records of the file
-                // from our data structures.
-                else {
-                    [_imageCacheSortedRefs removeObject:oldestCachedImageRef];
-                }
-            
-            }
-            
-            // Record the new dates and files dictionary.
-            // Maybe we could find a better place to write this?
-            if(![NSKeyedArchiver archiveRootObject:_imageCacheSortedRefs toFile:_imageCacheIndexPath])
-            {
-                NSLog(@"Unable to write the image cache dictionary to the disk at path: %@", _imageCacheIndexPath);
-            }
-            
-        }
-        else {
-            //NSLog(@"Skipping caching %@ because it's too old.", cacheKey);
-        }
-        
-    });
     
+    if (_imageCacheDir) {
+        
+        // Next we want to dispatch a background block to see if we should store this image in
+        // our on-disk cache. The on-disk cache is only used when starting up the app.
+        dispatch_async(_imageCacheQueue, ^{
+            
+            // If this image is newer than the last image in our disk cache, or there are fewer
+            // than 100 objects in our disk cache, then add this to the cache.
+            if (_imageCacheSortedRefs.count < kImageCacheCapacity || [photo.datePosted compare:[[_imageCacheSortedRefs lastObject] datePosted]] == NSOrderedDescending) {
+                
+                NSLog(@"Saving image %@ into the on-disk cache", cacheKey);
+                // Write the image into the correct location in the image cache.
+                NSString *cachedImagePath = [NSString stringWithFormat:@"%@/%@", _imageCacheDir, cacheKey];
+                NSURL *imageURL = [NSURL fileURLWithPath:cachedImagePath isDirectory:NO];
+                NSData *imageData = UIImageJPEGRepresentation(image, 1.0);
+                [imageData writeToFile:cachedImagePath atomically:YES];
+                
+                // Create a cached image object to store the data.
+                EMTLCachedImage *cachedImageRef = [[EMTLCachedImage alloc] initWithDate:photo.datePosted url:imageURL];
+                
+                [_imageCacheSortedRefs addObject:cachedImageRef];
+                
+                [_imageCacheSortedRefs sortUsingComparator:^(EMTLCachedImage *image1, EMTLCachedImage *image2) {
+                    // Sort the list in descending order by the date posted.
+                    return [image2.datePosted compare:image1.datePosted];
+                }];
+                
+                
+                // If we've exceeded 100 items in the disk cache, we want to dump the oldest.
+                if(_imageCacheSortedRefs.count > kImageCacheCapacity + kImageCacheLeeway) {
+                    
+                    // Find the oldest image
+                    EMTLCachedImage *oldestCachedImageRef = [_imageCacheSortedRefs lastObject];
+                    NSFileManager *fileManger = [NSFileManager defaultManager];
+                    NSError *error;
+                    
+                    NSLog(@"reaping a file from the on-disk image cache. %@ for date %@", oldestCachedImageRef.filename, oldestCachedImageRef.datePosted);
+                    
+                    // Remove the file
+                    [fileManger removeItemAtURL:oldestCachedImageRef.urlToImage error:&error];
+                    
+                    // Do not delete the records of the file unless it was actaully deleted,
+                    // otherwise the file will be leaked.
+                    if(error)
+                    {
+                        NSLog(@"Unable to remove oldest cached file: %@", oldestCachedImageRef.filename);
+                        NSLog(@"Error message: %@", [error localizedDescription]);
+                    }
+                    
+                    // If the file was successfully deleted, we want to remove the records of the file
+                    // from our data structures.
+                    else {
+                        [_imageCacheSortedRefs removeObject:oldestCachedImageRef];
+                    }
+                    
+                }
+                
+                // Record the new dates and files dictionary.
+                // Maybe we could find a better place to write this?
+                if(![NSKeyedArchiver archiveRootObject:_imageCacheSortedRefs toFile:_imageCacheIndexPath])
+                {
+                    NSLog(@"Unable to write the image cache dictionary to the disk at path: %@", _imageCacheIndexPath);
+                }
+                
+            }
+            else {
+                //NSLog(@"Skipping caching %@ because it's too old.", cacheKey);
+            }
+            
+        });
+        
+    }
+        
 }
 
 - (UIImage *)imageFromCacheWithSize:(EMTLImageSize)size forPhoto:(EMTLPhoto *)photo
@@ -659,6 +694,11 @@ NSString *const kUserCacheDict = @"Users";
     
     // Kill it.
     [_photoQueries removeObjectForKey:photoQueryID];
+}
+
+- (void)cache:(NSCache *)cache willEvictObject:(id)obj
+{
+    NSLog(@"Image cache evicting an object");
 }
 
 

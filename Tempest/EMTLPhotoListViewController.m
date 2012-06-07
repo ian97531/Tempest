@@ -91,7 +91,7 @@
     
     _tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 148)];
 
-    UIImageView *headerImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LabelTempest.png"]];
+    UIImageView *headerImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LabelTempest2.png"]];
     headerImage.frame = CGRectMake(10, 30, 300, 113);
     [_tableHeaderView addSubview:headerImage];
     
@@ -177,6 +177,7 @@
     [cell setCommentsString:[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
     
     cell.favoriteIndicator.tag = indexPath.row;
+    cell.cardView.tag = indexPath.row;
     cell.favoriteIndicatorTurnedOn = photo.isFavorite;
     
     

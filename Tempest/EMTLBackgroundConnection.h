@@ -11,6 +11,7 @@
 @interface EMTLBackgroundConnection : NSURLConnection
 {
     NSRunLoop *_runLoop;
+    NSPort *_port;
 }
 
 + (EMTLBackgroundConnection *)connectionWithRequest:(NSURLRequest *)request delegate:(id)delegate;
@@ -19,5 +20,6 @@
 
 
 - (void)start;
+- (void)completed;
 
 @end
