@@ -50,6 +50,7 @@
 - (void)setImage:(UIImage *)image;
 - (void)setProgress:(float)progress;
 - (void)setFavoriteIndicatorTurnedOn:(BOOL)favoriteState;
+- (void)setDate:(NSString *)dateString;
 - (BOOL)favoriteIndicatorTurnedOn;
 
 - (void)logPhotoID;

@@ -7,7 +7,7 @@
 //
 
 #import "EMTLAppDelegate.h"
-#import "EMTLPhotoListViewController.h"
+#import "EMTLTimelineViewController.h"
 #import "EMTLFlickrPhotoSource.h"
 
 @interface EMTLAppDelegate ()
@@ -164,7 +164,7 @@
 {
     NSLog(@"authorization complete for %@.", photoSource.serviceName);
 
-    self.timelineViewController = [[EMTLPhotoListViewController alloc] initWithPhotoQuery:[photoSource currentPhotos]];
+    self.timelineViewController = [[EMTLTimelineViewController alloc] initWithPhotoQuery:[photoSource currentPhotos]];
     [self.navController pushViewController:self.timelineViewController animated:NO];
 }
 

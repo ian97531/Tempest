@@ -7,6 +7,7 @@
 //
 
 #import "EMTLPhotoQuery.h"
+#import "EMTLPhoto.h"
 
 @implementation EMTLPhotoQuery
 
@@ -34,14 +35,15 @@
         _totalPhotos = 0;
         _numPhotosExpected = 0;
         _numPhotosReceived = 0;
+        _photoIDs = [NSMutableArray array];
         
         if (photos) {
             NSLog(@"Got cached photos in the photo query");
             _photoList = [NSMutableArray arrayWithArray:photos];
-            
         }
         else {
             _photoList = [NSMutableArray array];
+            
         }
         
     }
@@ -51,17 +53,31 @@
 
 - (void)photoSource:(EMTLPhotoSource *)source fetchedPhotos:(NSArray *)photos totalPhotos:(int)total;
 {
-    if (_reloading) {
-        // If we're reloading, we want to dump the existing array of photos.
-        _photoList = [NSMutableArray array];
-        _reloading = NO;
-    }
+
     
     _numPhotosExpected = total;
     _numPhotosReceived += photos.count;
     
-    // We should be gracefully merging the new photos in here.
-    [_photoList addObjectsFromArray:photos];
+    NSMutableArray *photosToAdd = [NSMutableArray arrayWithCapacity:photos.count];
+    NSMutableArray *photoIDsToAdd = [NSMutableArray arrayWithCapacity:photos.count];
+    
+    // Workaround for Flickr, it sometimes sends us dupes now....
+    for (EMTLPhoto *photo in photos) {
+        if ([_photoIDs indexOfObject:photo.photoID] == NSNotFound) {
+            [photosToAdd addObject:photo];
+            [photoIDsToAdd addObject:photo.photoID];
+        }
+    }
+    
+    if (_reloading && photosToAdd.count) {
+        // If we're reloading, we want to dump the existing array of photos.
+        _photoList = [NSMutableArray array];
+        _photoIDs = [NSMutableArray array];
+        _reloading = NO;
+    }
+    
+    [_photoList addObjectsFromArray:photosToAdd];
+    [_photoIDs addObjectsFromArray:photoIDsToAdd];
     
     [_delegate photoQueryDidUpdate:self];
 }
@@ -73,6 +89,8 @@
     _queryArguments = arguments;
     _numPhotosExpected = 0;
     _numPhotosReceived = 0;
+    _busy = NO;
+    _reloading = NO;
     [_delegate photoQueryFinishedUpdating:self];
 }
 
@@ -88,12 +106,16 @@
 
 - (void)morePhotos
 {
-    [_source updateQuery:self];
+    if (!_busy) {
+        [_source updateQuery:self];
+        _busy = YES;
+    }
 }
 
 - (void)reloadPhotos
 {
     _reloading = YES;
+    _busy = YES;
     [_source cancelQuery:self];
     _numPhotosExpected = 0;
     _numPhotosReceived = 0;
@@ -104,13 +126,18 @@
 
 - (NSArray *)photoList
 {
-    NSArray *photoList = [_photoList copy];
-    return photoList;
+    //NSArray *photoList = [_photoList copy];
+    return _photoList;
 }
 
 - (int)totalPhotos
 {
     return _photoList.count + (_numPhotosExpected - _numPhotosReceived);
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"\nPhoto Query ID: %@\nQuery Type: %i\nQuery Arguments: %@\nPhotos Currently Loaded: %i\nPhotos:%@", _photoQueryID, _queryType, _queryArguments, _photoList.count, _photoList];
 }
 
 @end

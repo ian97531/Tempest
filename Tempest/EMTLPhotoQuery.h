@@ -31,12 +31,14 @@
     __weak id<EMTLPhotoQueryDelegate> _delegate;
     EMTLPhotoSource * _source;
     BOOL _reloading;
+    BOOL _busy;
     int _totalPhotos;
     int _numPhotosExpected;
     int _numPhotosReceived;
     
     @protected
     NSMutableArray *_photoList; // BSEELY: Not actually sure this has to be mutable. 
+    NSMutableArray *_photoIDs;
 }
 
 @property (nonatomic, readonly, copy) NSArray *photoList;

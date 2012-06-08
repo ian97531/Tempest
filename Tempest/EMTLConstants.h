@@ -13,7 +13,6 @@ typedef enum EMTLPhotoQueryType {
     EMTLPhotoQueryFavorites,
     EMTLPhotoQueryUserPhotos,
     EMTLPhotoQueryPopularPhotos,
-    EMTLPhotoQueryPhotoAssets,
     EMTLPhotoQueryTypeUndefined, // Add new types above this
 } EMTLPhotoQueryType;
 

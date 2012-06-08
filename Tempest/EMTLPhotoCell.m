@@ -222,7 +222,7 @@
 
 - (void)logPhotoID
 {
-    NSLog(@"Photo ID is: %@", _photoID);
+    NSLog(@"Photo is: %@", _photoID);
 }
 
 
@@ -338,6 +338,20 @@
 {
     [commentsButton setTitle:commentsString forState:UIControlStateNormal];
     
+}
+
+- (void)setDate:(NSString *)dateString
+{
+    dateLabel.text = dateString;
+    
+    // Resize the owner label so that we don't overlap and we maximize free space.
+    CGSize dateSize = [dateString sizeWithFont:dateLabel.font];
+    
+    int newLeft = dateSize.width + dateLabel.frame.origin.x + 35;
+    int oldLeft = ownerLabel.frame.origin.x;
+    
+    int newWidth = ownerLabel.frame.size.width + (oldLeft - newLeft);
+    ownerLabel.frame = CGRectMake(newLeft, ownerLabel.frame.origin.y, newWidth, ownerLabel.frame.size.height);
 }
 
 

@@ -13,6 +13,7 @@
 #import "EMTLPhoto.h"
 #import "EMTLPhotoSource_Private.h"
 #import "EMTLCachedImage.h"
+#import "EMTLUser.h"
 
 NSString *const kPhotoObject = @"photo_object";
 
@@ -348,7 +349,9 @@ NSString *const kUserCacheDict = @"Users";
     // Sanity Check - since we can only handle a single delegate per query, this method should really never get called with this query
     // already exists.
     // NOTE: If we decide to comment out this assert, then we have to fire the one below
-    NSAssert(query == nil, @"We already have this query");
+    //NSAssert(query == nil, @"We already have this query");
+    
+    if (query) return query;
     
     
     // See if the photo list for this query has been cached.

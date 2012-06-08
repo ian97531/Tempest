@@ -42,6 +42,7 @@ extern NSString *const kFlickrAPIArgumentContacts;
 extern NSString *const kFlickrAPIArgumentSort;
 extern NSString *const kFlickrAPIArgumentExtras;
 extern NSString *const kFlickrAPIArgumentLocation;
+extern NSString *const kFlickrAPIArgumentContentType;
 
 extern NSString *const kFlickrRequestTokenURL;
 extern NSString *const kFlickrAuthorizationURL;

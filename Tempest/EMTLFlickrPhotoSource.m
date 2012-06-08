@@ -52,6 +52,7 @@ NSString *const kFlickrAPIArgumentContacts = @"contacts";
 NSString *const kFlickrAPIArgumentSort = @"sort";
 NSString *const kFlickrAPIArgumentExtras = @"extras";
 NSString *const kFlickrAPIArgumentLocation = @"woe_id";
+NSString *const kFlickrAPIArgumentContentType = @"content_type";
 
 
 NSString *const kFlickrRequestTokenURL = @"http://www.flickr.com/services/oauth/request_token";
@@ -193,14 +194,11 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
             
         case EMTLPhotoQueryFavorites:
             [newQuery setValue:kFlickrAPIMethodFavoritePhotos forKey:kFlickrQueryMethod];
-            [newQuery setValue:[query valueForKey:kPhotoUserID] forKey:kFlickrAPIArgumentUserID];
-            [newQuery removeObjectForKey:kPhotoUserID];
             break;
             
         case EMTLPhotoQueryUserPhotos:
             [newQuery setValue:kFlickrAPIMethodUserPhotos forKey:kFlickrQueryMethod];
-            [newQuery setValue:[query valueForKey:kPhotoUserID] forKey:kFlickrAPIArgumentUserID];
-            [newQuery removeObjectForKey:kPhotoUserID];
+            [newQuery setValue:[queryArguments valueForKey:kPhotoUserID] forKey:kFlickrAPIArgumentUserID];
             break;
             
         default:

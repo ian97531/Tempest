@@ -16,7 +16,6 @@
     @protected
     EMTLPhotoQuery *_photoQuery;
     UITableView *_tableView;
-    UIView *_tableHeaderView;
     UIButton *_reloadButton;
     NSMutableDictionary *_flipState;
     UITapGestureRecognizer *_hideChromeGestureRecognizer;

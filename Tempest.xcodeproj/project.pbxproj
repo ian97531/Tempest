@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		28CD7CE9155EE88C00892383 /* EMTLConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CD7CE8155EE88C00892383 /* EMTLConstants.m */; };
 		28CD7CF1155F21B500892383 /* EMTLPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 28CD7CF0155F21B500892383 /* EMTLPhotoCell.m */; };
+		EB0656D11581952C00DB6109 /* EMTLUserPhotoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0656D01581952B00DB6109 /* EMTLUserPhotoListViewController.m */; };
+		EB0656D51581975B00DB6109 /* EMTLTimelineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB0656D41581975B00DB6109 /* EMTLTimelineViewController.m */; };
 		EB14ED661579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14ED651579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m */; };
 		EB14ED6D15798DE100724F0C /* EMTLUser.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14ED6C15798DE100724F0C /* EMTLUser.m */; };
 		EB14EDCF157E95C200724F0C /* EMTLBackgroundConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14EDCE157E95C200724F0C /* EMTLBackgroundConnection.m */; };
@@ -167,6 +169,10 @@
 		28CD7CE8155EE88C00892383 /* EMTLConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLConstants.m; sourceTree = "<group>"; };
 		28CD7CEF155F21B400892383 /* EMTLPhotoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoCell.h; sourceTree = "<group>"; };
 		28CD7CF0155F21B500892383 /* EMTLPhotoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoCell.m; sourceTree = "<group>"; };
+		EB0656CF1581952B00DB6109 /* EMTLUserPhotoListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLUserPhotoListViewController.h; sourceTree = "<group>"; };
+		EB0656D01581952B00DB6109 /* EMTLUserPhotoListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLUserPhotoListViewController.m; sourceTree = "<group>"; };
+		EB0656D31581975B00DB6109 /* EMTLTimelineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLTimelineViewController.h; sourceTree = "<group>"; };
+		EB0656D41581975B00DB6109 /* EMTLTimelineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLTimelineViewController.m; sourceTree = "<group>"; };
 		EB14ED641579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFlickrSetFavoriteStateOperation.h; sourceTree = "<group>"; };
 		EB14ED651579800A00724F0C /* EMTLFlickrSetFavoriteStateOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickrSetFavoriteStateOperation.m; sourceTree = "<group>"; };
 		EB14ED6B15798DE100724F0C /* EMTLUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLUser.h; sourceTree = "<group>"; };
@@ -436,6 +442,10 @@
 				EB14EDD7157EBBBF00724F0C /* EMTLMagicUserList.m */,
 				EB69B1F2153CD26D003D8422 /* EMTLPhotoListViewController.h */,
 				EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */,
+				EB0656D31581975B00DB6109 /* EMTLTimelineViewController.h */,
+				EB0656D41581975B00DB6109 /* EMTLTimelineViewController.m */,
+				EB0656CF1581952B00DB6109 /* EMTLUserPhotoListViewController.h */,
+				EB0656D01581952B00DB6109 /* EMTLUserPhotoListViewController.m */,
 				EB9B5E7F15657211008D0CBD /* EMTLOperationQueue.h */,
 				EB9B5E8015657212008D0CBD /* EMTLOperationQueue.m */,
 				EB14EDCD157E95C200724F0C /* EMTLBackgroundConnection.h */,
@@ -933,6 +943,8 @@
 				EB14EDD2157E970300724F0C /* EMTLDownloadOperation.m in Sources */,
 				EB14EDD5157EB61000724F0C /* EMTLFlickrFetchLocationOperation.m in Sources */,
 				EB14EDD8157EBBBF00724F0C /* EMTLMagicUserList.m in Sources */,
+				EB0656D11581952C00DB6109 /* EMTLUserPhotoListViewController.m in Sources */,
+				EB0656D51581975B00DB6109 /* EMTLTimelineViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

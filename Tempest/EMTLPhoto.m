@@ -393,7 +393,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"Photo ID:%@\nPhoto Title: %@\nPhoto Date:%@\nTaken By: %@", photoID, title, datePosted, [user description]];
+    return [NSString stringWithFormat:@"\nPhoto ID:%@\nPhoto Title: %@\nPhoto Date:%@\nTaken By: %@", photoID, title, datePosted, [user description]];
 }
 
 @end

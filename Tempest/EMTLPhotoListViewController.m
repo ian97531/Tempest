@@ -7,6 +7,7 @@
 //
 
 #import "EMTLPhotoListViewController.h"
+#import "EMTLUserPhotoListViewController.h"
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
 #import "EMTLLocation.h"
@@ -106,20 +107,6 @@
     // Set a background image.
     UIImageView *backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ClothBackground.png"]];
     
-    
-    _tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 148)];
-
-    UIImageView *headerImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LabelTempest2.png"]];
-    headerImage.frame = CGRectMake(10, 30, 300, 113);
-    [_tableHeaderView addSubview:headerImage];
-    
-    _reloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [_reloadButton setImage:[UIImage imageNamed:@"Reload.png"] forState:UIControlStateNormal];
-    _reloadButton.frame = CGRectMake(238, 72, 35, 35);
-    _reloadButton.layer.opacity = 0.8;
-    [_reloadButton addTarget:self action:@selector(reloadQuery) forControlEvents:UIControlEventTouchUpInside];
-    [_tableHeaderView addSubview:_reloadButton];
-    
     // Get a table ready that fills the screen and is transparent. Give it a header so that the first cell
     // is not occluded by the iOS status bar.
     self.tableView = [[UITableView alloc] initWithFrame:backgroundImage.frame style:UITableViewStylePlain];
@@ -128,23 +115,13 @@
     self.tableView.dataSource = self;
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.layer.masksToBounds = YES; // TODO BSEELY: does it matter? This can be expensive so if it's not already the default or not needed, we should remove it
-    self.tableView.tableHeaderView = _tableHeaderView;
-    
-    // Put a large progress spinner into the view to appease the user while the first set of
-    // EMTLPhotos is loaded.
-//    spinner = [EMTLProgressIndicatorViewController indicatorWithSize:kLargeProgressIndicator];
-//    spinner.view.center = self.tableView.center;
-//    spinner.view.layer.opacity = 0.2;
     
     // Throw everything into the view, and make it fullscreen.
     [parent addSubview:backgroundImage];
     [parent addSubview:self.tableView];
-    //[parent addSubview:spinner.view];
+    
     self.view = parent;
     self.wantsFullScreenLayout = YES;
-    
-    // Start the progress indicator spinning.
-    //[spinner spin];
             
 }
 
@@ -202,8 +179,9 @@
     cell.photoID = photo.photoID;
     cell.cardView.tag = indexPath.row;
     
+    [cell setDate:[photo datePostedString]];
     cell.ownerLabel.text = photo.user.username;
-    cell.dateLabel.text = [photo datePostedString];
+    
     
     cell.favoriteUsers.photoID = photo.photoID;
     cell.favoriteUsers.signedInUser = _photoQuery.source.user;
@@ -328,6 +306,14 @@
 - (void) userList:(EMTLMagicUserList *)list didTapUser:(EMTLUser *)user
 {
     NSLog(@"Tapped User: %@", user);
+    
+    EMTLPhotoQuery *userQuery = [_photoQuery.source photosForUser:user.userID];
+    
+    EMTLUserPhotoListViewController *nextViewController = [[EMTLUserPhotoListViewController alloc] initWithPhotoQuery:userQuery user:user];
+    [self.navigationController pushViewController:nextViewController animated:YES];
+    self.navigationController.navigationBar.hidden = NO;
+    
+    
 }
 
 - (void) userListDidTapRemainderItem:(EMTLMagicUserList *)list

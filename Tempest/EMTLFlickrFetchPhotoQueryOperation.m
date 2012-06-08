@@ -53,6 +53,7 @@ static int const kPhotosToLoad = 50;
 }
 
 
+
 - (void)start
 {
     
@@ -66,17 +67,31 @@ static int const kPhotosToLoad = 50;
     
     
     
-    NSMutableDictionary *queryArguments = [NSMutableDictionary dictionaryWithDictionary:_query];
     
     // Build the request paramets and the OAMutableURLRequest.
     NSMutableDictionary *requestParameters = [NSMutableDictionary dictionaryWithCapacity:8];
+    NSDictionary *queryArguments = _photoQuery.queryArguments;
+    switch (_photoQuery.queryType) {
+        case EMTLPhotoQueryTimeline:
+            [requestParameters setObject:@"all" forKey:kFlickrAPIArgumentContacts];
+            break;
+            
+        case EMTLPhotoQueryUserPhotos:
+            [requestParameters setObject:[queryArguments objectForKey:kFlickrAPIArgumentUserID] forKey:kFlickrAPIArgumentUserID];
+            break;
+            
+        case EMTLPhotoQueryFavorites:
+        case EMTLPhotoQueryPopularPhotos:
+        default:
+            return;
+    }
+    
     
     [requestParameters setObject:kFlickrAPIKey forKey:kFlickrAPIArgumentAPIKey];
     [requestParameters setObject:[[NSNumber numberWithInt:kPhotosToLoad] stringValue] forKey:kFlickrAPIArgumentItemsPerPage];
-    [requestParameters setObject:@"all" forKey:kFlickrAPIArgumentContacts];
+    [requestParameters setObject:@"1" forKey:kFlickrAPIArgumentContentType];
     [requestParameters setObject:@"date_taken,date_upload,owner_name,o_dims,last_update,description,license,geo,tags" forKey:kFlickrAPIArgumentExtras];
     [requestParameters setObject:@"date-posted-desc" forKey:kFlickrAPIArgumentSort];
-    
     [requestParameters setObject:[NSString stringWithFormat:@"%04i-%02i-%02i", 
                                   [[queryArguments valueForKey:kFlickrQueryMinYear] intValue], 
                                   [[queryArguments valueForKey:kFlickrQueryMinMonth] intValue], 
@@ -180,8 +195,10 @@ static int const kPhotosToLoad = 50;
     _finished = YES;
     [self didChangeValueForKey:@"isFinished"];
 
-    
 }
+
+
+
 
 - (void)cancel
 {
