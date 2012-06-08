@@ -24,10 +24,12 @@ NSString *const kPhotoImageURL = @"image_url";
 NSString *const kPhotoImageAspectRatio = @"aspect_ratio";
 NSString *const kPhotoDatePosted = @"date_posted";
 NSString *const kPhotoDateUpdated = @"date_updated";
+NSString *const kPhotoDateTaken = @"date_taken";
 NSString *const kPhotoComments = @"comments";
 NSString *const kPhotoFavorites = @"favorites";
 NSString *const kPhotoIsFavorite = @"is_favorite";
 NSString *const kPhotoLocation = @"location";
+NSString *const kPhotoDescription = @"photo_description";
 
 NSString *const kCommentText = @"comment_text";
 NSString *const kCommentDate = @"comment_date";
@@ -76,6 +78,7 @@ NSString *const kUserCacheDict = @"Users";
         // In-memory caching for images
         _imageCache = [[NSCache alloc] init];
         _imageCache.delegate = self;
+        _imageCache.countLimit = 125;
         
         
         

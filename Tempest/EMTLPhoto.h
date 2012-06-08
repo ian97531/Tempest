@@ -40,10 +40,11 @@
 @property (nonatomic, strong, readonly) NSString *uniqueID;
 @property (nonatomic, strong, readonly) NSURL *imageURL;
 @property (nonatomic, strong, readonly) NSString *title;
-@property (nonatomic, strong, readonly) NSString *description;
+@property (nonatomic, strong, readonly) NSString *photoDescription;
 @property (nonatomic, strong, readonly) EMTLUser *user;
 @property (nonatomic, strong, readonly) NSDate *datePosted;
 @property (nonatomic, strong, readonly) NSDate *dateUpdated;
+@property (nonatomic, strong, readonly) NSDate *dateTaken;
 @property (nonatomic, strong, readonly) NSString *photoID;
 @property (nonatomic, strong, readonly) NSNumber *aspectRatio;
 @property (nonatomic, strong, readonly) NSString *datePostedString;
@@ -59,6 +60,8 @@
 
 + (id)photoWithSource:(EMTLPhotoSource *)source dict:(NSDictionary *)dict;
 - (id)initWithSource:(EMTLPhotoSource *)source dict:(NSDictionary *)dict;
+- (NSString *)datePostedString;
+- (NSString *)dateTakenString;
 
 // NSCoding Methods
 - (id)initWithCoder:(NSCoder *)aDecoder;
@@ -67,7 +70,6 @@
 // Image Loading methods
 - (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
 - (void)cancelImageWithSize:(EMTLImageSize)size;
-- (NSString *)datePostedString;
 
 // Set the favorite status
 - (void)setFavorite:(BOOL)isFavorite;

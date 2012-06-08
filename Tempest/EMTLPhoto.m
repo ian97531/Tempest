@@ -12,6 +12,7 @@
 @interface EMTLPhoto ()
 
 - (NSArray *)_generateFavoriteUsersArray:(NSArray *)faves;
+- (NSString *)_humanDateStringFromDate:(NSDate *)date;
 
 @end
 
@@ -21,10 +22,11 @@
 @synthesize uniqueID;
 @synthesize imageURL;
 @synthesize title;
-@synthesize description;
+@synthesize photoDescription;
 @synthesize user;
 @synthesize dateUpdated;
 @synthesize datePosted;
+@synthesize dateTaken;
 @synthesize photoID;
 @synthesize aspectRatio;
 @synthesize isFavorite;
@@ -69,6 +71,12 @@
             else if ([key isEqualToString:kPhotoDateUpdated]) {
                 dateUpdated = [dict objectForKey:kPhotoDateUpdated];
             }
+            else if ([key isEqualToString:kPhotoDateTaken]) {
+                dateTaken = [dict objectForKey:kPhotoDateTaken];
+            }
+            else if ([key isEqualToString:kPhotoDescription]) {
+                photoDescription = [dict objectForKey:kPhotoDescription];
+            }
         }
         
         NSString *username = [dict objectForKey:kPhotoUsername];
@@ -105,6 +113,8 @@
         dateUpdated = [aDecoder decodeObjectForKey:kPhotoDateUpdated];
         isFavorite = [aDecoder decodeBoolForKey:kPhotoIsFavorite];
         location = [aDecoder decodeObjectForKey:kPhotoLocation];
+        photoDescription = [aDecoder decodeObjectForKey:kPhotoDescription];
+        dateTaken = [aDecoder decodeObjectForKey:kPhotoDateTaken];
         
         comments = [aDecoder decodeObjectForKey:kPhotoComments];
         _favorites = [aDecoder decodeObjectForKey:kPhotoFavorites];
@@ -131,6 +141,8 @@
     [aCoder encodeObject:dateUpdated forKey:kPhotoDateUpdated];
     [aCoder encodeBool:isFavorite forKey:kPhotoIsFavorite];
     [aCoder encodeObject:location forKey:kPhotoLocation];
+    [aCoder encodeObject:photoDescription forKey:kPhotoDescription];
+    [aCoder encodeObject:dateTaken forKey:kPhotoDateTaken];
     
     [aCoder encodeObject:comments forKey:kPhotoComments];
     [aCoder encodeObject:_favorites forKey:kPhotoFavorites];
@@ -313,18 +325,29 @@
 }
 
 
-- (NSString *)datePostedString 
+- (NSString *)datePostedString
 {
-    
-    if (datePostedString) {
-        return datePostedString;
-    }
+    return [self _humanDateStringFromDate:datePosted];
+}
+
+- (NSString *)dateTakenString
+{
+    return [self _humanDateStringFromDate:dateTaken];
+}
+
+
+- (NSString *)_humanDateStringFromDate:(NSDate *)date 
+{
+//    
+//    if (datePostedString) {
+//        return datePostedString;
+//    }
     
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     NSDate *now = [NSDate date];
     NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     NSDateComponents *nowComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:now];
-    NSDateComponents *dateComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:datePosted];
+    NSDateComponents *dateComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:date];
     
     int nowYear = [nowComponents year];
     int nowMonth = [nowComponents month];
@@ -362,10 +385,15 @@
         [dateFormat setDateFormat:@"MMM d, y"];
     }
     
-    datePostedString = [dateFormat stringFromDate:self.datePosted];
+    //datePostedString = ;
     
-    return datePostedString;
+    return [dateFormat stringFromDate:self.datePosted];
     
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"Photo ID:%@\nPhoto Title: %@\nPhoto Date:%@\nTaken By: %@", photoID, title, datePosted, [user description]];
 }
 
 @end

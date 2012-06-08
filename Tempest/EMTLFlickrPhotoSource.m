@@ -279,7 +279,6 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
     
     if (cachedPhoto) 
     {
-        NSLog(@"Returning cached photo for %@", photo.photoID);
         return cachedPhoto;
     }
     else 
@@ -289,7 +288,6 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
             EMTLFlickrFetchImageOperation *imageOp = [[EMTLFlickrFetchImageOperation alloc] initWithPhoto:photo size:size photoSource:self];
             [_imageOperations setObject:imageOp forKey:cacheKey];
             [[EMTLOperationQueue photoQueue] addOperation:imageOp];
-            NSLog(@"Starting network request for %@", photo.photoID);
         }
         else {
             //NSLog(@"Ignoring request underway for %@", photo.photoID);

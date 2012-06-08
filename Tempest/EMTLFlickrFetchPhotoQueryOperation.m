@@ -74,7 +74,7 @@ static int const kPhotosToLoad = 50;
     [requestParameters setObject:kFlickrAPIKey forKey:kFlickrAPIArgumentAPIKey];
     [requestParameters setObject:[[NSNumber numberWithInt:kPhotosToLoad] stringValue] forKey:kFlickrAPIArgumentItemsPerPage];
     [requestParameters setObject:@"all" forKey:kFlickrAPIArgumentContacts];
-    [requestParameters setObject:@"date_upload,owner_name,o_dims,last_update,description,license,geo,tags" forKey:kFlickrAPIArgumentExtras];
+    [requestParameters setObject:@"date_taken,date_upload,owner_name,o_dims,last_update,description,license,geo,tags" forKey:kFlickrAPIArgumentExtras];
     [requestParameters setObject:@"date-posted-desc" forKey:kFlickrAPIArgumentSort];
     
     [requestParameters setObject:[NSString stringWithFormat:@"%04i-%02i-%02i", 
@@ -243,9 +243,11 @@ static int const kPhotosToLoad = 50;
         // Get the dates
         NSDate* lastupdate = [NSDate dateWithTimeIntervalSince1970:[[photoDict objectForKey:@"lastupdate"] doubleValue]];
         NSDate* datePosted = [NSDate dateWithTimeIntervalSince1970:[[photoDict objectForKey:@"dateupload"] doubleValue]];
+        NSDate* dateTaken = [NSDate dateWithTimeIntervalSince1970:[[photoDict objectForKey:@"datetaken"] doubleValue]];
         
         [photoDict setObject:lastupdate forKey:kPhotoDateUpdated];
         [photoDict setObject:datePosted forKey:kPhotoDatePosted];
+        [photoDict setObject:dateTaken forKey:kPhotoDateTaken];
         
         // Set the aspect ratio
         if([photoDict objectForKey:@"o_width"] && [photoDict objectForKey:@"o_height"]) {
@@ -260,6 +262,7 @@ static int const kPhotosToLoad = 50;
         [photoDict setObject:[photoDict objectForKey:@"owner"] forKey:kPhotoUserID];
         [photoDict setObject:[photoDict objectForKey:@"ownername"] forKey:kPhotoUsername];
         [photoDict setObject:[photoDict objectForKey:@"title"] forKey:kPhotoTitle];
+        [photoDict setObject:[[photoDict objectForKey:@"description"] objectForKey:@"_content"] forKey:kPhotoDescription];
         
         EMTLPhoto *photo = [[EMTLPhoto alloc] initWithSource:_photoSource dict:photoDict];
         

@@ -8,25 +8,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "Tempest/EMTLMagicUserList.m"
-         timestampString = "360718557.94664"
+         timestampString = "360811127.973849"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "146"
-         endingLineNumber = "146"
+         startingLineNumber = "237"
+         endingLineNumber = "237"
          landmarkName = "-_regenerateString"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "Tempest/EMTLPhotoCell.m"
-         timestampString = "360718885.246305"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "144"
-         endingLineNumber = "144"
-         landmarkName = "-logPhotoID"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

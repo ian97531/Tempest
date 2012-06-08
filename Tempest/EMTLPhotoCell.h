@@ -15,23 +15,34 @@
 {
     BOOL fadeContents;
     BOOL _favoriteIndicatorOn;
+    BOOL _frontFacingForward;
     NSString *_photoID;
 }
 
-@property (nonatomic, strong) UIImageView *imageView;
-@property (nonatomic, strong) UIImageView *cardImageView;
 @property (nonatomic, strong) UIView *cardView;
-@property (nonatomic, strong) UIView *backgroundView;
-@property (nonatomic, strong) UIView *backgroundGutter;
-@property (nonatomic, strong) UILabel *ownerLabel;
-@property (nonatomic, strong) UILabel *dateLabel;
-@property (nonatomic, strong) EMTLMagicUserList *favoriteUsers;
-@property (nonatomic, strong) UIButton *commentsButton;
-@property (nonatomic, strong) UIProgressView *progressBar;
-@property (nonatomic, strong) UIImageView *favoriteIndicator;
-@property (nonatomic, strong) UITapGestureRecognizer *favoriteTapGesture;
 @property (nonatomic) BOOL favoriteIndicatorTurnedOn;
 @property (nonatomic, strong) NSString *photoID;
+@property (nonatomic) BOOL frontFacingForward;
+@property (nonatomic, strong) UITapGestureRecognizer *flipGesture;
+
+@property (nonatomic, strong) UIView *frontView;
+@property (nonatomic, strong) UIImageView *cardImageView;
+@property (nonatomic, strong) UILabel *ownerLabel;
+@property (nonatomic, strong) UILabel *dateLabel;
+@property (nonatomic, strong) UIView *backgroundGutter;
+@property (nonatomic, strong) UIProgressView *progressBar;
+@property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) EMTLMagicUserList *favoriteUsers;
+@property (nonatomic, strong) UIButton *commentsButton;
+@property (nonatomic, strong) UIImageView *favoriteIndicator;
+@property (nonatomic, strong) UITapGestureRecognizer *favoriteTapGesture;
+
+@property (nonatomic, strong) UIView *backView;
+@property (nonatomic, strong) UILabel *titleLabel;
+@property (nonatomic, strong) UILabel *dateTakenLabel;
+@property (nonatomic, strong) UILabel *locationLabel;
+@property (nonatomic, strong) UILabel *descriptionLabel;
+
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
 

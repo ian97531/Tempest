@@ -41,6 +41,7 @@
     if (self != nil)
     {
 
+        _flipState = [NSMutableDictionary dictionary];
         //NSLog(@"in view controller\n%@", query.queryArguments);
         _photoQuery = query;
         _photoQuery.delegate = self;
@@ -61,7 +62,7 @@
 {
     
     BOOL statusBarVisible = ![UIApplication sharedApplication].statusBarHidden;
-    [[UIApplication sharedApplication] setStatusBarHidden:statusBarVisible withAnimation:UIStatusBarAnimationSlide];
+    [[UIApplication sharedApplication] setStatusBarHidden:statusBarVisible withAnimation:UIStatusBarAnimationFade];
         
 }
 
@@ -73,8 +74,25 @@
     EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:favoriteGesture.view.tag];
     
     [photo setFavorite:!photo.isFavorite];
-    [_tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:[NSIndexPath indexPathForRow:favoriteGesture.view.tag inSection:0]] withRowAnimation:NO];
     
+    EMTLPhotoCell *cell = (EMTLPhotoCell *)[_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:favoriteGesture.view.tag inSection:0]];
+    
+    if (cell)
+    {
+        cell.favoriteIndicatorTurnedOn = photo.isFavorite;
+        cell.favoriteUsers.users = photo.favoritesUsers;
+    }
+    
+}
+
+// If the photo got flipped, we want to record that incase we need to reload that cell.
+- (void)photoFlipped:(id)sender
+{
+    UITapGestureRecognizer *flipGesture = (UITapGestureRecognizer *)sender;
+    
+    EMTLPhotoCell *cell = (EMTLPhotoCell *)[_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:flipGesture.view.tag inSection:0]];
+    
+    [_flipState setValue:[NSNumber numberWithBool:cell.frontFacingForward] forKey:cell.photoID];    
 }
 
 - (void)loadView
@@ -82,8 +100,8 @@
     
     UIView *parent = [[UIView alloc] init];
     
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleChromeVisibility)];
-    [parent addGestureRecognizer:tap];
+    _hideChromeGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleChromeVisibility)];
+    [parent addGestureRecognizer:_hideChromeGestureRecognizer];
 
     // Set a background image.
     UIImageView *backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ClothBackground.png"]];
@@ -157,15 +175,32 @@
     if (cell == nil) {
         cell = [[EMTLPhotoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PhotoCell"];
         [cell.favoriteTapGesture addTarget:self action:@selector(favoriteButtonPushed:)];
+        [cell.flipGesture addTarget:self action:@selector(photoFlipped:)];
+        [_hideChromeGestureRecognizer requireGestureRecognizerToFail:cell.flipGesture];
+        cell.favoriteUsers.delegate = self;
+        cell.favoriteUsers.highlightSelectableRangesWithColor = NULL;//[UIColor colorWithRed:1 green:1 blue:0.69 alpha:1];
+        cell.favoriteUsers.backgroundColor = [UIColor clearColor];
     }
     
     EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:indexPath.row];
     
-    if (indexPath.row + 15 > _photoQuery.totalPhotos) {
+    // Adjust the flippedness of the cell if necessary.
+    NSNumber *frontFacingForward = [_flipState objectForKey:photo.photoID];
+    if (frontFacingForward) {
+        cell.frontFacingForward = frontFacingForward.boolValue;
+    }
+    else {
+        cell.frontFacingForward = YES;
+    }
+    
+    // Start requesting more photos if necessary.
+    if (indexPath.row + 12 > _photoQuery.totalPhotos) {
         [_photoQuery morePhotos];
     }
     
+    // Setup the front face of the photo
     cell.photoID = photo.photoID;
+    cell.cardView.tag = indexPath.row;
     
     cell.ownerLabel.text = photo.user.username;
     cell.dateLabel.text = [photo datePostedString];
@@ -177,18 +212,23 @@
     [cell setCommentsString:[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
     
     cell.favoriteIndicator.tag = indexPath.row;
-    cell.cardView.tag = indexPath.row;
     cell.favoriteIndicatorTurnedOn = photo.isFavorite;
     
-    
+    // If an image is available, put it in the cell. If not, set the progress bar value.
     UIImage *image = [photo loadImageWithSize:EMTLImageSizeMediumAspect delegate:self];
-    
     if(image) {
         [cell setImage:image];
     }
     else {
         [cell setProgress:photo.imageProgress];
     }
+    
+    
+    // Setup the rearface of the cell
+    cell.titleLabel.text = photo.title;
+    cell.dateTakenLabel.text = photo.dateTakenString;
+    cell.locationLabel.text = photo.location.name;
+    cell.descriptionLabel.text = photo.photoDescription;
 
         
     return cell;
@@ -271,6 +311,26 @@
         
         [_tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationNone];
     }
+}
+
+
+
+#pragma mark -
+#pragma mark EMTLMagicUserListDelegate methods
+
+- (void) userList:(EMTLMagicUserList *)list didTapUser:(EMTLUser *)user
+{
+    NSLog(@"Tapped User: %@", user);
+}
+
+- (void) userListDidTapRemainderItem:(EMTLMagicUserList *)list
+{
+    NSLog(@"Tapped remainder item");
+}
+
+- (void) userList:(EMTLMagicUserList *)list didLongPressUser:(EMTLUser *)user
+{
+    NSLog(@"Long Pressed User: %@", user);
 }
 
 

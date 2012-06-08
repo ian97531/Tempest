@@ -30,6 +30,8 @@
 		EB52221115377A3A00785F97 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F615377A3A00785F97 /* CoreData.framework */; };
 		EB52221915377A3A00785F97 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = EB52221715377A3A00785F97 /* InfoPlist.strings */; };
 		EB52221C15377A3A00785F97 /* TempestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = EB52221B15377A3A00785F97 /* TempestTests.m */; };
+		EB68319A15812A4100128C23 /* LabelTempest3.png in Resources */ = {isa = PBXBuildFile; fileRef = EB68319815812A4100128C23 /* LabelTempest3.png */; };
+		EB68319B15812A4100128C23 /* LabelTempest3@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EB68319915812A4100128C23 /* LabelTempest3@2x.png */; };
 		EB69B1F7153CD26D003D8422 /* EMTLPhotoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */; };
 		EB69B1FD153CD42A003D8422 /* EMTLPhotoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */; };
 		EB69B241153CD46B003D8422 /* NSMutableURLRequest+Parameters.m in Sources */ = {isa = PBXBuildFile; fileRef = EB69B204153CD46B003D8422 /* NSMutableURLRequest+Parameters.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -197,6 +199,8 @@
 		EB52221815377A3A00785F97 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		EB52221A15377A3A00785F97 /* TempestTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TempestTests.h; sourceTree = "<group>"; };
 		EB52221B15377A3A00785F97 /* TempestTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TempestTests.m; sourceTree = "<group>"; };
+		EB68319815812A4100128C23 /* LabelTempest3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = LabelTempest3.png; sourceTree = "<group>"; };
+		EB68319915812A4100128C23 /* LabelTempest3@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LabelTempest3@2x.png"; sourceTree = "<group>"; };
 		EB69B1F2153CD26D003D8422 /* EMTLPhotoListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLPhotoListViewController.h; sourceTree = "<group>"; };
 		EB69B1F3153CD26D003D8422 /* EMTLPhotoListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLPhotoListViewController.m; sourceTree = "<group>"; };
 		EB69B203153CD46B003D8422 /* NSMutableURLRequest+Parameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableURLRequest+Parameters.h"; sourceTree = "<group>"; };
@@ -477,6 +481,8 @@
 		EB69B200153CD46B003D8422 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				EB68319815812A4100128C23 /* LabelTempest3.png */,
+				EB68319915812A4100128C23 /* LabelTempest3@2x.png */,
 				EB6E5A2915802FE90040D9CB /* LabelTempest2.png */,
 				EB6E5A2A15802FE90040D9CB /* LabelTempest2@2x.png */,
 				EB6E5A25158014260040D9CB /* Agent _C.ttf */,
@@ -851,6 +857,8 @@
 				EB6E5A26158014260040D9CB /* Agent _C.ttf in Resources */,
 				EB6E5A2B15802FEA0040D9CB /* LabelTempest2.png in Resources */,
 				EB6E5A2C15802FEA0040D9CB /* LabelTempest2@2x.png in Resources */,
+				EB68319A15812A4100128C23 /* LabelTempest3.png in Resources */,
+				EB68319B15812A4100128C23 /* LabelTempest3@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
