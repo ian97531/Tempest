@@ -292,11 +292,15 @@
 
 - (void)photo:(EMTLPhoto *)photo didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress
 {
-    if ([_photoQuery.photoList indexOfObject:photo] != NSNotFound) {
-        int photoIndex = [_photoQuery.photoList indexOfObject:photo];
-        NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:photoIndex inSection:0]];
+    int photoIndex = [_photoQuery.photoList indexOfObject:photo];
+    if (photoIndex != NSNotFound) {
         
-        [_tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationNone];
+        EMTLPhotoCell *cell = (EMTLPhotoCell *)[_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:photoIndex inSection:0]];
+        
+        if (cell) {
+            [cell setProgress:progress];
+        }
+
     }
     
 }
@@ -304,13 +308,16 @@
 
 - (void)photo:(EMTLPhoto *)photo didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size
 {
-    
-    if ([_photoQuery.photoList indexOfObject:photo] != NSNotFound) {
-        int photoIndex = [_photoQuery.photoList indexOfObject:photo];
-        NSArray *paths = [NSArray arrayWithObject:[NSIndexPath indexPathForRow:photoIndex inSection:0]];
+    int photoIndex = [_photoQuery.photoList indexOfObject:photo];
+    if (photoIndex != NSNotFound) {
         
-        [_tableView reloadRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationNone];
+        EMTLPhotoCell *cell = (EMTLPhotoCell *)[_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:photoIndex inSection:0]];
+        
+        if (cell) {
+            [cell setImage:image];
+        }
     }
+
 }
 
 

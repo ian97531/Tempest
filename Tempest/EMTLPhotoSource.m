@@ -78,7 +78,7 @@ NSString *const kUserCacheDict = @"Users";
         // In-memory caching for images
         _imageCache = [[NSCache alloc] init];
         _imageCache.delegate = self;
-        _imageCache.countLimit = 125;
+        _imageCache.countLimit = 10000;
         
         
         
@@ -193,54 +193,74 @@ NSString *const kUserCacheDict = @"Users";
         // We queue each iteration separately in a serial queue so that the imageFromCacheWithSize:forPhoto:
         // method can squeeze some blocks in to pull out photos while we're still populating the in-memory cache.
         
-
+        NSFileManager *fm = [NSFileManager defaultManager];
+        NSMutableArray *staleImageRefs = [NSMutableArray array];
         for (EMTLCachedImage *imageRef in _imageCacheSortedRefs) {
-            dispatch_async(_imageCacheQueue, ^{
+            
+            if (![fm fileExistsAtPath:imageRef.path]) {
+                NSLog(@"Found an image that no longer exists");
+                [staleImageRefs addObject:imageRef];
+            }
+            else {
                 
-                // Force CG to draw the image so the JPEG is already decompressed by the time
-                // our view controller gets its hand on this. This helps to avoid a stutter
-                // when displaying the image on-screen for the first time.
-
-                UIImage *image = [UIImage imageWithContentsOfFile:imageRef.path];
-                
-                CGImageRef cgImageRef = image.CGImage;
-                // System only supports RGB, set explicitly and prevent context error
-                // if the downloaded image is not the supported format
-                CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-                
-                CGContextRef context = CGBitmapContextCreate(NULL,
-                                                             CGImageGetWidth(cgImageRef),
-                                                             CGImageGetHeight(cgImageRef),
-                                                             8,
-                                                             // width * 4 will be enough because are in ARGB format, don't read from the image
-                                                             CGImageGetWidth(cgImageRef) * 4,
-                                                             colorSpace,
-                                                             // kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little 
-                                                             // makes system don't need to do extra conversion when displayed.
-                                                             kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little); 
-                CGColorSpaceRelease(colorSpace);
-                
-                if (context) {
-                    CGRect rect = (CGRect){CGPointZero, CGImageGetWidth(cgImageRef), CGImageGetHeight(cgImageRef)};
-                    CGContextDrawImage(context, rect, cgImageRef);
-                    CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
-                    CGContextRelease(context);
+                dispatch_async(_imageCacheQueue, ^{
                     
-                    UIImage *decompressedImage = [[UIImage alloc] initWithCGImage:decompressedImageRef];
-                    CGImageRelease(decompressedImageRef);
+                    // Force CG to draw the image so the JPEG is already decompressed by the time
+                    // our view controller gets its hand on this. This helps to avoid a stutter
+                    // when displaying the image on-screen for the first time.
                     
                     
-                    // Save the image to our in-memory cache, if we were able to pull it from the disk
-                    if (decompressedImage)
-                    {
-                        [_imageCache setObject:decompressedImage forKey:imageRef.filename];
-                        //NSLog(@"Loaded %@ into the in-memory cache", imageRef.filename);
+                    
+                    
+                    
+                    UIImage *image = [UIImage imageWithContentsOfFile:imageRef.path];
+                    
+                    CGImageRef cgImageRef = image.CGImage;
+                    // System only supports RGB, set explicitly and prevent context error
+                    // if the downloaded image is not the supported format
+                    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+                    
+                    CGContextRef context = CGBitmapContextCreate(NULL,
+                                                                 CGImageGetWidth(cgImageRef),
+                                                                 CGImageGetHeight(cgImageRef),
+                                                                 8,
+                                                                 // width * 4 will be enough because are in ARGB format, don't read from the image
+                                                                 CGImageGetWidth(cgImageRef) * 4,
+                                                                 colorSpace,
+                                                                 // kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little 
+                                                                 // makes system don't need to do extra conversion when displayed.
+                                                                 kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little); 
+                    CGColorSpaceRelease(colorSpace);
+                    
+                    if (context) {
+                        CGRect rect = (CGRect){CGPointZero, CGImageGetWidth(cgImageRef), CGImageGetHeight(cgImageRef)};
+                        CGContextDrawImage(context, rect, cgImageRef);
+                        CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
+                        CGContextRelease(context);
+                        
+                        UIImage *decompressedImage = [[UIImage alloc] initWithCGImage:decompressedImageRef];
+                        CGImageRelease(decompressedImageRef);
+                        
+                        
+                        // Save the image to our in-memory cache, if we were able to pull it from the disk
+                        if (decompressedImage)
+                        {
+                            [_imageCache setObject:decompressedImage forKey:imageRef.filename];
+                            //NSLog(@"Loaded %@ into the in-memory cache", imageRef.filename);
+                        }
+                        
                     }
 
-                }
-                
-            });
+                });
+
+            }
         }
+        
+        for (EMTLCachedImage *imageRef in staleImageRefs)
+        {
+            [_imageCacheSortedRefs removeObject:imageRef];
+        }
+        
     }
     else {
         NSLog(@"Found no files in the disk image cache");
@@ -475,7 +495,8 @@ NSString *const kUserCacheDict = @"Users";
                     NSLog(@"reaping a file from the on-disk image cache. %@ for date %@", oldestCachedImageRef.filename, oldestCachedImageRef.datePosted);
                     
                     // Remove the file
-                    [fileManger removeItemAtURL:oldestCachedImageRef.urlToImage error:&error];
+                    //[fileManger removeItemAtURL:oldestCachedImageRef.urlToImage error:&error];
+                    [fileManger removeItemAtPath:oldestCachedImageRef.path error:&error];
                     
                     // Do not delete the records of the file unless it was actaully deleted,
                     // otherwise the file will be leaked.
@@ -701,7 +722,7 @@ NSString *const kUserCacheDict = @"Users";
 
 - (void)cache:(NSCache *)cache willEvictObject:(id)obj
 {
-    NSLog(@"Image cache evicting an object");
+    //NSLog(@"Image cache evicting an object");
 }
 
 
