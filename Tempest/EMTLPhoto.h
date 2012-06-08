@@ -39,6 +39,7 @@
 
 @property (nonatomic, strong, readonly) NSString *uniqueID;
 @property (nonatomic, strong, readonly) NSURL *imageURL;
+@property (nonatomic, strong, readonly) NSURL *webPageURL;
 @property (nonatomic, strong, readonly) NSString *title;
 @property (nonatomic, strong, readonly) NSString *photoDescription;
 @property (nonatomic, strong, readonly) EMTLUser *user;
@@ -48,6 +49,8 @@
 @property (nonatomic, strong, readonly) NSString *photoID;
 @property (nonatomic, strong, readonly) NSNumber *aspectRatio;
 @property (nonatomic, strong, readonly) NSString *datePostedString;
+@property (nonatomic, strong, readonly) NSArray *tags;
+@property (nonatomic, readonly) EMTLPhotoLicenseType license;
 @property (nonatomic, strong) NSArray *favorites;
 @property (nonatomic, readonly) NSArray *favoritesUsers;
 @property (nonatomic, strong) NSArray *comments;

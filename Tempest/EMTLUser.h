@@ -28,6 +28,7 @@
     NSString *_real_name;
     NSString *_location;
     UIImage *_icon;
+    NSURL *_iconURL;
     NSDate *_date_retrieved;
     EMTLPhotoSource *_source;
 }
@@ -38,11 +39,13 @@
 @property (nonatomic, strong) NSString *real_name;
 @property (nonatomic, strong) NSString *location;
 @property (nonatomic, strong) UIImage *icon;
+@property (nonatomic, strong) NSURL *iconURL;
 @property (nonatomic, strong) NSDate *date_retrieved;
 
 @property (nonatomic) EMTLPhotoSource *source;
 
 - (id)initWIthUserID:(NSString *)userID source:(EMTLPhotoSource *)source;
+- (void)copyExistingUser:(EMTLUser *)user;
 
 // Loading the user
 - (void)loadUserWithDelegate:(id<EMTLUserDelegate>)delegate;

@@ -6,14 +6,8 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
-typedef enum EMTLLocationType {
-    EMTLLocationNeighbourhood = 1,
-    EMTLLocationLocality,
-    EMTLLocationCountry,
-    EMTLLocationUndefined, // Add new types above this
-} EMTLLocationType;
-
 #import <Foundation/Foundation.h>
+#import "EMTLConstants.h"
 
 @interface EMTLLocation : NSObject <NSCoding>
 

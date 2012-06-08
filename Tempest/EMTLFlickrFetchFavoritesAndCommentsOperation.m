@@ -105,19 +105,19 @@
         //NSLog(@"Getting favorites page %i of %i for %@", _favoritesCurrentPage, _favoritesPages, _photo.photoID);
         // Fetch the favorites
         NSMutableDictionary *favoriteArgs = [NSMutableDictionary dictionaryWithCapacity:4];
-        [favoriteArgs setObject:kFlickrAPIKey 
-                         forKey:kFlickrAPIArgumentAPIKey];
+        [favoriteArgs setObject:EMTLFlickrAPIKey 
+                         forKey:EMTLFlickrAPIArgumentAPIKey];
         
         [favoriteArgs setObject:_photo.photoID
-                         forKey:kFlickrAPIArgumentPhotoID];
+                         forKey:EMTLFlickrAPIArgumentPhotoID];
         
-        [favoriteArgs setObject:@"50"
-                         forKey:kFlickrAPIArgumentItemsPerPage];
+        [favoriteArgs setObject:EMTLFlickrAPIValueFavoriteItemsPerPage
+                         forKey:EMTLFlickrAPIArgumentItemsPerPage];
         
         [favoriteArgs setObject:[[NSNumber numberWithInt:_favoritesCurrentPage + 1] stringValue]
-                         forKey:kFlickrAPIArgumentPageNumber];
+                         forKey:EMTLFlickrAPIArgumentPageNumber];
         
-        OAMutableURLRequest *favoriteRequest = [_photoSource oaurlRequestForMethod:kFlickrAPIMethodPhotoFavorites arguments:favoriteArgs];
+        OAMutableURLRequest *favoriteRequest = [_photoSource oaurlRequestForMethod:EMTLFlickrAPIMethodPhotoFavorites arguments:favoriteArgs];
         
         NSURLResponse *response = nil;
         NSError *error = nil;
@@ -135,13 +135,13 @@
     // Fetch the comments
     NSMutableDictionary *commentsArgs = [NSMutableDictionary dictionaryWithCapacity:4];
     
-    [commentsArgs setObject:kFlickrAPIKey 
-                     forKey:kFlickrAPIArgumentAPIKey];
+    [commentsArgs setObject:EMTLFlickrAPIKey 
+                     forKey:EMTLFlickrAPIArgumentAPIKey];
     
     [commentsArgs setObject:_photo.photoID
-                     forKey:kFlickrAPIArgumentPhotoID];
+                     forKey:EMTLFlickrAPIArgumentPhotoID];
     
-    OAMutableURLRequest *commentRequest = [_photoSource oaurlRequestForMethod:kFlickrAPIMethodPhotoComments arguments:commentsArgs];
+    OAMutableURLRequest *commentRequest = [_photoSource oaurlRequestForMethod:EMTLFlickrAPIMethodPhotoComments arguments:commentsArgs];
     
     NSURLResponse *response = nil;
     NSError *error = nil;
@@ -165,34 +165,35 @@
         
         NSMutableArray *favorites = [NSMutableArray arrayWithCapacity:20];
         
-        _favoritesPages = [[[favoritesDict objectForKey:@"photo"] objectForKey:@"pages"] intValue];
-        _favoritesCurrentPage = [[[favoritesDict objectForKey:@"photo"] objectForKey:@"page"] intValue];
+        _favoritesPages = [[[favoritesDict objectForKey:EMTLFlickrAPIResponseFavoritesList] objectForKey:EMTLFlickrAPIResponseListPages] intValue];
+        _favoritesCurrentPage = [[[favoritesDict objectForKey:EMTLFlickrAPIResponseFavoritesList] objectForKey:EMTLFlickrAPIResponseListPage] intValue];
         
         // Iterate through all of the favorites. We need to put the data into a format
         // that the generic EMTLPhoto class will understand.
-        for (NSDictionary *favoriteDict in [[favoritesDict objectForKey:@"photo"] objectForKey:@"person"]) {
+        for (NSDictionary *favoriteDict in [[favoritesDict objectForKey:EMTLFlickrAPIResponseFavoritesList] objectForKey:EMTLFlickrAPIResponseFavoritesListItems]) {
             
             // Get the date of the favoriting
-            NSDate *favorite_date = [NSDate dateWithTimeIntervalSince1970:[[favoriteDict objectForKey:@"favedate"] doubleValue]];
-            [favoriteDict setValue:favorite_date forKey:kFavoriteDate];
+            [favoriteDict setValue:[NSDate dateWithTimeIntervalSince1970:[[favoriteDict objectForKey:EMTLFlickrAPIResponseFavoriteDate] doubleValue]]
+                            forKey:EMTLFavoriteDate];
             
             // Setup the user
-            EMTLUser *user = [_photoSource userForUserID:[favoriteDict objectForKey:@"nsid"]];
+            NSString *userID = [favoriteDict objectForKey:EMTLFlickrAPIResponseFavoriteUserID];
+            NSString *username = [favoriteDict objectForKey:EMTLFlickrAPIResponseFavoriteUsername];
+            NSString *iconFarm = [favoriteDict objectForKey:EMTLFlickrAPIResponseUserIconFarm];
+            NSString *iconServer = [favoriteDict objectForKey:EMTLFlickrAPIResponseUserIconServer];
+            
+            EMTLUser *user = [_photoSource userForUserID:userID];
+            user.username = username;
+            user.iconURL = [NSURL URLWithString:[NSString stringWithFormat:EMTLFlickrUserIconURLFormat, iconFarm, iconServer, userID]];
+
+            [favoriteDict setValue:user forKey:EMTLFavoriteUser];
+            
             
             // If the nsid is same as the calling user, then this photo has been favorited and we should mark it as such.
             if (user == _photoSource.user)
             {
-                NSLog(@"photo is favorite %@", _photo.photoID);
                 _photo.isFavorite = YES;
             }
-            
-            if (!user.username)
-            {
-                user.username = [favoriteDict objectForKey:@"username"];
-            }
-            
-            [favoriteDict setValue:user forKey:kFavoriteUser];
-            
                         
             // Add the modified dict to the array of favorites.
             [favorites addObject:favoriteDict];
@@ -215,24 +216,31 @@
     else {
         NSMutableArray *comments = [NSMutableArray arrayWithCapacity:20];
         
-        for (NSDictionary *commentDict in [[commentsDict objectForKey:@"comments"] objectForKey:@"comment"]) {
+        for (NSDictionary *commentDict in [[commentsDict objectForKey:EMTLFlickrAPIResponseCommentsList] objectForKey:EMTLFlickrAPIResponseCommentsListItems]) {
             
             // Get the date of the comment
-            NSDate *comment_date = [NSDate dateWithTimeIntervalSince1970:[[commentDict objectForKey:@"datecreate"] doubleValue]];
-            [commentDict setValue:comment_date forKey:kCommentDate];
+            [commentDict setValue:[NSDate dateWithTimeIntervalSince1970:[[commentDict objectForKey:EMTLFlickrAPIResponseCommentDate] doubleValue]]
+                           forKey:EMTLCommentDate];
             
-            // Setup the user
-            EMTLUser *user = [_photoSource userForUserID:[commentDict objectForKey:@"author"]];
+            // Get the comment content
+            [commentDict setValue:[commentDict objectForKey:EMTLFlickrAPIResponseCommentContent]
+                           forKey:EMTLCommentText];
             
-            if (!user.username)
-            {
-                user.username = [commentDict objectForKey:@"authorname"];
-            }
+            // Get the user
+            NSString *userID = [commentDict objectForKey:EMTLFlickrAPIResponseCommentUserID];
+            NSString *username = [commentDict objectForKey:EMTLFlickrAPIResponseCommentUsername];
+            NSString *iconFarm = [commentDict objectForKey:EMTLFlickrAPIResponseUserIconFarm];
+            NSString *iconServer = [commentDict objectForKey:EMTLFlickrAPIResponseUserIconServer];
             
-            [commentDict setValue:user forKey:kCommentUser];
-            [commentDict setValue:[commentDict objectForKey:@"_content"] forKey:kCommentText];
+            EMTLUser *user = [_photoSource userForUserID:userID];
+            user.username = username;
+            user.iconURL = [NSURL URLWithString:[NSString stringWithFormat:EMTLFlickrUserIconURLFormat, iconFarm, iconServer, userID]];
+    
+            [commentDict setValue:user forKey:EMTLCommentUser];
             
+            // Save this comment to our internal list for this operation
             [comments addObject:commentDict];
+            
         }
         return comments;
     }

@@ -15,35 +15,8 @@
 #import "EMTLCachedImage.h"
 #import "EMTLUser.h"
 
-NSString *const kPhotoObject = @"photo_object";
+#import "UIImage+IWDecompressJPEG.h"
 
-NSString *const kPhotoUsername = @"user_name";
-NSString *const kPhotoUserID = @"user_id";
-NSString *const kPhotoTitle = @"photo_title";
-NSString *const kPhotoID = @"photo_id";
-NSString *const kPhotoImageURL = @"image_url";
-NSString *const kPhotoImageAspectRatio = @"aspect_ratio";
-NSString *const kPhotoDatePosted = @"date_posted";
-NSString *const kPhotoDateUpdated = @"date_updated";
-NSString *const kPhotoDateTaken = @"date_taken";
-NSString *const kPhotoComments = @"comments";
-NSString *const kPhotoFavorites = @"favorites";
-NSString *const kPhotoIsFavorite = @"is_favorite";
-NSString *const kPhotoLocation = @"location";
-NSString *const kPhotoDescription = @"photo_description";
-
-NSString *const kCommentText = @"comment_text";
-NSString *const kCommentDate = @"comment_date";
-NSString *const kCommentUser = @"comment_user";
-
-NSString *const kFavoriteDate = @"favorite_date";
-NSString *const kFavoriteUser = @"favorite_user";
-
-int const kImageCacheCapacity = 20;
-int const kImageCacheLeeway = 20;
-
-NSString *const kImageCacheFilesDatesDict = @"Images_and_Dates";
-NSString *const kUserCacheDict = @"Users";
 
 @interface EMTLPhotoSource ()
 - (NSString *)_photoQueryIDFromQueryType:(EMTLPhotoQueryType)queryType andArguments:(NSDictionary *)arguments; // Assumes that argument keys and values are strings
@@ -110,7 +83,7 @@ NSString *const kUserCacheDict = @"Users";
         }
         else
         {
-            NSString *cachePath = [NSString stringWithFormat:@"%@/%@", _userCacheDir, kUserCacheDict];
+            NSString *cachePath = [NSString stringWithFormat:@"%@/%@", _userCacheDir, EMTLUserCacheDict];
             _userCache = [NSKeyedUnarchiver unarchiveObjectWithFile:cachePath];
             
             if (_userCache) {
@@ -176,7 +149,7 @@ NSString *const kUserCacheDict = @"Users";
     // Create our queue for background disk image cache operations.
     _imageCacheQueue = dispatch_queue_create("com.Elemental.ImageCacheQueue", DISPATCH_QUEUE_SERIAL);
     
-    _imageCacheIndexPath = [NSString stringWithFormat:@"%@/%@", _imageCacheDir, kImageCacheFilesDatesDict];
+    _imageCacheIndexPath = [NSString stringWithFormat:@"%@/%@", _imageCacheDir, EMTLImageCacheFilesDatesDict];
     _imageCacheSortedRefs = [NSKeyedUnarchiver unarchiveObjectWithFile:_imageCacheIndexPath];
     
     
@@ -210,48 +183,9 @@ NSString *const kUserCacheDict = @"Users";
                     // our view controller gets its hand on this. This helps to avoid a stutter
                     // when displaying the image on-screen for the first time.
                     
+                    UIImage *image = [UIImage decompressImageWithContentsOfFile:imageRef.path];
+                    [_imageCache setObject:image forKey:imageRef.filename];
                     
-                    
-                    
-                    
-                    UIImage *image = [UIImage imageWithContentsOfFile:imageRef.path];
-                    
-                    CGImageRef cgImageRef = image.CGImage;
-                    // System only supports RGB, set explicitly and prevent context error
-                    // if the downloaded image is not the supported format
-                    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-                    
-                    CGContextRef context = CGBitmapContextCreate(NULL,
-                                                                 CGImageGetWidth(cgImageRef),
-                                                                 CGImageGetHeight(cgImageRef),
-                                                                 8,
-                                                                 // width * 4 will be enough because are in ARGB format, don't read from the image
-                                                                 CGImageGetWidth(cgImageRef) * 4,
-                                                                 colorSpace,
-                                                                 // kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little 
-                                                                 // makes system don't need to do extra conversion when displayed.
-                                                                 kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little); 
-                    CGColorSpaceRelease(colorSpace);
-                    
-                    if (context) {
-                        CGRect rect = (CGRect){CGPointZero, CGImageGetWidth(cgImageRef), CGImageGetHeight(cgImageRef)};
-                        CGContextDrawImage(context, rect, cgImageRef);
-                        CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
-                        CGContextRelease(context);
-                        
-                        UIImage *decompressedImage = [[UIImage alloc] initWithCGImage:decompressedImageRef];
-                        CGImageRelease(decompressedImageRef);
-                        
-                        
-                        // Save the image to our in-memory cache, if we were able to pull it from the disk
-                        if (decompressedImage)
-                        {
-                            [_imageCache setObject:decompressedImage forKey:imageRef.filename];
-                            //NSLog(@"Loaded %@ into the in-memory cache", imageRef.filename);
-                        }
-                        
-                    }
-
                 });
 
             }
@@ -318,22 +252,22 @@ NSString *const kUserCacheDict = @"Users";
     return [self addPhotoQueryType:EMTLPhotoQueryPopularPhotos withArguments:nil];
 }
 
-- (EMTLPhotoQuery *)favoritePhotosForUser:(NSString *)user_id
+- (EMTLPhotoQuery *)favoritePhotosForUser:(EMTLUser *)user
 {    
-    if (!user_id) {
-        user_id = _user.userID;
+    if (!user) {
+        user = _user;
     }
-    NSDictionary *args = [NSDictionary dictionaryWithObject:user_id forKey:kPhotoUserID];
+    NSDictionary *args = [NSDictionary dictionaryWithObject:user.userID forKey:EMTLPhotoUserID];
     
     return [self addPhotoQueryType:EMTLPhotoQueryFavorites withArguments:args];
 }
 
-- (EMTLPhotoQuery *)photosForUser:(NSString *)user_id
+- (EMTLPhotoQuery *)photosForUser:(EMTLUser *)user
 {
-    if (!user_id) {
-        user_id = _user.userID;
+    if (!user) {
+        user = _user;
     }
-    NSDictionary *args = [NSDictionary dictionaryWithObject:user_id forKey:kPhotoUserID];
+    NSDictionary *args = [NSDictionary dictionaryWithObject:user.userID forKey:EMTLPhotoUserID];
     
     return [self addPhotoQueryType:EMTLPhotoQueryUserPhotos withArguments:args];
 }
@@ -467,7 +401,7 @@ NSString *const kUserCacheDict = @"Users";
             
             // If this image is newer than the last image in our disk cache, or there are fewer
             // than 100 objects in our disk cache, then add this to the cache.
-            if (_imageCacheSortedRefs.count < kImageCacheCapacity || [photo.datePosted compare:[[_imageCacheSortedRefs lastObject] datePosted]] == NSOrderedDescending) {
+            if (_imageCacheSortedRefs.count < EMTLImageCacheCapacity || [photo.datePosted compare:[[_imageCacheSortedRefs lastObject] datePosted]] == NSOrderedDescending) {
                 
                 NSLog(@"Saving image %@ into the on-disk cache", cacheKey);
                 // Write the image into the correct location in the image cache.
@@ -488,7 +422,7 @@ NSString *const kUserCacheDict = @"Users";
                 
                 
                 // If we've exceeded 100 items in the disk cache, we want to dump the oldest.
-                if(_imageCacheSortedRefs.count > kImageCacheCapacity + kImageCacheLeeway) {
+                if(_imageCacheSortedRefs.count > EMTLImageCacheCapacity + EMTLImageCacheLeeway) {
                     
                     // Find the oldest image
                     EMTLCachedImage *oldestCachedImageRef = [_imageCacheSortedRefs lastObject];
@@ -555,7 +489,7 @@ NSString *const kUserCacheDict = @"Users";
     // Serialize and write out the photo list to the cache, unless user caching has been
     // disabled.
     if (_userCacheDir) {
-        NSString *cachePath = [NSString stringWithFormat:@"%@/%@", _userCacheDir, kUserCacheDict];
+        NSString *cachePath = [NSString stringWithFormat:@"%@/%@", _userCacheDir, EMTLUserCacheDict];
         if([NSKeyedArchiver archiveRootObject:_userCache toFile:cachePath])
         {
             //NSLog(@"successfully updated the on-disk user cache with user %@", user.username);

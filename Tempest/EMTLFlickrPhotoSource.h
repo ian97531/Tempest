@@ -8,49 +8,7 @@
 
 #import "EMTLPhotoSource.h"
 #import "EMTLPhotoSource_Private.h"
-
-
-extern NSString *const kFlickrQueryTotalPages;
-extern NSString *const kFlickrQueryCurrentPage;
-extern NSString *const kFlickrQueryMaxYear;
-extern NSString *const kFlickrQueryMaxMonth;
-extern NSString *const kFlickrQueryMaxDay;
-extern NSString *const kFlickrQueryMinYear;
-extern NSString *const kFlickrQueryMinMonth;
-extern NSString *const kFlickrQueryMinDay;
-extern NSString *const kFlickrQueryMethod;
-extern NSString *const kFlickrQueryIdentifier;
-
-extern NSString *const kFlickrAPIMethodTestLogin;
-extern NSString *const kFlickrAPIMethodUserInfo;
-extern NSString *const kFlickrAPIMethodSearch;
-extern NSString *const kFlickrAPIMethodPopularPhotos;
-extern NSString *const kFlickrAPIMethodFavoritePhotos;
-extern NSString *const kFlickrAPIMethodUserPhotos;
-extern NSString *const kFlickrAPIMethodPhotoFavorites;
-extern NSString *const kFlickrAPIMethodPhotoComments;
-extern NSString *const kFlickrAPIMethodPhotoLocation;
-extern NSString *const kFlickrAPIMethodAddFavorite;
-extern NSString *const kFlickrAPIMethodRemoveFavorite;
-
-extern NSString *const kFlickrAPIArgumentUserID;
-extern NSString *const kFlickrAPIArgumentPhotoID;
-extern NSString *const kFlickrAPIArgumentItemsPerPage;
-extern NSString *const kFlickrAPIArgumentPageNumber;
-extern NSString *const kFlickrAPIArgumentAPIKey;
-extern NSString *const kFlickrAPIArgumentContacts;
-extern NSString *const kFlickrAPIArgumentSort;
-extern NSString *const kFlickrAPIArgumentExtras;
-extern NSString *const kFlickrAPIArgumentLocation;
-extern NSString *const kFlickrAPIArgumentContentType;
-
-extern NSString *const kFlickrRequestTokenURL;
-extern NSString *const kFlickrAuthorizationURL;
-extern NSString *const kFlickrAccessTokenURL;
-extern NSString *const kFlickrAPICallURL;
-extern NSString *const kFlickrDefaultsServiceProviderName;
-extern NSString *const kFlickrDefaultsPrefix;
-extern NSString *const kFlickrDefaultIconURLString;
+#import "EMTLFlickrConstants.h"
 
 @class EMTLFlickrFetchPhotoQueryOperation;
 @class EMTLFlickrFetchImageOperation;

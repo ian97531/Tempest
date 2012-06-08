@@ -89,7 +89,6 @@
     _queryArguments = arguments;
     _numPhotosExpected = 0;
     _numPhotosReceived = 0;
-    _busy = NO;
     _reloading = NO;
     [_delegate photoQueryFinishedUpdating:self];
 }
@@ -106,16 +105,14 @@
 
 - (void)morePhotos
 {
-    if (!_busy) {
-        [_source updateQuery:self];
-        _busy = YES;
-    }
+    [_source updateQuery:self];
+
+
 }
 
 - (void)reloadPhotos
 {
     _reloading = YES;
-    _busy = YES;
     [_source cancelQuery:self];
     _numPhotosExpected = 0;
     _numPhotosReceived = 0;
@@ -137,7 +134,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"\nPhoto Query ID: %@\nQuery Type: %i\nQuery Arguments: %@\nPhotos Currently Loaded: %i\nPhotos:%@", _photoQueryID, _queryType, _queryArguments, _photoList.count, _photoList];
+    return [NSString stringWithFormat:@"\nPhoto Query ID: %@\nQuery Type: %i\nQuery Arguments: %@\nPhotos Currently Loaded: %i", _photoQueryID, _queryType, _queryArguments, _photoList.count];
 }
 
 @end

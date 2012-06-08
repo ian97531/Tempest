@@ -20,8 +20,9 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface EMTLPhotoListViewController ()
-@property (nonatomic, strong) EMTLPhotoQuery *photoQuery;
-@property (nonatomic, strong) UITableView *tableView;
+    @property (nonatomic, strong) EMTLPhotoQuery *photoQuery;
+    @property (nonatomic, strong) UITableView *tableView;
+    - (void)_requestMorePhotosIfCloseToEnd;
 @end
 
 @implementation EMTLPhotoListViewController
@@ -95,6 +96,24 @@
     
     [_flipState setValue:[NSNumber numberWithBool:cell.frontFacingForward] forKey:cell.photoID];    
 }
+
+
+
+- (void)_requestMorePhotosIfCloseToEnd
+{
+    dispatch_queue_t queue = dispatch_queue_create(DISPATCH_QUEUE_PRIORITY_DEFAULT, nil);
+    dispatch_async(queue, ^{
+        NSArray *indexPaths = [_tableView indexPathsForVisibleRows];
+        int lastVisibleItemIndex = [[indexPaths lastObject] row];
+        
+        // Start requesting more photos if necessary.
+        if (lastVisibleItemIndex + 20 > _photoQuery.totalPhotos) {
+            [_photoQuery morePhotos];
+        }
+    });
+}
+
+
 
 - (void)loadView
 {
@@ -170,11 +189,6 @@
         cell.frontFacingForward = YES;
     }
     
-    // Start requesting more photos if necessary.
-    if (indexPath.row + 12 > _photoQuery.totalPhotos) {
-        [_photoQuery morePhotos];
-    }
-    
     // Setup the front face of the photo
     cell.photoID = photo.photoID;
     cell.cardView.tag = indexPath.row;
@@ -225,10 +239,16 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
+
     
 }
 
+// Each time we initiate a scroll, let's check to see if we should
+// be requesting more photos.
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    [self _requestMorePhotosIfCloseToEnd];
+}
 
 
 
@@ -255,8 +275,8 @@
 
 - (void)photoQueryFinishedUpdating:(EMTLPhotoQuery *)query
 {
-    NSLog(@"Query finished loading");
-
+    // In case we only got a few photos, or no photos.
+    [self _requestMorePhotosIfCloseToEnd];
 }
 
 
@@ -307,7 +327,7 @@
 {
     NSLog(@"Tapped User: %@", user);
     
-    EMTLPhotoQuery *userQuery = [_photoQuery.source photosForUser:user.userID];
+    EMTLPhotoQuery *userQuery = [_photoQuery.source photosForUser:user];
     
     EMTLUserPhotoListViewController *nextViewController = [[EMTLUserPhotoListViewController alloc] initWithPhotoQuery:userQuery user:user];
     [self.navigationController pushViewController:nextViewController animated:YES];

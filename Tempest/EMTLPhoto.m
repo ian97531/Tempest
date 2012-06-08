@@ -21,6 +21,7 @@
 
 @synthesize uniqueID;
 @synthesize imageURL;
+@synthesize webPageURL;
 @synthesize title;
 @synthesize photoDescription;
 @synthesize user;
@@ -28,6 +29,8 @@
 @synthesize datePosted;
 @synthesize dateTaken;
 @synthesize photoID;
+@synthesize tags;
+@synthesize license;
 @synthesize aspectRatio;
 @synthesize isFavorite;
 @synthesize datePostedString;
@@ -50,39 +53,45 @@
         _source = source;
         
         for (NSString *key in dict) {
-            if ([key isEqualToString:kPhotoUserID]) {
-                user = [_source userForUserID:[dict objectForKey:kPhotoUserID]];
+            if ([key isEqualToString:EMTLPhotoUser]) {
+                user = [_source userForUserID:[dict objectForKey:EMTLPhotoUser]];
             }
-            else if ([key isEqualToString:kPhotoTitle]) {
-                title = [dict objectForKey:kPhotoTitle];
+            else if ([key isEqualToString:EMTLPhotoTitle]) {
+                title = [dict objectForKey:EMTLPhotoTitle];
             }
-            else if ([key isEqualToString:kPhotoID]) {
-                photoID = [dict objectForKey:kPhotoID];
+            else if ([key isEqualToString:EMTLPhotoID]) {
+                photoID = [dict objectForKey:EMTLPhotoID];
             }
-            else if ([key isEqualToString:kPhotoImageURL]) {
-                imageURL = [dict objectForKey:kPhotoImageURL];
+            else if ([key isEqualToString:EMTLPhotoImageURL]) {
+                imageURL = [dict objectForKey:EMTLPhotoImageURL];
             }
-            else if ([key isEqualToString:kPhotoDatePosted]) {
-                datePosted = [dict objectForKey:kPhotoDatePosted];
+            else if ([key isEqualToString:EMTLPhotoDatePosted]) {
+                datePosted = [dict objectForKey:EMTLPhotoDatePosted];
             }
-            else if ([key isEqualToString:kPhotoImageAspectRatio]) {
-                aspectRatio = [dict objectForKey:kPhotoImageAspectRatio];
+            else if ([key isEqualToString:EMTLPhotoImageAspectRatio]) {
+                aspectRatio = [dict objectForKey:EMTLPhotoImageAspectRatio];
             }
-            else if ([key isEqualToString:kPhotoDateUpdated]) {
-                dateUpdated = [dict objectForKey:kPhotoDateUpdated];
+            else if ([key isEqualToString:EMTLPhotoDateUpdated]) {
+                dateUpdated = [dict objectForKey:EMTLPhotoDateUpdated];
             }
-            else if ([key isEqualToString:kPhotoDateTaken]) {
-                dateTaken = [dict objectForKey:kPhotoDateTaken];
+            else if ([key isEqualToString:EMTLPhotoDateTaken]) {
+                dateTaken = [dict objectForKey:EMTLPhotoDateTaken];
             }
-            else if ([key isEqualToString:kPhotoDescription]) {
-                photoDescription = [dict objectForKey:kPhotoDescription];
+            else if ([key isEqualToString:EMTLPhotoDescription]) {
+                photoDescription = [dict objectForKey:EMTLPhotoDescription];
+            }
+            else if ([key isEqualToString:EMTLPhotoWebPageURL]) {
+                webPageURL = [dict objectForKey:EMTLPhotoWebPageURL];
+            }
+            else if ([key isEqualToString:EMTLPhotoTags]) {
+                tags = [dict objectForKey:EMTLPhotoTags];
+            }
+            else if ([key isEqualToString:EMTLPhotoLicense]) {
+                license = [[dict objectForKey:EMTLPhotoLicense] intValue];
             }
         }
         
-        NSString *username = [dict objectForKey:kPhotoUsername];
-        if (username) {
-            user.username = username;
-        }
+        if (!tags) tags = [NSArray array];
         
         comments = [NSArray array];
         _favorites = [NSArray array];
@@ -104,20 +113,23 @@
 {
     self = [super init];
     if (self) {
-        user = [aDecoder decodeObjectForKey:kPhotoUserID];
-        title = [aDecoder decodeObjectForKey:kPhotoTitle];
-        photoID = [aDecoder decodeObjectForKey:kPhotoID];
-        imageURL = [aDecoder decodeObjectForKey:kPhotoImageURL];
-        datePosted = [aDecoder decodeObjectForKey:kPhotoDatePosted];
-        aspectRatio = [aDecoder decodeObjectForKey:kPhotoImageAspectRatio];
-        dateUpdated = [aDecoder decodeObjectForKey:kPhotoDateUpdated];
-        isFavorite = [aDecoder decodeBoolForKey:kPhotoIsFavorite];
-        location = [aDecoder decodeObjectForKey:kPhotoLocation];
-        photoDescription = [aDecoder decodeObjectForKey:kPhotoDescription];
-        dateTaken = [aDecoder decodeObjectForKey:kPhotoDateTaken];
+        user = [aDecoder decodeObjectForKey:EMTLPhotoUser];
+        title = [aDecoder decodeObjectForKey:EMTLPhotoTitle];
+        photoID = [aDecoder decodeObjectForKey:EMTLPhotoID];
+        imageURL = [aDecoder decodeObjectForKey:EMTLPhotoImageURL];
+        webPageURL = [aDecoder decodeObjectForKey:EMTLPhotoWebPageURL];
+        datePosted = [aDecoder decodeObjectForKey:EMTLPhotoDatePosted];
+        aspectRatio = [aDecoder decodeObjectForKey:EMTLPhotoImageAspectRatio];
+        dateUpdated = [aDecoder decodeObjectForKey:EMTLPhotoDateUpdated];
+        isFavorite = [aDecoder decodeBoolForKey:EMTLPhotoIsFavorite];
+        location = [aDecoder decodeObjectForKey:EMTLPhotoLocation];
+        photoDescription = [aDecoder decodeObjectForKey:EMTLPhotoDescription];
+        dateTaken = [aDecoder decodeObjectForKey:EMTLPhotoDateTaken];
+        tags = [aDecoder decodeObjectForKey:EMTLPhotoTags];
+        license = [aDecoder decodeIntForKey:EMTLPhotoLicense];
         
-        comments = [aDecoder decodeObjectForKey:kPhotoComments];
-        _favorites = [aDecoder decodeObjectForKey:kPhotoFavorites];
+        comments = [aDecoder decodeObjectForKey:EMTLPhotoComments];
+        _favorites = [aDecoder decodeObjectForKey:EMTLPhotoFavorites];
         
         _imageProgress = 0;
         
@@ -132,20 +144,23 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     
-    [aCoder encodeObject:user forKey:kPhotoUserID];
-    [aCoder encodeObject:title forKey:kPhotoTitle];
-    [aCoder encodeObject:photoID forKey:kPhotoID];
-    [aCoder encodeObject:imageURL forKey:kPhotoImageURL];
-    [aCoder encodeObject:datePosted forKey:kPhotoDatePosted];
-    [aCoder encodeObject:aspectRatio forKey:kPhotoImageAspectRatio];
-    [aCoder encodeObject:dateUpdated forKey:kPhotoDateUpdated];
-    [aCoder encodeBool:isFavorite forKey:kPhotoIsFavorite];
-    [aCoder encodeObject:location forKey:kPhotoLocation];
-    [aCoder encodeObject:photoDescription forKey:kPhotoDescription];
-    [aCoder encodeObject:dateTaken forKey:kPhotoDateTaken];
+    [aCoder encodeObject:user forKey:EMTLPhotoUser];
+    [aCoder encodeObject:title forKey:EMTLPhotoTitle];
+    [aCoder encodeObject:photoID forKey:EMTLPhotoID];
+    [aCoder encodeObject:imageURL forKey:EMTLPhotoImageURL];
+    [aCoder encodeObject:webPageURL forKey:EMTLPhotoWebPageURL];
+    [aCoder encodeObject:datePosted forKey:EMTLPhotoDatePosted];
+    [aCoder encodeObject:aspectRatio forKey:EMTLPhotoImageAspectRatio];
+    [aCoder encodeObject:dateUpdated forKey:EMTLPhotoDateUpdated];
+    [aCoder encodeBool:isFavorite forKey:EMTLPhotoIsFavorite];
+    [aCoder encodeObject:location forKey:EMTLPhotoLocation];
+    [aCoder encodeObject:photoDescription forKey:EMTLPhotoDescription];
+    [aCoder encodeObject:dateTaken forKey:EMTLPhotoDateTaken];
+    [aCoder encodeObject:tags forKey:EMTLPhotoTags];
+    [aCoder encodeInt:license forKey:EMTLPhotoLicense];
     
-    [aCoder encodeObject:comments forKey:kPhotoComments];
-    [aCoder encodeObject:_favorites forKey:kPhotoFavorites];
+    [aCoder encodeObject:comments forKey:EMTLPhotoComments];
+    [aCoder encodeObject:_favorites forKey:EMTLPhotoFavorites];
     
 }
 
@@ -158,26 +173,21 @@
     if (_updateUsers) {
         
         EMTLUser *newOwner = [source userForUserID:user.userID];
-        if (!newOwner.username) {
-            newOwner.username = user.username;
-        }
+        [newOwner copyExistingUser:user];
         user = newOwner;
         
         NSMutableArray *newComments = [NSMutableArray arrayWithCapacity:comments.count];
         NSMutableArray *newFaves = [NSMutableArray arrayWithCapacity:_favorites.count];
         
         for (NSDictionary *comment in comments) {
-            EMTLUser *oldUser = [comment objectForKey:kCommentUser];
+            EMTLUser *oldUser = [comment objectForKey:EMTLCommentUser];
             EMTLUser *newUser = [source userForUserID:oldUser.userID];
-            
-            if (!newUser.username){
-                newUser.username = oldUser.username;
-            }
+            [newUser copyExistingUser:oldUser];
             
             NSDictionary *newComment = [NSDictionary dictionaryWithObjectsAndKeys:  
-                                        [comment objectForKey:kCommentDate], kCommentDate,
-                                        [comment objectForKey:kCommentText], kCommentText,
-                                        newUser, kCommentUser,
+                                        [comment objectForKey:EMTLCommentDate], EMTLCommentDate,
+                                        [comment objectForKey:EMTLCommentText], EMTLCommentText,
+                                        newUser, EMTLCommentUser,
                                         nil];
             
             [newComments addObject:newComment];
@@ -186,16 +196,13 @@
         comments = newComments;
         
         for (NSDictionary *favorite in _favorites) {
-            EMTLUser *oldUser = [favorite objectForKey:kFavoriteUser];
+            EMTLUser *oldUser = [favorite objectForKey:EMTLFavoriteUser];
             EMTLUser *newUser = [source userForUserID:oldUser.userID];
-            
-            if (!newUser.username){
-                newUser.username = oldUser.username;
-            }
+            [newUser copyExistingUser:oldUser];
             
             NSDictionary *newFave = [NSDictionary dictionaryWithObjectsAndKeys:  
-                                        [favorite objectForKey:kFavoriteDate], kFavoriteDate,
-                                        newUser, kFavoriteUser,
+                                        [favorite objectForKey:EMTLFavoriteDate], EMTLFavoriteDate,
+                                        newUser, EMTLFavoriteUser,
                                         nil];
             
             [newFaves addObject:newFave];
@@ -233,8 +240,8 @@
     if (isFavorite) {
         NSMutableDictionary *myFavorite = [NSMutableDictionary dictionaryWithCapacity:2];
         
-        [myFavorite setValue:[NSDate date] forKey:kFavoriteDate];
-        [myFavorite setValue:_source.user forKey:kFavoriteUser];
+        [myFavorite setValue:[NSDate date] forKey:EMTLFavoriteDate];
+        [myFavorite setValue:_source.user forKey:EMTLFavoriteUser];
         
         _favorites = [_favorites arrayByAddingObject:myFavorite];
     }
@@ -244,7 +251,7 @@
     {
         NSDictionary *toDelete;
         for (NSDictionary *favorite in _favorites) {
-            if (_source.user == [favorite objectForKey:kFavoriteUser])
+            if (_source.user == [favorite objectForKey:EMTLFavoriteUser])
             {
                 toDelete = favorite;
                 break;
@@ -277,14 +284,14 @@
 {
     // Sort the list of favorites by date, newest first.
     NSArray *sortedFaves = [faves sortedArrayUsingComparator:^(NSDictionary *id1, NSDictionary *id2){
-        return [(NSDate *)[id2 objectForKey:kFavoriteDate] compare:(NSDate *)[id1 objectForKey:kFavoriteDate]];
+        return [(NSDate *)[id2 objectForKey:EMTLFavoriteDate] compare:(NSDate *)[id1 objectForKey:EMTLFavoriteDate]];
     }];
     
     NSMutableArray *users = [NSMutableArray arrayWithCapacity:sortedFaves.count];
     
     // Put the users into an array
     for (NSDictionary *favoriteItem in sortedFaves) {
-        [users addObject:[favoriteItem objectForKey:kFavoriteUser]]; 
+        [users addObject:[favoriteItem objectForKey:EMTLFavoriteUser]]; 
     }
     
     return users;

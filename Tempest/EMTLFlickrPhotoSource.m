@@ -17,55 +17,6 @@
 #import "OAMutableURLRequest.h"
 
 
-
-
-NSString *const kFlickrQueryTotalPages = @"flickr-total-pages";
-NSString *const kFlickrQueryCurrentPage = @"flickr-current-page";
-NSString *const kFlickrQueryMaxYear = @"flickr-max-year";
-NSString *const kFlickrQueryMaxMonth = @"flickr-max-month";
-NSString *const kFlickrQueryMaxDay = @"flickr-max-day";
-NSString *const kFlickrQueryMinYear = @"flickr-min-year";
-NSString *const kFlickrQueryMinMonth = @"flickr-min-month";
-NSString *const kFlickrQueryMinDay = @"flickr-min-day";
-NSString *const kFlickrQueryMethod = @"flickr-method";
-NSString *const kFlickrQueryIdentifier = @"flickr-identifier";
-NSString *const kFlickrQueryAPIKey = @"flickr-api-key";
-
-NSString *const kFlickrAPIMethodTestLogin = @"flickr.test.login";
-NSString *const kFlickrAPIMethodUserInfo = @"flickr.people.getInfo";
-NSString *const kFlickrAPIMethodSearch = @"flickr.photos.search";
-NSString *const kFlickrAPIMethodPopularPhotos = @"flickr.interestingness.getList";
-NSString *const kFlickrAPIMethodFavoritePhotos = @"flickr.favorites.getList";
-NSString *const kFlickrAPIMethodUserPhotos = @"flickr.people.getPhotos";
-NSString *const kFlickrAPIMethodPhotoFavorites = @"flickr.photos.getFavorites";
-NSString *const kFlickrAPIMethodPhotoComments = @"flickr.photos.comments.getList";
-NSString *const kFlickrAPIMethodPhotoLocation = @"flickr.places.getInfo";
-NSString *const kFlickrAPIMethodAddFavorite = @"flickr.favorites.add";
-NSString *const kFlickrAPIMethodRemoveFavorite = @"flickr.favorites.remove";
-
-NSString *const kFlickrAPIArgumentUserID = @"user_id";
-NSString *const kFlickrAPIArgumentPhotoID = @"photo_id";
-NSString *const kFlickrAPIArgumentItemsPerPage = @"per_page";
-NSString *const kFlickrAPIArgumentPageNumber = @"page";
-NSString *const kFlickrAPIArgumentAPIKey = @"api_key";
-NSString *const kFlickrAPIArgumentContacts = @"contacts";
-NSString *const kFlickrAPIArgumentSort = @"sort";
-NSString *const kFlickrAPIArgumentExtras = @"extras";
-NSString *const kFlickrAPIArgumentLocation = @"woe_id";
-NSString *const kFlickrAPIArgumentContentType = @"content_type";
-
-
-NSString *const kFlickrRequestTokenURL = @"http://www.flickr.com/services/oauth/request_token";
-NSString *const kFlickrAuthorizationURL = @"http://www.flickr.com/services/oauth/authorize";
-NSString *const kFlickrAccessTokenURL = @"http://www.flickr.com/services/oauth/access_token";
-NSString *const kFlickrAPICallURL = @"http://api.flickr.com/services/rest";
-NSString *const kFlickrDefaultsServiceProviderName = @"flickr-access-token";
-NSString *const kFlickrDefaultsPrefix = @"com.Elemental.Flickrgram";
-NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/buddyicon.gif";
-
-
-
-
 @implementation EMTLFlickrPhotoSource
 
 
@@ -102,11 +53,11 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
  */
 - (void)authorize 
 {
-    consumer = [[OAConsumer alloc] initWithKey:kFlickrAPIKey secret:kFlickrAPISecret];
-    accessToken = [[OAToken alloc] initWithUserDefaultsUsingServiceProviderName:kFlickrDefaultsServiceProviderName prefix:kFlickrDefaultsPrefix];
+    consumer = [[OAConsumer alloc] initWithKey:EMTLFlickrAPIKey secret:EMTLFlickrAPISecret];
+    accessToken = [[OAToken alloc] initWithUserDefaultsUsingServiceProviderName:EMTLFlickrDefaultsServiceProviderName prefix:EMTLFlickrDefaultsPrefix];
     if (accessToken)
     {
-        OAMutableURLRequest *loginRequest = [self oaurlRequestForMethod:kFlickrAPIMethodTestLogin arguments:nil];
+        OAMutableURLRequest *loginRequest = [self oaurlRequestForMethod:EMTLFlickrAPIMethodTestLogin arguments:nil];
         OADataFetcher *fetcher = [[OADataFetcher alloc] init];
         [fetcher fetchDataWithRequest:loginRequest 
                              delegate:self 
@@ -118,7 +69,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
     
     NSLog(@"No token was found for %@ in the user defaults. Requesting a new token...", self.serviceName);
     
-    NSURL *url = [NSURL URLWithString:kFlickrRequestTokenURL];
+    NSURL *url = [NSURL URLWithString:EMTLFlickrRequestTokenURL];
     OAMutableURLRequest *request = [[OAMutableURLRequest alloc] initWithURL:url
                                                                    consumer:consumer
                                                                       token:nil
@@ -153,7 +104,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 {
     requestToken.verifier = verfier;
     
-    NSURL *url = [NSURL URLWithString:kFlickrAccessTokenURL];
+    NSURL *url = [NSURL URLWithString:EMTLFlickrAccessTokenURL];
     OAMutableURLRequest *request = [[OAMutableURLRequest alloc] initWithURL:url
                                                                    consumer:consumer
                                                                       token:requestToken
@@ -185,20 +136,21 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 
     switch (query.queryType) {
         case EMTLPhotoQueryTimeline:
-            [newQuery setValue:kFlickrAPIMethodSearch forKey:kFlickrQueryMethod];
+            [newQuery setValue:EMTLFlickrAPIMethodSearch forKey:EMTLFlickrQueryMethod];
             break;
             
         case EMTLPhotoQueryPopularPhotos:
-            [newQuery setValue:kFlickrAPIMethodPopularPhotos forKey:kFlickrQueryMethod];
+            [newQuery setValue:EMTLFlickrAPIMethodPopularPhotos forKey:EMTLFlickrQueryMethod];
             break;
             
         case EMTLPhotoQueryFavorites:
-            [newQuery setValue:kFlickrAPIMethodFavoritePhotos forKey:kFlickrQueryMethod];
+            [newQuery setValue:EMTLFlickrAPIMethodFavoritePhotos forKey:EMTLFlickrQueryMethod];
+            [newQuery setValue:[queryArguments valueForKey:EMTLPhotoUserID] forKey:EMTLFlickrAPIArgumentUserID];
             break;
             
         case EMTLPhotoQueryUserPhotos:
-            [newQuery setValue:kFlickrAPIMethodUserPhotos forKey:kFlickrQueryMethod];
-            [newQuery setValue:[queryArguments valueForKey:kPhotoUserID] forKey:kFlickrAPIArgumentUserID];
+            [newQuery setValue:EMTLFlickrAPIMethodUserPhotos forKey:EMTLFlickrQueryMethod];
+            [newQuery setValue:[queryArguments valueForKey:EMTLPhotoUserID] forKey:EMTLFlickrAPIArgumentUserID];
             break;
             
         default:
@@ -383,7 +335,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 - (OAMutableURLRequest *)oaurlRequestForMethod:(NSString *)method arguments:(NSDictionary *)args
 {
     // Get the Flickr API URL
-    NSURL *url = [NSURL URLWithString:kFlickrAPICallURL];
+    NSURL *url = [NSURL URLWithString:EMTLFlickrAPICallURL];
     
     // Create the request, with the accessToken.
     OAMutableURLRequest *request = [[OAMutableURLRequest alloc] initWithURL:url
@@ -471,6 +423,10 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
 }
 
 
+      
+
+
+
 #pragma mark -
 #pragma mark Private Flickr OA Callback Selectors
 
@@ -480,7 +436,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
     if (ticket.didSucceed)
     {
         requestToken = [[OAToken alloc] initWithHTTPResponseBody:responseBody];
-        NSString *url = [NSString stringWithFormat:@"%@?perms=write&oauth_token=%@", kFlickrAuthorizationURL, requestToken.key];
+        NSString *url = [NSString stringWithFormat:@"%@?perms=write&oauth_token=%@", EMTLFlickrAuthorizationURL, requestToken.key];
         [self.authorizationDelegate photoSource:self requiresAuthorizationAtURL:[NSURL URLWithString:url]];
     }
     else
@@ -507,7 +463,7 @@ NSString *const kFlickrDefaultIconURLString = @"http://www.flickr.com/images/bud
         NSString *responseBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
         
         accessToken = [[OAToken alloc] initWithHTTPResponseBody:responseBody];
-        [accessToken storeInUserDefaultsWithServiceProviderName:kFlickrDefaultsServiceProviderName prefix:kFlickrDefaultsPrefix];
+        [accessToken storeInUserDefaultsWithServiceProviderName:EMTLFlickrDefaultsServiceProviderName prefix:EMTLFlickrDefaultsPrefix];
         
         OAMutableURLRequest *loginRequest = [self oaurlRequestForMethod:@"flickr.test.login" arguments:nil];
         OADataFetcher *fetcher = [[OADataFetcher alloc] init];

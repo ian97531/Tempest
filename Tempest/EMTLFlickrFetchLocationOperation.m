@@ -57,13 +57,13 @@
     // Fetch the comments
     NSMutableDictionary *locationArgs = [NSMutableDictionary dictionaryWithCapacity:4];
     
-    [locationArgs setObject:kFlickrAPIKey 
-                     forKey:kFlickrAPIArgumentAPIKey];
+    [locationArgs setObject:EMTLFlickrAPIKey 
+                     forKey:EMTLFlickrAPIArgumentAPIKey];
     
     [locationArgs setObject:_photo.location.woe_id
-                     forKey:kFlickrAPIArgumentLocation];
+                     forKey:EMTLFlickrAPIArgumentLocation];
     
-    OAMutableURLRequest *locationRequest = [_photoSource oaurlRequestForMethod:kFlickrAPIMethodPhotoLocation arguments:locationArgs];
+    OAMutableURLRequest *locationRequest = [_photoSource oaurlRequestForMethod:EMTLFlickrAPIMethodPhotoLocation arguments:locationArgs];
     
     [self startRequest:locationRequest];
     
@@ -82,18 +82,23 @@
     
     else {
         
-        NSDictionary *place = [locationDict objectForKey:@"place"];
+        NSDictionary *place = [locationDict objectForKey:EMTLFlickrAPIResponseLocation];
         NSString *place_string = @"";
         
         // These are the place types we can process
-        NSArray *process_places = [NSArray arrayWithObjects:@"nothing", @"neighbourhood", @"locality", @"country", nil];
+        NSArray *process_places = [NSArray arrayWithObjects:
+                                   EMTLFlickrAPIValueLocationTypeUndefined, 
+                                   EMTLFlickrAPIValueLocationTypeNeighborhood, 
+                                   EMTLFlickrAPIValueLocationTypeLocality, 
+                                   EMTLFlickrAPIValueLocationTypeCountry,
+                                   nil];
         
         // Get the place type
-        NSString *place_type = [place objectForKey:@"place_type"];
+        NSString *place_type = [place objectForKey:EMTLFlickrAPIResponseLocationType];
         
         // If we got the county place type, we round it up to country.
-        if ([place_type isEqualToString:@"county"]) {
-            place_type = @"country";
+        if ([place_type isEqualToString:EMTLFlickrAPIValueLocationTypeCounty]) {
+            place_type = EMTLFlickrAPIValueLocationTypeCountry;
         }
         
         // We want to process the place type, and each place type that's broader than what was
@@ -104,15 +109,21 @@
             
             if (i == EMTLLocationNeighbourhood)
             {
-                NSString *neighborhood = [[[[place objectForKey:@"neighbourhood"] objectForKey:@"_content"] componentsSeparatedByString:@", "] objectAtIndex:0];
+                NSString *neighborhood = [[[[place objectForKey:EMTLFlickrAPIValueLocationTypeNeighborhood] 
+                                            objectForKey:EMTLFlickrAPIResponseContent] componentsSeparatedByString:@", "] objectAtIndex:0];
+                
+                // Localize string "in"
                 place_string = [NSString stringWithFormat:@"%@ in ", neighborhood];
             }
             
             
             if (i == EMTLLocationLocality)
             {
-                NSString *country = [[place objectForKey:@"country"] objectForKey:@"_content"];
-                NSArray *locality = [[[place objectForKey:@"locality"] objectForKey:@"_content"] componentsSeparatedByString:@", "];
+                NSString *country = [[place objectForKey:EMTLFlickrAPIValueLocationTypeCountry] 
+                                     objectForKey:EMTLFlickrAPIResponseContent];
+                
+                NSArray *locality = [[[place objectForKey:EMTLFlickrAPIValueLocationTypeLocality] 
+                                      objectForKey:EMTLFlickrAPIResponseContent] componentsSeparatedByString:@", "];
                 
                 if ([country isEqualToString:@"United States"])
                 {
@@ -125,12 +136,15 @@
                     NSString *town = [locality objectAtIndex:0];
                     place_string = [NSString stringWithFormat:@"%@%@, ", place_string, town];
                 }
+                
             }
             
             
             if (i == EMTLLocationCountry)
             {
-                NSString *country = [self _shortCountry:[[place objectForKey:@"country"] objectForKey:@"_content"]];
+                NSString *country = [self _shortCountry:[[place objectForKey:EMTLFlickrAPIValueLocationTypeCountry] 
+                                                         objectForKey:EMTLFlickrAPIResponseContent]];
+                
                 place_string = [NSString stringWithFormat:@"%@%@", place_string, country];
             }
             

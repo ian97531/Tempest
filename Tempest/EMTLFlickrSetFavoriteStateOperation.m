@@ -39,13 +39,13 @@
 
     NSMutableDictionary *favoritesArgs = [NSMutableDictionary dictionaryWithCapacity:4];
     
-    [favoritesArgs setObject:kFlickrAPIKey 
-                     forKey:kFlickrAPIArgumentAPIKey];
+    [favoritesArgs setObject:EMTLFlickrAPIKey 
+                     forKey:EMTLFlickrAPIArgumentAPIKey];
     
     [favoritesArgs setObject:_photo.photoID
-                     forKey:kFlickrAPIArgumentPhotoID];
+                     forKey:EMTLFlickrAPIArgumentPhotoID];
     
-    NSString *favoritesMethod = _isFavorite ? kFlickrAPIMethodAddFavorite : kFlickrAPIMethodRemoveFavorite;
+    NSString *favoritesMethod = _isFavorite ? EMTLFlickrAPIMethodAddFavorite : EMTLFlickrAPIMethodRemoveFavorite;
     OAMutableURLRequest *favoritesRequest = [_photoSource oaurlRequestForMethod:favoritesMethod arguments:favoritesArgs];
     //[favoritesRequest setHTTPMethod:@"POST"];
     //[favoritesRequest prepare];

@@ -11,6 +11,8 @@
 #import "EMTLBackgroundConnection.h"
 #import "EMTLPhoto.h"
 
+#import "UIImage+IWDecompressJPEG.h"
+
 @implementation EMTLFlickrFetchImageOperation
 
 - (id)initWithPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size photoSource:(EMTLFlickrPhotoSource *)photoSource
@@ -42,46 +44,13 @@
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
     
-    UIImage *image = [UIImage imageWithData:_incomingData];
-        
-    CGImageRef cgImageRef = image.CGImage;
-    // System only supports RGB, set explicitly and prevent context error
-    // if the downloaded image is not the supported format
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+    UIImage *image = [UIImage decompressImageWithData:_incomingData];
     
-    CGContextRef context = CGBitmapContextCreate(NULL,
-                                                 CGImageGetWidth(cgImageRef),
-                                                 CGImageGetHeight(cgImageRef),
-                                                 8,
-                                                 // width * 4 will be enough because are in ARGB format, don't read from the image
-                                                 CGImageGetWidth(cgImageRef) * 4,
-                                                 colorSpace,
-                                                 // kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little 
-                                                 // makes system don't need to do extra conversion when displayed.
-                                                 kCGImageAlphaPremultipliedFirst | kCGBitmapByteOrder32Little); 
-    CGColorSpaceRelease(colorSpace);
-    
-    if (context) {
-        CGRect rect = (CGRect){CGPointZero, CGImageGetWidth(cgImageRef), CGImageGetHeight(cgImageRef)};
-        CGContextDrawImage(context, rect, cgImageRef);
-        CGImageRef decompressedImageRef = CGBitmapContextCreateImage(context);
-        CGContextRelease(context);
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [_photoSource operation:self didLoadImage:image forPhoto:_photo withSize:_size];
+    });
         
-        UIImage *decompressedImage = [[UIImage alloc] initWithCGImage:decompressedImageRef];
-        CGImageRelease(decompressedImageRef);
-        
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [_photoSource operation:self didLoadImage:decompressedImage forPhoto:_photo withSize:_size];
-        });
-    }
-    else {
-        
-        dispatch_sync(dispatch_get_main_queue(), ^{
-            [_photoSource operation:self didLoadImage:image forPhoto:_photo withSize:_size];
-        });
-        
-    }
-    
+
     [super connectionDidFinishLoading:connection];
 
 }

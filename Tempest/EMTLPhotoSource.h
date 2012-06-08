@@ -16,35 +16,6 @@
 #import "EMTLConstants.h"
 #import "EMTLUser.h"
 
-extern NSString *const kPhotoObject;
-
-extern NSString *const kPhotoUsername;
-extern NSString *const kPhotoUserID;
-extern NSString *const kPhotoTitle;
-extern NSString *const kPhotoID;
-extern NSString *const kPhotoImageURL;
-extern NSString *const kPhotoImageAspectRatio;
-extern NSString *const kPhotoDatePosted;
-extern NSString *const kPhotoDateUpdated;
-extern NSString *const kPhotoDateTaken;
-extern NSString *const kPhotoComments;
-extern NSString *const kPhotoFavorites;
-extern NSString *const kPhotoIsFavorite;
-extern NSString *const kPhotoLocation;
-extern NSString *const kPhotoDescription;
-
-extern NSString *const kCommentText;
-extern NSString *const kCommentDate;
-extern NSString *const kCommentUser;
-
-extern NSString *const kFavoriteDate;
-extern NSString *const kFavoriteUser;
-
-extern int const kImageCacheCapacity;
-extern int const kImageCacheLeeway;
-
-extern NSString *const kImageCacheFilesDatesDict;
-extern NSString *const kUserCacheDict;
 
 @protocol EMTLImageDelegate;
 @class EMTLPhotoSource;
@@ -96,8 +67,8 @@ extern NSString *const kUserCacheDict;
 // Photo Queries 
 - (EMTLPhotoQuery *)currentPhotos;
 - (EMTLPhotoQuery *)popularPhotos;
-- (EMTLPhotoQuery *)favoritePhotosForUser:(NSString *)user_id;
-- (EMTLPhotoQuery *)photosForUser:(NSString *)user_id;
+- (EMTLPhotoQuery *)favoritePhotosForUser:(EMTLUser *)user;
+- (EMTLPhotoQuery *)photosForUser:(EMTLUser *)user;
 - (EMTLPhotoQuery *)addPhotoQueryType:(EMTLPhotoQueryType)queryType withArguments:(NSDictionary *)queryArguments;
 - (void)updateQuery:(EMTLPhotoQuery *)query;
 - (void)cancelQuery:(EMTLPhotoQuery *)query;

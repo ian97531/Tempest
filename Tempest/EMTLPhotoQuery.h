@@ -31,7 +31,6 @@
     __weak id<EMTLPhotoQueryDelegate> _delegate;
     EMTLPhotoSource * _source;
     BOOL _reloading;
-    BOOL _busy;
     int _totalPhotos;
     int _numPhotosExpected;
     int _numPhotosReceived;

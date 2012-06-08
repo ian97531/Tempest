@@ -10,6 +10,8 @@
 #import "EMTLFlickrPhotoSource.h"
 #import "EMTLUser.h"
 
+#import "UIImage+IWDecompressJPEG.h"
+
 @implementation EMTLFlickrFetchUserOperation
 
 - (id)initWithPhoto:(EMTLUser *)user photoSource:(EMTLFlickrPhotoSource *)photoSource
@@ -38,14 +40,14 @@
     
     NSMutableDictionary *userArgs = [NSMutableDictionary dictionaryWithCapacity:4];
     
-    [userArgs setObject:kFlickrAPIKey 
-                 forKey:kFlickrAPIArgumentAPIKey];
+    [userArgs setObject:EMTLFlickrAPIKey 
+                 forKey:EMTLFlickrAPIArgumentAPIKey];
     
     [userArgs setObject:_user.userID
-                 forKey:kFlickrAPIArgumentUserID];
+                 forKey:EMTLFlickrAPIArgumentUserID];
     
     
-    OAMutableURLRequest *userRequest = [_photoSource oaurlRequestForMethod:kFlickrAPIMethodUserInfo arguments:userArgs];
+    OAMutableURLRequest *userRequest = [_photoSource oaurlRequestForMethod:EMTLFlickrAPIMethodUserInfo arguments:userArgs];
     
     NSURLResponse *response = nil;
     NSError *error = nil;
@@ -101,34 +103,34 @@
     }
     
     else {
-        NSDictionary *userDetails = [userDict objectForKey:@"person"];
+        NSDictionary *userDetails = [userDict objectForKey:EMTLFlickrAPIResponseUser];
         
-        _user.username = [userDetails objectForKey:@"username"];
-        _user.real_name = [userDetails objectForKey:@"realname"];
-        _user.location = [[userDetails objectForKey:@"location"] objectForKey:@"_content"];
+        _user.username = [userDetails objectForKey:EMTLFlickrAPIResponseUserUsername];
+        _user.real_name = [userDetails objectForKey:EMTLFlickrAPIResponseUserRealname];
+        _user.location = [[userDetails objectForKey:EMTLFlickrAPIResponseUserLocation] 
+                          objectForKey:EMTLFlickrAPIResponseContent];
         
-        NSString *iconFarm = [userDetails objectForKey:@"iconfarm"];
-        NSString *iconServer = [userDetails objectForKey:@"iconserver"];
-        NSURL *iconURL;
-        if (![iconFarm isEqualToString:@"0"] && ![iconServer isEqualToString:@"0"]) {
-            NSString *iconURL = [NSString stringWithFormat:@"http://farm%@.staticflickr.com/%@buddyicons/%@.jpg", iconFarm, iconServer, _user.userID];
-            iconURL = [NSURL URLWithString:iconURL];
+        NSString *iconFarm = [userDetails objectForKey:EMTLFlickrAPIResponseUserIconFarm];
+        NSString *iconServer = [userDetails objectForKey:EMTLFlickrAPIResponseUserIconServer];
+        
+        if(iconFarm && iconServer)
+        {
+            _user.iconURL = [NSURL URLWithString:[NSString stringWithFormat:EMTLFlickrUserIconURLFormat, iconFarm, iconServer, _user.userID]];
         }
-        else {
-            iconURL = [NSURL URLWithString:kFlickrDefaultIconURLString];
+        else 
+        {
+            _user.iconURL = [NSURL URLWithString:EMTLFlickrDefaultIconURLString];
         }
+        
         
         // Grab the icon
         NSURLResponse *response;
         NSError *error;
-        NSURLRequest *iconRequest = [NSURLRequest requestWithURL:iconURL cachePolicy:NSURLCacheStorageNotAllowed timeoutInterval:10.0];
+        NSURLRequest *iconRequest = [NSURLRequest requestWithURL:_user.iconURL cachePolicy:NSURLCacheStorageNotAllowed timeoutInterval:10.0];
         NSData *iconData = [NSURLConnection sendSynchronousRequest:iconRequest returningResponse:&response error:&error];
         
         if(!error) {
-            _user.icon = [UIImage imageWithData:iconData];
-            UIGraphicsBeginImageContext(CGSizeMake(_user.icon.size.width, _user.icon.size.height));
-            [_user.icon drawAtPoint:CGPointZero];
-            UIGraphicsEndImageContext();
+            _user.icon = [UIImage decompressImageWithData:iconData];
         }
         else {
             NSLog(@"Could not load the icon for user %@", _user.username);
