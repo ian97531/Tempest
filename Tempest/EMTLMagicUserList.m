@@ -31,7 +31,6 @@
 @synthesize empty = _emptyString;
 @synthesize numericSuffix = _numericSuffix;
 @synthesize singularNumericSuffix = _singularNumericSuffix;
-@synthesize photoID = _photoID;
 @synthesize underlineSelectableRanges;
 @synthesize highlightSelectableRangesWithColor;
 @synthesize boldSelectableRanges;
@@ -230,11 +229,15 @@
         return;
     }
     
-
+    NSString *you = NSLocalizedString(@"you", @"");
+    NSString *and = NSLocalizedString(@"and", @"");
+    NSString *other = NSLocalizedString(@"other", @"");
+    NSString *others = NSLocalizedString(@"others", @"");
+    
     
     if(_users.count == 1) {
         EMTLUser *user = [_users objectAtIndex:0];
-        NSString *name = (user == _signedInUser) ? @"you" : user.username;
+        NSString *name = (user == _signedInUser) ? you : user.username;
         NSString *likeString = [NSString stringWithFormat:@"%@ ", _prefixString];
         [_tappableAreas setObject:user forKey:[self _areaForNewString:name onString:likeString]];
         [_underlinedRanges addObject:[self _rangeForNewString:name onString:likeString]];
@@ -257,7 +260,7 @@
         for (int i = 0; i < _users.count; i++) {
             // Get the width for the user
             EMTLUser *user = [_users objectAtIndex:i];
-            NSString *name = (user == _signedInUser) ? @"you" : user.username;
+            NSString *name = (user == _signedInUser) ? you : user.username;
             
             int userSize = [name sizeWithFont:_font].width;
             availableWidth = availableWidth - userSize;
@@ -286,7 +289,7 @@
         // " and x others" string.
         if (usedUsers.count < _users.count)
         {
-            NSString *remainingUsersFormat = @"and %i others";
+            NSString *remainingUsersFormat = [[and stringByAppendingFormat:@" %i "] stringByAppendingString:others];
             
             while (usedUsers.count) {
                 int usersLeft = (_users.count - usedUsers.count) + 1;
@@ -295,7 +298,7 @@
                 int neededWidth = [[NSString stringWithFormat:remainingUsersFormat, usersLeft] sizeWithFont:_font].width;
                 
                 // Find the width of the last object in the array and remove it.
-                NSString *name = ([usedUsers lastObject] == _signedInUser) ? @"you" : [[usedUsers lastObject] username];
+                NSString *name = ([usedUsers lastObject] == _signedInUser) ? you : [[usedUsers lastObject] username];
                 int sizeOfLastItem = [name sizeWithFont:_font].width;
                 [usedUsers removeLastObject];
                 
@@ -330,10 +333,6 @@
             return;
         }
         
-        if ([_photoID isEqualToString:@"7162783437"])
-        {
-            NSLog(@"Got it");
-        }
         
         // Now we know what will fit, so let's construct the line.
         NSString *likeString = _prefixString;
@@ -341,7 +340,7 @@
         // Pull together the usedUsers and generate the correct tappable areas.
         for (int i = 0; i < usedUsers.count; i++) {
             EMTLUser *user = [usedUsers objectAtIndex:i];
-            NSString *name = (user == _signedInUser) ? @"you" : user.username;
+            NSString *name = (user == _signedInUser) ? you : user.username;
             likeString = [likeString stringByAppendingString:@" "];
             [_tappableAreas setObject:user forKey:[self _areaForNewString:name onString:likeString]];
             [_underlinedRanges addObject:[self _rangeForNewString:name onString:likeString]];
@@ -358,9 +357,9 @@
         // If there is a remainder, add the remainder string.
         if (numRemaining) 
         {
-            NSString *pluralRemainder = (numRemaining != 1) ? @"s" : @"";
-            likeString = [likeString stringByAppendingString:@" and "];
-            NSString *remainder = [NSString stringWithFormat:@"%i other%@", numRemaining, pluralRemainder];
+            NSString *pluralRemainder = (numRemaining != 1) ? others : other;
+            likeString = [likeString stringByAppendingFormat:@" %@ ", and];
+            NSString *remainder = [NSString stringWithFormat:@"%i %@", numRemaining, pluralRemainder];
             _allUsersTappableArea = [self _areaForNewString:remainder onString:likeString];
             [_underlinedRanges addObject:[self _rangeForNewString:remainder onString:likeString]];
             likeString = [likeString stringByAppendingString:remainder];

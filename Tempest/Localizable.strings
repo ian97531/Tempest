@@ -1,0 +1,23 @@
+/* 
+  Localizable.strings
+  Tempest
+
+  Created by Ian White on 6/8/12.
+  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
+*/
+
+"Today" = "Today";
+"Yesterday" = "Yesterday";
+
+"Comment" = "Comment";
+"Comments" = "Comments";
+"Liked by" = "Liked by";
+"likes" = "likes";
+"like" = "like";
+"you" = "you";
+"0 Likes" = "0 Likes";
+"and" = "and";
+"other" = "other";
+"others" = "others";
+"Title:" = "Title:";
+"Taken On:" = "Taken On:";

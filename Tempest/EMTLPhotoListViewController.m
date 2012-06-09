@@ -196,8 +196,6 @@
     [cell setDate:[photo datePostedString]];
     cell.ownerLabel.text = photo.user.username;
     
-    
-    cell.favoriteUsers.photoID = photo.photoID;
     cell.favoriteUsers.signedInUser = _photoQuery.source.user;
     cell.favoriteUsers.users = photo.favoritesUsers;
     

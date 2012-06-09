@@ -44,8 +44,7 @@
     NSMutableArray *_underlinedRanges;
 
     id<EMTLMagicUserListDelegate> _delegate;
-    
-    NSString *_photoID;
+
 }
 
 @property (nonatomic, strong) NSArray *users;
@@ -60,7 +59,6 @@
 @property (nonatomic) BOOL underlineSelectableRanges;
 @property (nonatomic) BOOL boldSelectableRanges;
 
-@property (nonatomic, strong) NSString *photoID;
 @property (nonatomic, assign) id<EMTLMagicUserListDelegate> delegate;
 
 - (id)initWithFrame:(CGRect)frame emtpyString:(NSString *)emptyString;

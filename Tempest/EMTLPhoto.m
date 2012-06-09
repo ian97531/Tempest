@@ -370,10 +370,10 @@
         if (nowMonth == dateMonth) {
             
             if (nowDay == dateDay) {
-                return @"Today";
+                return NSLocalizedString(@"Today", @"");
             }
             else if (nowDay == dateDay + 1) {
-                return @"Yesterday";
+                return NSLocalizedString(@"Yesterday", @"");;
             }
             else if (nowDay - dateDay < 6) {
                 [dateFormat setDateFormat:@"EEEE"];

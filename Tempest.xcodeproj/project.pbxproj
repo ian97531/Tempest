@@ -21,6 +21,7 @@
 		EB14EDD8157EBBBF00724F0C /* EMTLMagicUserList.m in Sources */ = {isa = PBXBuildFile; fileRef = EB14EDD7157EBBBF00724F0C /* EMTLMagicUserList.m */; };
 		EB14EDDA157EC2FB00724F0C /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB14EDD9157EC2FB00724F0C /* CoreText.framework */; };
 		EB1FF975157D444A009DA624 /* EMTLFlickrFetchUserOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EB1FF974157D444A009DA624 /* EMTLFlickrFetchUserOperation.m */; };
+		EB20EAD01582D4FE00AD755A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = EB20EACF1582D4FE00AD755A /* Localizable.strings */; };
 		EB5221F115377A3A00785F97 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F015377A3A00785F97 /* UIKit.framework */; };
 		EB5221F315377A3A00785F97 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F215377A3A00785F97 /* Foundation.framework */; };
 		EB5221F515377A3A00785F97 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB5221F415377A3A00785F97 /* CoreGraphics.framework */; };
@@ -124,6 +125,7 @@
 		EB14EDD9157EC2FB00724F0C /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		EB1FF973157D444A009DA624 /* EMTLFlickrFetchUserOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMTLFlickrFetchUserOperation.h; sourceTree = "<group>"; };
 		EB1FF974157D444A009DA624 /* EMTLFlickrFetchUserOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickrFetchUserOperation.m; sourceTree = "<group>"; };
+		EB20EACF1582D4FE00AD755A /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = ../Localizable.strings; sourceTree = "<group>"; };
 		EB5221EC15377A3A00785F97 /* Tempest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tempest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB5221F015377A3A00785F97 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		EB5221F215377A3A00785F97 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -440,6 +442,7 @@
 		EB69B200153CD46B003D8422 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				EB20EACF1582D4FE00AD755A /* Localizable.strings */,
 				EB6E5A2915802FE90040D9CB /* LabelTempest2.png */,
 				EB6E5A2A15802FE90040D9CB /* LabelTempest2@2x.png */,
 				EB6E5A25158014260040D9CB /* Agent _C.ttf */,
@@ -631,6 +634,7 @@
 				EB6E5A26158014260040D9CB /* Agent _C.ttf in Resources */,
 				EB6E5A2B15802FEA0040D9CB /* LabelTempest2.png in Resources */,
 				EB6E5A2C15802FEA0040D9CB /* LabelTempest2@2x.png in Resources */,
+				EB20EAD01582D4FE00AD755A /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

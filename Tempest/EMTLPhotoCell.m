@@ -120,9 +120,10 @@
         [frontView addSubview:ownerLabel];
         
         
-        favoriteUsers = [[EMTLMagicUserList alloc] initWithFrame:CGRectMake(52, 350, 250, 20) emtpyString:@"0 Likes"];
-        favoriteUsers.prefix = @"Liked by";
-        favoriteUsers.numericSuffix = @"likes";
+        favoriteUsers = [[EMTLMagicUserList alloc] initWithFrame:CGRectMake(52, 350, 250, 20) emtpyString:NSLocalizedString(@"0 Likes", @"")];
+        favoriteUsers.prefix = NSLocalizedString(@"Liked by", @"");
+        favoriteUsers.numericSuffix = NSLocalizedString(@"likes", @"");
+        favoriteUsers.singularNumericSuffix = NSLocalizedString(@"like", @"");
         favoriteUsers.font = [UIFont fontWithName:@"MarkerSD" size:14];
         favoriteUsers.textColor = [UIColor colorWithWhite:0.4 alpha:1];
         [favoriteUsers setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth];
@@ -164,7 +165,7 @@
         titleText.backgroundColor = [UIColor clearColor];
         titleText.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:15];
         titleText.textColor = [UIColor colorWithWhite:0.3 alpha:1];
-        titleText.text = @"Title:";
+        titleText.text = NSLocalizedString(@"Title:", @"");
         [backView addSubview:titleText];
         
         titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(25, 40, 252, 40)];
@@ -182,7 +183,7 @@
         takenOnText.backgroundColor = [UIColor clearColor];
         takenOnText.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:15];
         takenOnText.textColor = [UIColor colorWithWhite:0.3 alpha:1];
-        takenOnText.text = @"Taken on:";
+        takenOnText.text = NSLocalizedString(@"Taken on:", @"");
         [backView addSubview:takenOnText];
         
         dateTakenLabel = [[UILabel alloc] initWithFrame:CGRectMake(25, 110, 150, 30)];
