@@ -167,6 +167,7 @@
     //NSLog(@"Getting cell at index path: %i", indexPath.row);
     // Grab a cell from the queue or create a new one.
     EMTLPhotoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
+    EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:indexPath.row];
     
     if (cell == nil) {
         cell = [[EMTLPhotoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PhotoCell"];
@@ -177,8 +178,15 @@
         cell.favoriteUsers.highlightSelectableRangesWithColor = NULL;//[UIColor colorWithRed:1 green:1 blue:0.69 alpha:1];
         cell.favoriteUsers.backgroundColor = [UIColor clearColor];
     }
+    else {
+        // This is reused cell. If it's loading an image, we should cancel the load.
+        EMTLPhoto *oldPhoto = [_photoQuery.photoList objectAtIndex:cell.tag];
+        if (oldPhoto && oldPhoto != photo) {
+            [oldPhoto cancelImageWithSize:EMTLImageSizeMediumAspect];
+        }
+    }
     
-    EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:indexPath.row];
+    
     
     // Adjust the flippedness of the cell if necessary.
     NSNumber *frontFacingForward = [_flipState objectForKey:photo.photoID];
@@ -190,6 +198,7 @@
     }
     
     // Setup the front face of the photo
+    cell.tag = indexPath.row;
     cell.photoID = photo.photoID;
     cell.cardView.tag = indexPath.row;
     

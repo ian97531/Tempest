@@ -406,7 +406,8 @@
     NSString *cacheKey = [self _cacheKeyForPhoto:photo imageSize:size];
     [_imageCache setObject:image forKey:cacheKey];
     
-    
+    // short circuit the disk caching that's not currently reaping properly.
+    return;
     if (_imageCacheDir) {
         
         // Next we want to dispatch a background block to see if we should store this image in
