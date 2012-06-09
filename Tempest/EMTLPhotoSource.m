@@ -272,6 +272,20 @@
     return [self addPhotoQueryType:EMTLPhotoQueryUserPhotos withArguments:args];
 }
 
+
+- (EMTLPhotoQuery *)photosForLocation:(EMTLLocation *)location
+{
+    if (!location) {
+        // find current location
+    }
+    
+    NSDictionary *args = [NSDictionary dictionaryWithObject:location.woe_id forKey:EMTLPhotoLocationWOEID];
+    
+    return [self addPhotoQueryType:EMTLPhotoQueryLocationPhotos withArguments:args];
+    
+}
+
+
 - (EMTLPhotoQuery *)addPhotoQueryType:(EMTLPhotoQueryType)queryType withArguments:(NSDictionary *)queryArguments
 {
     // Generate the query ID

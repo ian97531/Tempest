@@ -13,6 +13,7 @@ typedef enum EMTLPhotoQueryType {
     EMTLPhotoQueryFavorites,
     EMTLPhotoQueryUserPhotos,
     EMTLPhotoQueryPopularPhotos,
+    EMTLPhotoQueryLocationPhotos,
     EMTLPhotoQueryTypeUndefined, // Add new types above this
 } EMTLPhotoQueryType;
 
@@ -68,6 +69,7 @@ extern NSString *const EMTLPhotoDescription;
 extern NSString *const EMTLPhotoWebPageURL;
 extern NSString *const EMTLPhotoTags;
 extern NSString *const EMTLPhotoLicense;
+extern NSString *const EMTLPhotoLocationWOEID;
 
 extern NSString *const EMTLCommentText;
 extern NSString *const EMTLCommentDate;

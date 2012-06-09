@@ -134,7 +134,36 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"\nPhoto Query ID: %@\nQuery Type: %i\nQuery Arguments: %@\nPhotos Currently Loaded: %i", _photoQueryID, _queryType, _queryArguments, _photoList.count];
+
+    NSString *thisQueryType;
+    
+    switch (_queryType) {
+        case EMTLPhotoQueryTimeline:
+            thisQueryType = @"Timeline Photos";
+            break;
+            
+        case EMTLPhotoQueryFavorites:
+            thisQueryType = @"Favorite Photos";
+            break;
+            
+        case EMTLPhotoQueryUserPhotos:
+            thisQueryType = @"User Photos";
+            break;
+            
+        case EMTLPhotoQueryPopularPhotos:
+            thisQueryType = @"Popular Photos";
+            break;
+            
+        case EMTLPhotoQueryLocationPhotos:
+            thisQueryType = @"Location Photos";
+            break;
+            
+        default:
+            thisQueryType = @"Not Set";
+            break;
+    }
+    
+    return [NSString stringWithFormat:@"\nPhoto Query ID: %@\nQuery Type: %@\nQuery Arguments: %@\nPhotos Currently Loaded: %i", _photoQueryID, thisQueryType, _queryArguments, _photoList.count];
 }
 
 @end

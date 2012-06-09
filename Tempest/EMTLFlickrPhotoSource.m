@@ -153,6 +153,11 @@
             [newQuery setValue:[queryArguments valueForKey:EMTLPhotoUserID] forKey:EMTLFlickrAPIArgumentUserID];
             break;
             
+        case EMTLPhotoQueryLocationPhotos:
+            [newQuery setValue:EMTLFlickrAPIMethodPhotoLocation forKey:EMTLFlickrQueryMethod];
+            [newQuery setValue:[queryArguments valueForKey:EMTLPhotoLocationWOEID] forKey:EMTLFlickrAPIArgumentLocation];
+            break;
+            
         default:
             break;
     }

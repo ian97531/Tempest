@@ -310,8 +310,9 @@
         [photoDict setObject:[NSDate dateWithTimeIntervalSince1970:[[photoDict objectForKey:EMTLFlickrAPIResponsePhotoDatePosted] doubleValue]]
                       forKey:EMTLPhotoDatePosted];
         
-        [photoDict setObject:[NSDate dateWithTimeIntervalSince1970:[[photoDict objectForKey:EMTLFlickrAPIResponsePhotoDateTaken] doubleValue]]
-                      forKey:EMTLPhotoDateTaken];
+        // Date Taken is given in a different format that's harder to parse (ie 2012-06-07 22:43:05)
+        //[photoDict setObject:[NSDate dateWithString:[photoDict objectForKey:EMTLFlickrAPIResponsePhotoDateTaken]]
+        //             forKey:EMTLPhotoDateTaken];
         
         
         

@@ -28,6 +28,7 @@ NSString *const EMTLPhotoDescription = @"photo_description";
 NSString *const EMTLPhotoWebPageURL = @"web_page";
 NSString *const EMTLPhotoTags = @"tags";
 NSString *const EMTLPhotoLicense = @"license";
+NSString *const EMTLPhotoLocationWOEID = @"WOEID";
 
 NSString *const EMTLCommentText = @"comment_text";
 NSString *const EMTLCommentDate = @"comment_date";

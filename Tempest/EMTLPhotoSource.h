@@ -15,6 +15,7 @@
 #import "APISecrets.h"
 #import "EMTLConstants.h"
 #import "EMTLUser.h"
+#import "EMTLLocation.h"
 
 
 @protocol EMTLImageDelegate;
@@ -69,6 +70,7 @@
 - (EMTLPhotoQuery *)popularPhotos;
 - (EMTLPhotoQuery *)favoritePhotosForUser:(EMTLUser *)user;
 - (EMTLPhotoQuery *)photosForUser:(EMTLUser *)user;
+- (EMTLPhotoQuery *)photosForLocation:(EMTLLocation *)location;
 - (EMTLPhotoQuery *)addPhotoQueryType:(EMTLPhotoQueryType)queryType withArguments:(NSDictionary *)queryArguments;
 - (void)updateQuery:(EMTLPhotoQuery *)query;
 - (void)cancelQuery:(EMTLPhotoQuery *)query;
