@@ -663,4 +663,15 @@
 }
 
 
+- (NSString *)description
+{
+    NSString *imageCaching = (_imageCacheDir) ? @"YES" : @"NO";
+    NSString *photoListCaching = (_photoListCacheDir) ? @"YES" : @"NO";
+    NSString *userCaching = (_userCacheDir) ? @"YES" : @"NO";
+    
+    return [NSString stringWithFormat:@"\nService Name: %@\nImage Disk Caching Enabled: %@\nPhotoList Disk Caching Enabled: %@\nUser Disk Caching Enabled: %@\nLogged-In User: %@\nPhoto Queries: %@", self.serviceName, imageCaching, photoListCaching, userCaching, _user, _photoQueries]; 
+}
+
+
+
 @end

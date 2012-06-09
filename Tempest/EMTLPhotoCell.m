@@ -373,5 +373,9 @@
     return _favoriteIndicatorOn;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"Cell for PhotoID: %@", _photoID];
+}
 
 @end

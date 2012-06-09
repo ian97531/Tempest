@@ -11,6 +11,7 @@
 @implementation EMTLCachedImage
 
 @synthesize datePosted;
+@synthesize dateCached;
 @synthesize urlToImage;
 
 - (id)initWithDate:(NSDate *)date url:(NSURL *)url
@@ -19,6 +20,7 @@
     if (self)
     {
         datePosted = date;
+        dateCached = [NSDate date];
         urlToImage = url;
     }
     return self;
@@ -30,6 +32,7 @@
     if (self)
     {
         datePosted = [aDecoder decodeObjectForKey:@"datePosted"];
+        dateCached = [aDecoder decodeObjectForKey:@"dateCached"];
         urlToImage = [aDecoder decodeObjectForKey:@"urlToImage"];
     }
     return self;
@@ -38,6 +41,7 @@
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeObject:datePosted forKey:@"datePosted"];
+    [aCoder encodeObject:dateCached forKey:@"dateCached"];
     [aCoder encodeObject:urlToImage forKey:@"urlToImage"];
 }
 
@@ -49,6 +53,11 @@
 - (NSString *)path
 {
     return urlToImage.path;
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"Image File: %@\nDate Cached: %@\nDate Posted: %@", urlToImage.path, dateCached, datePosted];
 }
 
 @end

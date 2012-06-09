@@ -11,6 +11,7 @@
 @interface EMTLCachedImage : NSObject <NSCoding>
 
 @property (nonatomic, strong) NSDate *datePosted;
+@property (nonatomic, strong) NSDate *dateCached;
 @property (nonatomic, strong) NSURL *urlToImage;
 @property (nonatomic, strong, readonly) NSString *filename;
 @property (nonatomic, strong, readonly) NSString *path;

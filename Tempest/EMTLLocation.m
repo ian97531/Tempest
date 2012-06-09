@@ -53,4 +53,29 @@
 }
 
 
+- (NSString *)description
+{
+    
+    NSString * locationType;
+    switch (type) {
+        case EMTLLocationNeighbourhood:
+            locationType = @"Neighbourhood";
+            break;
+            
+        case EMTLLocationLocality:
+            locationType = @"Locality";
+            break;
+            
+        case EMTLLocationCountry:
+            locationType = @"Country";
+            break;
+            
+        default:
+            locationType = @"Not Set";
+    }
+    
+    return [NSString stringWithFormat:@"Location Name: %@\nLocation Type: %@\nWOE ID: %@\nLatitude: %f\nLongitude:%f", name, locationType, woe_id, latitude, longitude];
+}
+
+
 @end

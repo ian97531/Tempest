@@ -391,5 +391,10 @@
     return [NSValue valueWithRange:newRange];
 }
 
+- (NSString *)description
+{
+    return [_attributedString description];
+}
+
 
 @end
