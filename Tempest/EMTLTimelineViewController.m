@@ -41,10 +41,10 @@
     
     [super loadView];
     
-    _tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 148)];
+    _tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 100)];
     
-    UIImageView *headerImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LabelTempest2.png"]];
-    headerImage.frame = CGRectMake(10, 30, 300, 113);
+    UIImageView *headerImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"LabelTempest5.png"]];
+    headerImage.frame = CGRectMake(0, 0, 320, 82.5);
     [_tableHeaderView addSubview:headerImage];
     
     _reloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -52,7 +52,7 @@
     _reloadButton.frame = CGRectMake(238, 72, 35, 35);
     _reloadButton.alpha = 0.8;
     [_reloadButton addTarget:self action:@selector(reloadQuery) forControlEvents:UIControlEventTouchUpInside];
-    [_tableHeaderView addSubview:_reloadButton];
+    //[_tableHeaderView addSubview:_reloadButton];
     
     _tableView.tableHeaderView = _tableHeaderView;
     

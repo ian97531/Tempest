@@ -85,6 +85,9 @@
 		EBBC51FC156DA17100348F34 /* EMTLFlickrFetchFavoritesAndCommentsOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = EBBC51FB156DA17100348F34 /* EMTLFlickrFetchFavoritesAndCommentsOperation.m */; };
 		EBBC520C1576E2D900348F34 /* Reload.png in Resources */ = {isa = PBXBuildFile; fileRef = EBBC520A1576E2D900348F34 /* Reload.png */; };
 		EBBC520D1576E2D900348F34 /* Reload@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EBBC520B1576E2D900348F34 /* Reload@2x.png */; };
+		EBF32213158AD11700485709 /* LabelTempest3@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EBF32212158AD11700485709 /* LabelTempest3@2x.png */; };
+		EBF32216158AD2F300485709 /* LabelTempest4@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EBF32215158AD2F300485709 /* LabelTempest4@2x.png */; };
+		EBF32218158AD61000485709 /* LabelTempest5@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EBF32217158AD61000485709 /* LabelTempest5@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -226,6 +229,9 @@
 		EBBC51FB156DA17100348F34 /* EMTLFlickrFetchFavoritesAndCommentsOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EMTLFlickrFetchFavoritesAndCommentsOperation.m; sourceTree = "<group>"; };
 		EBBC520A1576E2D900348F34 /* Reload.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Reload.png; sourceTree = "<group>"; };
 		EBBC520B1576E2D900348F34 /* Reload@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Reload@2x.png"; sourceTree = "<group>"; };
+		EBF32212158AD11700485709 /* LabelTempest3@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LabelTempest3@2x.png"; sourceTree = "<group>"; };
+		EBF32215158AD2F300485709 /* LabelTempest4@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LabelTempest4@2x.png"; sourceTree = "<group>"; };
+		EBF32217158AD61000485709 /* LabelTempest5@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LabelTempest5@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -442,6 +448,9 @@
 		EB69B200153CD46B003D8422 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				EBF32217158AD61000485709 /* LabelTempest5@2x.png */,
+				EBF32215158AD2F300485709 /* LabelTempest4@2x.png */,
+				EBF32212158AD11700485709 /* LabelTempest3@2x.png */,
 				EB20EACF1582D4FE00AD755A /* Localizable.strings */,
 				EB6E5A2915802FE90040D9CB /* LabelTempest2.png */,
 				EB6E5A2A15802FE90040D9CB /* LabelTempest2@2x.png */,
@@ -635,6 +644,9 @@
 				EB6E5A2B15802FEA0040D9CB /* LabelTempest2.png in Resources */,
 				EB6E5A2C15802FEA0040D9CB /* LabelTempest2@2x.png in Resources */,
 				EB20EAD01582D4FE00AD755A /* Localizable.strings in Resources */,
+				EBF32213158AD11700485709 /* LabelTempest3@2x.png in Resources */,
+				EBF32216158AD2F300485709 /* LabelTempest4@2x.png in Resources */,
+				EBF32218158AD61000485709 /* LabelTempest5@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

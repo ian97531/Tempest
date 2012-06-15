@@ -47,7 +47,8 @@
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.backgroundColor = [UIColor whiteColor];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackTranslucent animated:NO];
+    //[[UIApplication sharedApplication] setStatusBarStyle:UIstat animated:NO];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationNone];
     
     self.navController = [[UINavigationController alloc] initWithRootViewController:[[UIViewController alloc] init]];
     self.navController.navigationBar.hidden = YES;

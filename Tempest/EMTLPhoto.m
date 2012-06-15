@@ -54,7 +54,7 @@
         
         for (NSString *key in dict) {
             if ([key isEqualToString:EMTLPhotoUser]) {
-                user = [_source userForUserID:[dict objectForKey:EMTLPhotoUser]];
+                user = [dict objectForKey:EMTLPhotoUser];
             }
             else if ([key isEqualToString:EMTLPhotoTitle]) {
                 title = [dict objectForKey:EMTLPhotoTitle];
