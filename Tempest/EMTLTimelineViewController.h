@@ -11,8 +11,17 @@
 
 @interface EMTLTimelineViewController : EMTLPhotoListViewController
 {
-    UIScrollView *_tableHeaderView;
+    UIScrollView *_titleView;
+    UIView *_tableHeaderView;
+    
+    UITextField *_instructions;
+    UITextField *_loadingText;
+    UIActivityIndicatorView *_loadingIndicator;
+
+    BOOL resizeHeader;
 }
+
+
 
 
 

@@ -20,6 +20,8 @@
     UIButton *_reloadButton;
     NSMutableDictionary *_flipState;
     UITapGestureRecognizer *_hideChromeGestureRecognizer;
+    
+    BOOL _isReloading;
 }
 
 - (id)initWithPhotoQuery:(EMTLPhotoQuery *)query;

@@ -205,6 +205,7 @@
     }
     
     [self cachePhotoList:photos forQueryID:query.photoQueryID];
+    NSLog(@"photo source: finishedFetchingPhotos");
     [query photoSource:self finishedFetchingPhotosWithUpdatedArguments:arguments];
     
     

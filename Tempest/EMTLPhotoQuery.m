@@ -85,7 +85,7 @@
 -(void)photoSource:(EMTLPhotoSource *)source finishedFetchingPhotosWithUpdatedArguments:(NSDictionary *)arguments
 {
     //NSLog(@"New Query: %@", [arguments description]);
-
+    NSLog(@"Query: finishedFetchingPhotosWithUpdatedArguments");
     _queryArguments = arguments;
     _numPhotosExpected = 0;
     _numPhotosReceived = 0;

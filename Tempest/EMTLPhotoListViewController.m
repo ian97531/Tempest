@@ -47,6 +47,7 @@
         //NSLog(@"in view controller\n%@", query.queryArguments);
         _photoQuery = query;
         _photoQuery.delegate = self;
+        _isReloading = NO;
         [self reloadQuery];
     }
     
@@ -265,6 +266,7 @@
 - (void)photoQueryWillUpdate:(EMTLPhotoQuery *)query
 {
     //NSLog(@"will get new photos");
+    _isReloading = YES;
 }
 
 
@@ -282,6 +284,8 @@
 - (void)photoQueryFinishedUpdating:(EMTLPhotoQuery *)query
 {
     // In case we only got a few photos, or no photos.
+    _isReloading = NO;
+    NSLog(@"photoqueryfinishedupdating");
     [self _requestMorePhotosIfCloseToEnd];
 }
 
