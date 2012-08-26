@@ -289,7 +289,7 @@
         // " and x others" string.
         if (usedUsers.count < _users.count)
         {
-            NSString *remainingUsersFormat = [[and stringByAppendingFormat:@" %i "] stringByAppendingString:others];
+            NSString *remainingUsersFormat = [[and stringByAppendingFormat:@" %i ", (_users.count - usedUsers.count)] stringByAppendingString:others];
             
             while (usedUsers.count) {
                 int usersLeft = (_users.count - usedUsers.count) + 1;

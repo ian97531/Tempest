@@ -11,9 +11,10 @@
 #import "EMTLPhotoQuery.h"
 #import "EMTLMagicUserList.h"
 
-@interface EMTLPhotoListViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, EMTLPhotoQueryDelegate, EMTLImageDelegate, EMTLMagicUserListDelegate>
+@interface EMTLPhotoListViewController : UIViewController <UIScrollViewDelegate, UITableViewDelegate, UITableViewDataSource, EMTLPhotoQueryDelegate, EMTLImageDelegate, EMTLMagicUserListDelegate>
 {
     @protected
+    UIView *_parent;
     EMTLPhotoQuery *_photoQuery;
     UITableView *_tableView;
     UIButton *_reloadButton;

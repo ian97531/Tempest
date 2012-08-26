@@ -78,7 +78,6 @@
     [photo setFavorite:!photo.isFavorite];
     
     EMTLPhotoCell *cell = (EMTLPhotoCell *)[_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:favoriteGesture.view.tag inSection:0]];
-    
     if (cell)
     {
         cell.favoriteIndicatorTurnedOn = photo.isFavorite;
@@ -118,10 +117,10 @@
 - (void)loadView
 {
     
-    UIView *parent = [[UIView alloc] init];
+    _parent = [[UIView alloc] init];
     
     _hideChromeGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleChromeVisibility)];
-    [parent addGestureRecognizer:_hideChromeGestureRecognizer];
+    [_parent addGestureRecognizer:_hideChromeGestureRecognizer];
 
     // Set a background image.
     UIImageView *backgroundImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ClothBackground.png"]];
@@ -134,12 +133,12 @@
     self.tableView.dataSource = self;
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.layer.masksToBounds = YES; // TODO BSEELY: does it matter? This can be expensive so if it's not already the default or not needed, we should remove it
+    self.tableView.backgroundView = backgroundImage;
     
     // Throw everything into the view, and make it fullscreen.
-    [parent addSubview:backgroundImage];
-    [parent addSubview:self.tableView];
+    [_parent addSubview:self.tableView];
     
-    self.view = parent;
+    self.view = _parent;
     self.wantsFullScreenLayout = YES;
             
 }

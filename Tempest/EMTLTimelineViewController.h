@@ -11,7 +11,7 @@
 
 @interface EMTLTimelineViewController : EMTLPhotoListViewController
 {
-    UIView *_tableHeaderView;
+    UIScrollView *_tableHeaderView;
 }
 
 
