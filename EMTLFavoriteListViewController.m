@@ -128,7 +128,7 @@
 
 - (void)userWillLoad:(EMTLUser *)user
 {
-    
+    return;
 }
 
 - (void)userDidLoad:(EMTLUser *)user
