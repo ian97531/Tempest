@@ -109,7 +109,6 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    NSLog(@"offset %f", scrollView.contentOffset.y);
     
     if (scrollView == _tableView) {
         if (_tableView.contentOffset.y > 0 && _tableView.contentOffset.y < _titleView.frame.size.height) {
@@ -134,7 +133,6 @@
     }
     
     if (_tableView.contentOffset.y <= -70 && !_isReloading && _tableView.tracking) {
-        NSLog(@"reloading");
         [self reloadQuery];
         
     }

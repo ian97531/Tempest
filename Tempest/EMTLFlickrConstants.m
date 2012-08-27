@@ -146,7 +146,7 @@ NSString *const EMTLFlickrAPIValuePhotoSizeOriginal = @"o";
 // Flickr URL Formats
 NSString *const EMTLFlickrImageURLFormat = @"http://farm%@.staticflickr.com/%@/%@_%@_%@.jpg";
 NSString *const EMTLFlickrPhotoWebPageURLFormat = @"http://www.flickr.com/photos/%@/%@";
-NSString *const EMTLFlickrUserIconURLFormat = @"http://farm%@.staticflickr.com/%@/buddyicons/%@.jpg";
+NSString *const EMTLFlickrUserIconURLFormat = @"http://farm%i.staticflickr.com/%i/buddyicons/%@.jpg";
 
 
 // Flickr URLs

@@ -13,6 +13,7 @@
 @class EMTLFlickrFetchPhotoQueryOperation;
 @class EMTLFlickrFetchImageOperation;
 @class EMTLFlickrSetFavoriteStateOperation;
+@class EMTLFlickrFetchUserOperation;
 
 @interface EMTLFlickrPhotoSource : EMTLPhotoSource
 {
@@ -42,5 +43,9 @@
 // Callbacks for EMTLFlickrSetFavoriteStateOperation
 - (void)operation:(EMTLFlickrSetFavoriteStateOperation *)operation successfullySetFavoriteStateForPhoto:(EMTLPhoto *)photo;
 - (void)operation:(EMTLFlickrSetFavoriteStateOperation *)operation failedToSetFavoriteStateForPhoto:(EMTLPhoto *)photo;
+
+// Callbacks for EMTLFlickrFetchUserOperation
+- (void)operation:(EMTLFlickrFetchUserOperation *)operation willRequestUser:(EMTLUser *)user;
+- (void)operation:(EMTLFlickrFetchUserOperation *)operation didLoadUser:(EMTLUser *)user;
 
 @end

@@ -8,11 +8,11 @@
 
 #import "EMTLPhoto.h"
 #import "EMTLPhotoSource.h"
+#import "NSDate+IW_ISO8601.h"
 
 @interface EMTLPhoto ()
 
 - (NSArray *)_generateFavoriteUsersArray:(NSArray *)faves;
-- (NSString *)_humanDateStringFromDate:(NSDate *)date;
 
 @end
 
@@ -334,69 +334,15 @@
 
 - (NSString *)datePostedString
 {
-    return [self _humanDateStringFromDate:datePosted];
+    return [datePosted humanString];
 }
 
 - (NSString *)dateTakenString
 {
-    return [self _humanDateStringFromDate:dateTaken];
+    return [dateTaken humanString];
 }
 
 
-- (NSString *)_humanDateStringFromDate:(NSDate *)date 
-{
-//    
-//    if (datePostedString) {
-//        return datePostedString;
-//    }
-    
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    NSDate *now = [NSDate date];
-    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-    NSDateComponents *nowComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:now];
-    NSDateComponents *dateComponents = [calendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:date];
-    
-    int nowYear = [nowComponents year];
-    int nowMonth = [nowComponents month];
-    int nowDay = [nowComponents day];
-    
-    int dateYear = [dateComponents year];
-    int dateMonth = [dateComponents month];
-    int dateDay = [dateComponents day];
-    
-    if (nowYear == dateYear)
-    {
-        
-        if (nowMonth == dateMonth) {
-            
-            if (nowDay == dateDay) {
-                return NSLocalizedString(@"Today", @"");
-            }
-            else if (nowDay == dateDay + 1) {
-                return NSLocalizedString(@"Yesterday", @"");;
-            }
-            else if (nowDay - dateDay < 6) {
-                [dateFormat setDateFormat:@"EEEE"];
-            }
-            else {
-                [dateFormat setDateFormat:@"MMMM d"];
-            }
-            
-        }
-        else {
-            [dateFormat setDateFormat:@"MMMM d"];
-        }
-        
-    }
-    else {
-        [dateFormat setDateFormat:@"MMM d, y"];
-    }
-    
-    //datePostedString = ;
-    
-    return [dateFormat stringFromDate:self.datePosted];
-    
-}
 
 - (NSString *)description
 {

@@ -20,7 +20,7 @@
     EMTLFlickrPhotoSource *_photoSource;
 }
 
-- (id)initWithPhoto:(EMTLUser *)user photoSource:(EMTLFlickrPhotoSource *)photoSource;
+- (id)initWithUser:(EMTLUser *)user photoSource:(EMTLFlickrPhotoSource *)photoSource;
 
 - (void)start;
 - (BOOL)isConcurrent;

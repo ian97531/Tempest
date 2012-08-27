@@ -198,7 +198,9 @@
     
     NSLog(@"Ending Photo Query: %@", _photoQuery.photoQueryID);
     
-    [_photoSource operation:self finishedFetchingPhotos:photos forQuery:_photoQuery updatedArguments:_query];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [_photoSource operation:self finishedFetchingPhotos:photos forQuery:_photoQuery updatedArguments:_query];
+    });
         
     [self willChangeValueForKey:@"isExecuting"];
     _executing = NO;

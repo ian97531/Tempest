@@ -10,6 +10,7 @@
 #import "EMTLPhoto.h"
 #import "EMTLPhotoQuery.h"
 #import "EMTLMagicUserList.h"
+#import "EMTLFavoriteListViewController.h"
 
 @interface EMTLPhotoListViewController : UIViewController <UIScrollViewDelegate, UITableViewDelegate, UITableViewDataSource, EMTLPhotoQueryDelegate, EMTLImageDelegate, EMTLMagicUserListDelegate>
 {
@@ -20,6 +21,7 @@
     UIButton *_reloadButton;
     NSMutableDictionary *_flipState;
     UITapGestureRecognizer *_hideChromeGestureRecognizer;
+    NSArray *_photoList;
     
     BOOL _isReloading;
 }

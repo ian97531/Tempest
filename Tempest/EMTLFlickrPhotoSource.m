@@ -316,7 +316,8 @@
 
 - (void)loadUser:(EMTLUser *)user withUserID:(NSString *)userID
 {
-    
+    EMTLFlickrFetchUserOperation *userOp = [[EMTLFlickrFetchUserOperation alloc] initWithUser:user photoSource:self];
+    [[EMTLOperationQueue photoQueue] addOperation:userOp];
 }
     
 

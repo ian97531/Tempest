@@ -14,7 +14,7 @@
 
 @implementation EMTLFlickrFetchUserOperation
 
-- (id)initWithPhoto:(EMTLUser *)user photoSource:(EMTLFlickrPhotoSource *)photoSource
+- (id)initWithUser:(EMTLUser *)user photoSource:(EMTLFlickrPhotoSource *)photoSource
 {
     self = [super init];
     if (self) {
@@ -37,6 +37,10 @@
     [self willChangeValueForKey:@"isExecuting"];
     _executing = YES;
     [self didChangeValueForKey:@"isExecuting"];
+    
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [_photoSource operation:self willRequestUser:_user];
+    });
     
     NSMutableDictionary *userArgs = [NSMutableDictionary dictionaryWithCapacity:4];
     
@@ -105,13 +109,13 @@
     else {
         NSDictionary *userDetails = [userDict objectForKey:EMTLFlickrAPIResponseUser];
         
-        _user.username = [userDetails objectForKey:EMTLFlickrAPIResponseUserUsername];
+        _user.username = [[userDetails objectForKey:EMTLFlickrAPIResponseUserUsername] objectForKey:@"_content"];
         _user.real_name = [userDetails objectForKey:EMTLFlickrAPIResponseUserRealname];
         _user.location = [[userDetails objectForKey:EMTLFlickrAPIResponseUserLocation] 
                           objectForKey:EMTLFlickrAPIResponseContent];
         
-        NSString *iconFarm = [userDetails objectForKey:EMTLFlickrAPIResponseUserIconFarm];
-        NSString *iconServer = [userDetails objectForKey:EMTLFlickrAPIResponseUserIconServer];
+        int iconFarm = [self intFromValue:[userDetails objectForKey:EMTLFlickrAPIResponseUserIconFarm]];
+        int iconServer = [self intFromValue:[userDetails objectForKey:EMTLFlickrAPIResponseUserIconServer]];
         
         if(iconFarm && iconServer)
         {
@@ -136,10 +140,97 @@
             NSLog(@"Could not load the icon for user %@", _user.username);
         }
         
+        
         NSLog(@"Got user");
+        
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [_photoSource operation:self didLoadUser:_user];
+        });
 
     }
 
+}
+
+- (NSDictionary *)dictionaryFromValue:(id)object
+{
+    if ([self objectIsNull:object]) {
+        return nil;
+    }
+    
+    return (NSDictionary *)object;
+}
+
+- (NSArray *)arrayFromValue:(id)object
+{
+    if ([self objectIsNull:object]) {
+        return nil;
+    }
+    
+    return (NSArray *)object;
+}
+
+- (NSString *)stringFromValue:(id)object
+{
+    if ([self objectIsNull:object]) {
+        return nil;
+    }
+    
+    return (NSString *)object;
+}
+
+- (NSURL *)urlFromValue:(id)object
+{
+    if ([self objectIsNull:object]) {
+        return nil;
+    }
+    
+    return [NSURL URLWithString:(NSString *)object];
+}
+
+
+- (BOOL)boolFromValue:(id)object
+{
+    if ([self objectIsNull:object]) {
+        return NO;
+    }
+    
+    return [(NSString *)object boolValue];
+}
+
+- (int)intFromValue:(id)object
+{
+    if ([self objectIsNull:object]) {
+        return 0;
+    }
+    
+    return [(NSString *)object intValue];
+}
+
+- (float)floatFromValue:(id)object
+{
+    if ([self objectIsNull:object]) {
+        return 0;
+    }
+    
+    return [(NSString *)object floatValue];
+}
+
+- (BOOL)objectIsNull:(id)object
+{
+    
+    if (object == nil) {
+        return YES;
+    }
+    
+    if (object == [NSNull null]) {
+        return YES;
+    }
+    
+    if ([object class] == [NSString class] && [object isEqualToString:@"<null>"]) {
+        return YES;
+    }
+    
+    return NO;
 }
 
 

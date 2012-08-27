@@ -74,7 +74,7 @@
 {
     UITapGestureRecognizer *favoriteGesture = (UITapGestureRecognizer *)sender;
     
-    EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:favoriteGesture.view.tag];
+    EMTLPhoto *photo = [_photoList objectAtIndex:favoriteGesture.view.tag];
     
     [photo setFavorite:!photo.isFavorite];
     
@@ -153,7 +153,7 @@
     
     // When the EMTLPhotos are returned to us using the photoSource:retreivedMorePhotos:
     // method, we stored the heights needed for each cell in the heights array.
-    EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:indexPath.row];
+    EMTLPhoto *photo = [_photoList objectAtIndex:indexPath.row];
     return roundf((294 / photo.aspectRatio.floatValue) + 150);
     
 }
@@ -167,7 +167,7 @@
     //NSLog(@"Getting cell at index path: %i", indexPath.row);
     // Grab a cell from the queue or create a new one.
     EMTLPhotoCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhotoCell"];
-    EMTLPhoto *photo = [_photoQuery.photoList objectAtIndex:indexPath.row];
+    EMTLPhoto *photo = [_photoList objectAtIndex:indexPath.row];
     
     if (cell == nil) {
         cell = [[EMTLPhotoCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PhotoCell"];
@@ -177,10 +177,11 @@
         cell.favoriteUsers.delegate = self;
         cell.favoriteUsers.highlightSelectableRangesWithColor = NULL;//[UIColor colorWithRed:1 green:1 blue:0.69 alpha:1];
         cell.favoriteUsers.backgroundColor = [UIColor clearColor];
+        
     }
     else {
         // This is reused cell. If it's loading an image, we should cancel the load.
-        EMTLPhoto *oldPhoto = [_photoQuery.photoList objectAtIndex:cell.tag];
+        EMTLPhoto *oldPhoto = [_photoList objectAtIndex:cell.tag];
         if (oldPhoto && oldPhoto != photo) {
             [oldPhoto cancelImageWithSize:EMTLImageSizeMediumAspect];
         }
@@ -207,6 +208,7 @@
     
     cell.favoriteUsers.signedInUser = _photoQuery.source.user;
     cell.favoriteUsers.users = photo.favoritesUsers;
+    cell.favoriteUsers.tag = indexPath.row;
     
     [cell setCommentsString:[NSString stringWithFormat:@"%i Comments", photo.comments.count]];
     
@@ -236,7 +238,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _photoQuery.photoList.count;
+    return _photoList.count;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -273,6 +275,7 @@
 - (void)photoQueryDidUpdate:(EMTLPhotoQuery *)query
 {
     //NSLog(@"got new photos, %i", query.photoList.count);
+    _photoList = query.photoList;
     [_tableView reloadData];
 }
 
@@ -300,7 +303,7 @@
 
 - (void)photo:(EMTLPhoto *)photo didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress
 {
-    int photoIndex = [_photoQuery.photoList indexOfObject:photo];
+    int photoIndex = [_photoList indexOfObject:photo];
     if (photoIndex != NSNotFound) {
         
         EMTLPhotoCell *cell = (EMTLPhotoCell *)[_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:photoIndex inSection:0]];
@@ -316,7 +319,7 @@
 
 - (void)photo:(EMTLPhoto *)photo didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size
 {
-    int photoIndex = [_photoQuery.photoList indexOfObject:photo];
+    int photoIndex = [_photoList indexOfObject:photo];
     if (photoIndex != NSNotFound) {
         
         EMTLPhotoCell *cell = (EMTLPhotoCell *)[_tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:photoIndex inSection:0]];
@@ -335,13 +338,8 @@
 
 - (void) userList:(EMTLMagicUserList *)list didTapUser:(EMTLUser *)user
 {
-    NSLog(@"Tapped User: %@", user);
-    
-    EMTLPhotoQuery *userQuery = [_photoQuery.source photosForUser:user];
-    
-    EMTLUserPhotoListViewController *nextViewController = [[EMTLUserPhotoListViewController alloc] initWithPhotoQuery:userQuery user:user];
-    [self.navigationController pushViewController:nextViewController animated:YES];
-    self.navigationController.navigationBar.hidden = NO;
+
+    [self userListDidTapRemainderItem:list];
     
     
 }
@@ -349,6 +347,11 @@
 - (void) userListDidTapRemainderItem:(EMTLMagicUserList *)list
 {
     NSLog(@"Tapped remainder item");
+    
+    EMTLFavoriteListViewController *nextViewController = [[EMTLFavoriteListViewController alloc] initWithPhoto:[_photoList objectAtIndex:list.tag]];
+    [self.navigationController pushViewController:nextViewController animated:YES];
+    self.navigationController.navigationBar.hidden = NO;
+    
 }
 
 - (void) userList:(EMTLMagicUserList *)list didLongPressUser:(EMTLUser *)user
