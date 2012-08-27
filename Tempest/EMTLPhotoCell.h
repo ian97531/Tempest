@@ -10,6 +10,15 @@
 
 @class EMTLProgressIndicatorViewController;
 @class EMTLMagicUserList;
+@class EMTLPhotoCell;
+
+
+@protocol EMTLPhotoCellDelegate <NSObject>
+
+-(void) photoCellWillFlipToBack:(EMTLPhotoCell *)cell;
+-(void) photoCellWillFlipToFront:(EMTLPhotoCell *)cell;
+
+@end
 
 @interface EMTLPhotoCell : UITableViewCell
 {
@@ -17,6 +26,10 @@
     BOOL _favoriteIndicatorOn;
     BOOL _frontFacingForward;
     NSString *_photoID;
+    __unsafe_unretained id<EMTLPhotoCellDelegate> _delegate;
+    
+    UILabel *_titleText;
+    UILabel *_locationText;
 }
 
 @property (nonatomic, strong) UIView *cardView;
@@ -39,9 +52,9 @@
 
 @property (nonatomic, strong) UIView *backView;
 @property (nonatomic, strong) UILabel *titleLabel;
-@property (nonatomic, strong) UILabel *dateTakenLabel;
 @property (nonatomic, strong) UILabel *locationLabel;
-@property (nonatomic, strong) UILabel *descriptionLabel;
+
+@property (nonatomic, assign) id<EMTLPhotoCellDelegate> delegate;
 
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
@@ -51,6 +64,8 @@
 - (void)setProgress:(float)progress;
 - (void)setFavoriteIndicatorTurnedOn:(BOOL)favoriteState;
 - (void)setDate:(NSString *)dateString;
+- (void)setTitle:(NSString *)title;
+- (void)setLocation:(NSString *)location;
 - (BOOL)favoriteIndicatorTurnedOn;
 
 - (void)logPhotoID;

@@ -11,8 +11,9 @@
 #import "EMTLPhotoQuery.h"
 #import "EMTLMagicUserList.h"
 #import "EMTLFavoriteListViewController.h"
+#import "EMTLPhotoCell.h"
 
-@interface EMTLPhotoListViewController : UIViewController <UIScrollViewDelegate, UITableViewDelegate, UITableViewDataSource, EMTLPhotoQueryDelegate, EMTLImageDelegate, EMTLMagicUserListDelegate>
+@interface EMTLPhotoListViewController : UIViewController <UIScrollViewDelegate, UITableViewDelegate, UITableViewDataSource, EMTLPhotoQueryDelegate, EMTLImageDelegate, EMTLMagicUserListDelegate, EMTLPhotoCellDelegate, EMTLLocationDelegate>
 {
     @protected
     UIView *_parent;
@@ -47,5 +48,13 @@
 - (void) userList:(EMTLMagicUserList *)list didTapUser:(EMTLUser *)user;
 - (void) userListDidTapRemainderItem:(EMTLMagicUserList *)list;
 - (void) userList:(EMTLMagicUserList *)list didLongPressUser:(EMTLUser *)user;
+
+// EMTLPhotoCellDelegate methods
+- (void) photoCellWillFlipToBack:(EMTLPhotoCell *)cell;
+- (void) photoCellWillFlipToFront:(EMTLPhotoCell *)cell;
+
+// EMTLLocationDelegate methods
+- (void) photoDidLoadLocation:(EMTLPhoto *)photo;
+- (void) photoWillRequestLocation:(EMTLPhoto *)photo;
 
 @end

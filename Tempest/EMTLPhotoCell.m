@@ -9,6 +9,7 @@
 #import "EMTLPhotoCell.h"
 #import "EMTLPhoto.h"
 #import "EMTLMagicUserList.h"
+#import "NSDate+IW_ISO8601.h"
 
 #import <QuartzCore/QuartzCore.h>
 
@@ -33,9 +34,9 @@
 
 @synthesize backView;
 @synthesize titleLabel;
-@synthesize dateTakenLabel;
 @synthesize locationLabel;
-@synthesize descriptionLabel;
+
+@synthesize delegate = _delegate;
 
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier;
@@ -161,14 +162,14 @@
         [backView setAutoresizingMask:UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
         [cardView addSubview:backView];
         
-        UILabel *titleText = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, 100, 20)];
-        titleText.backgroundColor = [UIColor clearColor];
-        titleText.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:15];
-        titleText.textColor = [UIColor colorWithWhite:0.3 alpha:1];
-        titleText.text = NSLocalizedString(@"Title:", @"");
-        [backView addSubview:titleText];
+        _titleText = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, 100, 20)];
+        _titleText.backgroundColor = [UIColor clearColor];
+        _titleText.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:15];
+        _titleText.textColor = [UIColor colorWithWhite:0.3 alpha:1];
+        _titleText.text = NSLocalizedString(@"Title:", @"");
         
-        titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(25, 40, 252, 40)];
+        
+        titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 22, 240, 20)];
         titleLabel.font = [UIFont fontWithName:@"MarkerSD" size:18];
         titleLabel.textColor = [UIColor colorWithWhite:0.4 alpha:1];
         titleLabel.textAlignment = UITextAlignmentLeft;
@@ -178,24 +179,15 @@
         titleLabel.numberOfLines = 0;
         [titleLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [backView addSubview:titleLabel];
+    
         
-        UILabel *takenOnText = [[UILabel alloc] initWithFrame:CGRectMake(20, 90, 100, 20)];
-        takenOnText.backgroundColor = [UIColor clearColor];
-        takenOnText.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:15];
-        takenOnText.textColor = [UIColor colorWithWhite:0.3 alpha:1];
-        takenOnText.text = NSLocalizedString(@"Taken on:", @"");
-        [backView addSubview:takenOnText];
+        _locationText = [[UILabel alloc] initWithFrame:CGRectMake(20, 45, 100, 20)];
+        _locationText.backgroundColor = [UIColor clearColor];
+        _locationText.font = [UIFont fontWithName:@"HelveticaNeue-Bold" size:15];
+        _locationText.textColor = [UIColor colorWithWhite:0.3 alpha:1];
+        _locationText.text = NSLocalizedString(@"Location:", @"");
         
-        dateTakenLabel = [[UILabel alloc] initWithFrame:CGRectMake(25, 110, 150, 30)];
-        dateTakenLabel.font = [UIFont fontWithName:@"MarkerSD" size:18];
-        dateTakenLabel.textColor = [UIColor colorWithWhite:0.4 alpha:1];
-        dateTakenLabel.textAlignment = UITextAlignmentLeft;
-        dateTakenLabel.layer.masksToBounds = YES;
-        dateTakenLabel.backgroundColor = [UIColor clearColor];
-        [dateTakenLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
-        [backView addSubview:dateTakenLabel];
-        
-        locationLabel = [[UILabel alloc] initWithFrame:CGRectMake(140, 110, 90, 30)];
+        locationLabel = [[UILabel alloc] initWithFrame:CGRectMake(95, 47, 205, 20)];
         locationLabel.font = [UIFont fontWithName:@"MarkerSD" size:18];
         locationLabel.textColor = [UIColor colorWithWhite:0.4 alpha:1];
         locationLabel.textAlignment = UITextAlignmentLeft;
@@ -203,19 +195,6 @@
         locationLabel.backgroundColor = [UIColor clearColor];
         [locationLabel setAutoresizingMask:UIViewAutoresizingFlexibleWidth];
         [backView addSubview:locationLabel];
-        
-        
-        descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 150, 280, 250)];
-        descriptionLabel.font = [UIFont fontWithName:@"MarkerSD" size:14];
-        descriptionLabel.textColor = [UIColor colorWithWhite:0.4 alpha:1];
-        descriptionLabel.textAlignment = UITextAlignmentLeft;
-        descriptionLabel.layer.masksToBounds = YES;
-        descriptionLabel.backgroundColor = [UIColor clearColor];
-        descriptionLabel.numberOfLines = 0;
-        descriptionLabel.lineBreakMode = UILineBreakModeWordWrap;
-
-        [descriptionLabel setAutoresizingMask:UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth];
-        [backView addSubview:descriptionLabel];
         
     }
     return self;
@@ -255,9 +234,9 @@
         
         frontView.hidden = YES;
         backView.hidden = NO;
-        //[frontView removeFromSuperview];
-        //[cardView addSubview:backView];
         _frontFacingForward = NO;
+        [_delegate photoCellWillFlipToBack:self];
+        
         
     }
     else {
@@ -266,9 +245,8 @@
                                  cache:YES];
         frontView.hidden = NO;
         backView.hidden = YES;
-        //[backView removeFromSuperview];
-        //[cardView addSubview:frontView];
         _frontFacingForward = YES;
+        [_delegate photoCellWillFlipToFront:self];
     }
     
 
@@ -281,16 +259,10 @@
     _frontFacingForward = frontFacingForward;
     
     if(frontFacingForward && backView.superview) {
-        //[backView removeFromSuperview];
-        //[cardView addSubview:frontView];
-        //frontView.frame = cardView.frame;
         frontView.hidden = NO;
         backView.hidden = YES;
     }
     else if (!frontFacingForward && frontView.superview) {
-        //[frontView removeFromSuperview];
-        //[cardView addSubview:backView];
-        //backView.frame = cardView.frame;
         frontView.hidden = YES;
         backView.hidden = NO;
     }
@@ -377,6 +349,39 @@
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"Cell for PhotoID: %@", _photoID];
+}
+
+- (void)setTitle:(NSString *)title
+{
+    
+    if ([title hasPrefix:@"DSC"] || [title hasPrefix:@"dsc"] || [title hasPrefix:@"IMG"] || [title hasPrefix:@"img"]) {
+        [_titleText removeFromSuperview];
+        titleLabel.text = @"";
+    }
+    
+    if (title && ![title isEqualToString:@""]) {
+        [backView addSubview:_titleText];
+        titleLabel.text = [NSString stringWithFormat:@"\"%@\"", title];
+    }
+    else {
+        [_titleText removeFromSuperview];
+        titleLabel.text = @"";
+    }
+    
+    
+}
+
+
+- (void)setLocation:(NSString *)locationString
+{
+    if (locationString) {
+        [backView addSubview:_locationText];
+        [locationLabel setText:locationString];
+    }
+    else {
+        [_locationText removeFromSuperview];
+        [locationLabel setText:@""];
+    }
 }
 
 @end

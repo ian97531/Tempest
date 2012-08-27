@@ -14,6 +14,7 @@
 @class EMTLFlickrFetchImageOperation;
 @class EMTLFlickrSetFavoriteStateOperation;
 @class EMTLFlickrFetchUserOperation;
+@class EMTLFlickrFetchLocationOperation;
 
 @interface EMTLFlickrPhotoSource : EMTLPhotoSource
 {
@@ -47,5 +48,9 @@
 // Callbacks for EMTLFlickrFetchUserOperation
 - (void)operation:(EMTLFlickrFetchUserOperation *)operation willRequestUser:(EMTLUser *)user;
 - (void)operation:(EMTLFlickrFetchUserOperation *)operation didLoadUser:(EMTLUser *)user;
+
+// Callbacks for EMTLFlickrFetchLocationOperation
+- (void)operation:(EMTLFlickrFetchLocationOperation *)operation willRequestLocationForPhoto:(EMTLPhoto *)photo;
+- (void)operation:(EMTLFlickrFetchLocationOperation *)operation didLoadLocationForPhoto:(EMTLPhoto *)photo;
 
 @end

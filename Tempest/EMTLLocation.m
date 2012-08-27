@@ -22,7 +22,7 @@
     self = [super init];
     if (self)
     {
-        name = @"";
+        name = nil;
         type = EMTLLocationUndefined;
     }
     

@@ -23,12 +23,20 @@
 
 @end
 
+@protocol EMTLLocationDelegate <NSObject>
+
+- (void)photoWillRequestLocation:(EMTLPhoto *)photo;
+- (void)photoDidLoadLocation:(EMTLPhoto *)photo;
+
+@end
+
 
 @interface EMTLPhoto : NSObject <NSCoding>
 
 {
 @private
     __weak id<EMTLImageDelegate> _delegate;
+    __weak id<EMTLLocationDelegate> _locationDelegate;
     float _imageProgress;
     EMTLPhotoSource *_source;
     NSArray *_favoritesUsers;
@@ -73,6 +81,7 @@
 // Image Loading methods
 - (UIImage *)loadImageWithSize:(EMTLImageSize)size delegate:(id<EMTLImageDelegate>)delegate;
 - (void)cancelImageWithSize:(EMTLImageSize)size;
+- (void)loadImageLocationWithDelegate:(id<EMTLLocationDelegate>)delegate;
 
 // Set the favorite status
 - (void)setFavorite:(BOOL)isFavorite;
@@ -82,7 +91,8 @@
 - (void)photoSource:(EMTLPhotoSource *)source didRequestImageWithSize:(EMTLImageSize)size progress:(float)progress;
 - (void)photoSource:(EMTLPhotoSource *)source didLoadImage:(UIImage *)image withSize:(EMTLImageSize)size;
 
-
+- (void)photoSourceDidLoadLocation:(EMTLPhotoSource *)source;
+- (void)photoSourceWillLoadLocation:(EMTLPhotoSource *)source;
 
 
 @end

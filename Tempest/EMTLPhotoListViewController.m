@@ -177,6 +177,7 @@
         cell.favoriteUsers.delegate = self;
         cell.favoriteUsers.highlightSelectableRangesWithColor = NULL;//[UIColor colorWithRed:1 green:1 blue:0.69 alpha:1];
         cell.favoriteUsers.backgroundColor = [UIColor clearColor];
+        cell.delegate = self;
         
     }
     else {
@@ -226,10 +227,17 @@
     
     
     // Setup the rearface of the cell
-    cell.titleLabel.text = photo.title;
-    cell.dateTakenLabel.text = photo.dateTakenString;
-    cell.locationLabel.text = photo.location.name;
-    cell.descriptionLabel.text = photo.photoDescription;
+    if (photo.title)
+    
+    [cell setTitle:photo.title];
+    
+    if (photo.location.name) {
+        [cell setLocation:photo.location.name];
+    }
+    else {
+        [cell setLocation:nil];
+    }
+    
 
         
     return cell;
@@ -357,6 +365,46 @@
 - (void) userList:(EMTLMagicUserList *)list didLongPressUser:(EMTLUser *)user
 {
     NSLog(@"Long Pressed User: %@", user);
+}
+
+#pragma mark -
+#pragma mark EMTLPhotoCellDelegate Methods
+-(void) photoCellWillFlipToBack:(EMTLPhotoCell *)cell
+{
+    NSIndexPath *indexPath = [_tableView indexPathForCell:cell];
+    EMTLPhoto *photo = [_photoList objectAtIndex:indexPath.row];
+    
+    if (photo.location.name) {
+        [cell setLocation:photo.location.name];
+    }
+    else if (photo.location.woe_id) {
+        [cell setLocation:@"..."];
+        [photo loadImageLocationWithDelegate:self];
+    }
+    else {
+        [cell setLocation:nil];
+    }
+}
+
+-(void) photoCellWillFlipToFront:(EMTLPhotoCell *)cell
+{
+
+    
+}
+
+- (void) photoDidLoadLocation:(EMTLPhoto *)photo
+{
+    int index = [_photoList indexOfObject:photo];
+    if (index != NSNotFound) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:index inSection:0];
+        EMTLPhotoCell *cell = (EMTLPhotoCell *)[_tableView cellForRowAtIndexPath:indexPath];
+        cell.locationLabel.text = photo.location.name;
+    }
+}
+
+- (void) photoWillRequestLocation:(EMTLPhoto *)photo
+{
+    
 }
 
 

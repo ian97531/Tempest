@@ -562,6 +562,11 @@
     // Subclasses override
 }
 
+- (void)loadLocationForPhoto:(EMTLPhoto *)photo
+{
+    //Subclasses override
+}
+
 
 #pragma mark -
 #pragma mark Setting Favorite State

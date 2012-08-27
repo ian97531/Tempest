@@ -12,6 +12,7 @@
 #import "EMTLFlickrFetchImageOperation.h"
 #import "EMTLFlickrSetFavoriteStateOperation.h"
 #import "EMTLFlickrFetchUserOperation.h"
+#import "EMTLFlickrFetchLocationOperation.h"
 #import "EMTLOperationQueue.h"
 #import "EMTLPhoto.h"
 #import "OAMutableURLRequest.h"
@@ -280,6 +281,22 @@
     [self cacheImage:image withSize:size forPhoto:photo];
     [photo photoSource:self didLoadImage:image withSize:size];
     [_imageOperations removeObjectForKey:cacheKey];
+}
+
+- (void)loadLocationForPhoto:(EMTLPhoto *)photo
+{
+    EMTLFlickrFetchLocationOperation *locationOp = [[EMTLFlickrFetchLocationOperation alloc] initWithPhoto:photo photoSource:self];
+    [[EMTLOperationQueue photoQueue] addOperation:locationOp];
+}
+
+- (void)operation:(EMTLFlickrFetchLocationOperation *)operation willRequestLocationForPhoto:(EMTLPhoto *)photo
+{
+    
+}
+
+- (void)operation:(EMTLFlickrFetchLocationOperation *)operation didLoadLocationForPhoto:(EMTLPhoto *)photo
+{
+    [photo photoSourceDidLoadLocation:self];
 }
 
 

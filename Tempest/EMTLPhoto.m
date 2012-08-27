@@ -343,6 +343,21 @@
 }
 
 
+- (void)loadImageLocationWithDelegate:(id<EMTLLocationDelegate>)delegate
+{
+    _locationDelegate = delegate;
+    [self.source loadLocationForPhoto:self];
+}
+
+- (void)photoSourceDidLoadLocation:(EMTLPhotoSource *)source
+{
+    [_locationDelegate photoDidLoadLocation:self];
+}
+
+- (void)photoSourceWillLoadLocation:(EMTLPhotoSource *)source
+{
+    
+}
 
 - (NSString *)description
 {

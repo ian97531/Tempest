@@ -53,7 +53,7 @@
 
 - (void)start
 {
-    
+    NSLog(@"getting location");
     // Fetch the comments
     NSMutableDictionary *locationArgs = [NSMutableDictionary dictionaryWithCapacity:4];
     
@@ -67,12 +67,17 @@
     
     [self startRequest:locationRequest];
     
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [_photoSource operation:self willRequestLocationForPhoto:_photo];
+    });
+    
 }
 
 
 
 - (void)_processLocationData:(NSData *)locationData
 {
+    NSLog(@"processing location");
     NSDictionary *locationDict = [_photoSource dictionaryFromResponseData:locationData];
     
     if(!locationDict) 
@@ -152,7 +157,14 @@
         
         _photo.location.name = place_string;
         _photo.location.type = starting_point;
+        
+        dispatch_sync(dispatch_get_main_queue(), ^{
+            [_photoSource operation:self didLoadLocationForPhoto:_photo];
+        });
+        
     }
+    
+    
     
     
 }

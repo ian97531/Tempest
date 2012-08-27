@@ -79,6 +79,8 @@
 - (UIImage *)imageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;
 - (void)cancelImageForPhoto:(EMTLPhoto *)photo size:(EMTLImageSize)size;
 
+- (void)loadLocationForPhoto:(EMTLPhoto *)photo;
+
 // Setting Photo Status
 - (void)setFavoriteStatus:(BOOL)isFavorite forPhoto:(EMTLPhoto *)photo;
 
