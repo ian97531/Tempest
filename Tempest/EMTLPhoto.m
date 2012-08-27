@@ -243,7 +243,7 @@
         [myFavorite setValue:[NSDate date] forKey:EMTLFavoriteDate];
         [myFavorite setValue:_source.user forKey:EMTLFavoriteUser];
         
-        _favorites = [_favorites arrayByAddingObject:myFavorite];
+        _favorites = [[NSArray arrayWithObject:myFavorite] arrayByAddingObjectsFromArray:_favorites];
     }
     
     // If we've unfavorited this picture, we need to remove ourselves from the array.

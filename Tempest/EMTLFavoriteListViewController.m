@@ -22,7 +22,6 @@
     if (self) {
         _photo = photo;
         self.title = @"Favorites";
-        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Photos" style:UIBarButtonItemStyleDone target:self action:@selector(backToPhotos)];
         NSMutableArray *users = [NSMutableArray arrayWithCapacity:photo.favorites.count];
         for (NSDictionary *favorite in photo.favorites) {
             [users addObject:[favorite objectForKey:EMTLFavoriteUser]];
@@ -93,7 +92,7 @@
     
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"FavoriteCell"];
-        
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     EMTLUser *user = [[_photo.favorites objectAtIndex:indexPath.row] objectForKey:EMTLFavoriteUser];
     
@@ -101,13 +100,10 @@
     cell.detailTextLabel.text = [[[_photo.favorites objectAtIndex:indexPath.row] objectForKey:EMTLFavoriteDate] humanString];
     
     if(user.icon) {
-        NSLog(@"icon size: %f x %f", user.icon.size.width, user.icon.size.height);
         cell.imageView.image = user.icon;
     }
     else {
-        UIImage *blankIcon = [UIImage imageNamed:@"BlankIcon.gif"];
-        cell.imageView.image = blankIcon;
-        NSLog(@"Blank icon size: %f x %f", blankIcon.size.width, blankIcon.size.height);
+        cell.imageView.image = [UIImage imageNamed:@"BlankIcon.gif"];
         [user loadUserWithDelegate:self];
     }
     
@@ -124,6 +120,7 @@
 {
     return 1;
 }
+
 
 
 - (void)userWillLoad:(EMTLUser *)user

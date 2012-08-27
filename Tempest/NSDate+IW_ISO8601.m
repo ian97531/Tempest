@@ -43,12 +43,6 @@
             else if (nowDay == dateDay + 1) {
                 return NSLocalizedString(@"Yesterday", @"");;
             }
-            else if (nowDay == dateDay - 1) {
-                return NSLocalizedString(@"Tomorrow", @"");;
-            }
-            else if (dateDay - nowDay < 6) {
-                [dateFormat setDateFormat:@"EEEE"];
-            }
             else {
                 [dateFormat setDateFormat:@"MMMM d"];
             }
